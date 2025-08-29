@@ -100,9 +100,12 @@ export const BlogPosts = () => {
   return (
     <div>
       <div className="space-y-64">
-        {posts.map((post) => (
+        {posts.map((post, index) => (
           <Link key={post.id} to={`/blogg/${post.slug}`}>
-            <article className="group cursor-pointer">
+            <article className="group cursor-pointer animate-fade-in" style={{
+              animationDelay: `${Math.min(index * 100, 500)}ms`,
+              animationFillMode: 'both'
+            }}>
               <div className="flex gap-6 min-h-[120px]">
                 {post.featured_image_url && (
                   <div className="w-32 h-24 flex-shrink-0">
@@ -114,7 +117,7 @@ export const BlogPosts = () => {
                   </div>
                 )}
                 <div className="flex-1 flex flex-col mb-16">
-                  <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
+                  <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
                     {post.title}
                   </h3>
                   <div className="text-sm text-muted-foreground mb-4">
@@ -140,9 +143,11 @@ export const BlogPosts = () => {
             variant="outline" 
             onClick={loadMorePosts}
             disabled={loadingMore}
-            className="px-8 py-2"
+            className="px-8 py-2 transition-all duration-300 hover:scale-105 hover:shadow-md"
           >
-            {loadingMore ? "Laddar..." : "Visa fler inlägg"}
+            <span className={`transition-opacity duration-200 ${loadingMore ? 'opacity-50' : 'opacity-100'}`}>
+              {loadingMore ? "Laddar..." : "Visa fler inlägg"}
+            </span>
           </Button>
         </div>
       )}

@@ -97,15 +97,19 @@ export const MediaGrid = () => {
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        {visibleItems.map((item) => (
+        {visibleItems.map((item, index) => (
           <a
             key={item.id}
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group block"
+            className="group block animate-fade-in"
+            style={{
+              animationDelay: `${Math.min(index * 100, 500)}ms`,
+              animationFillMode: 'both'
+            }}
           >
-            <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105">
+            <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1">
               <div className="flex items-center gap-3 mb-4">
                 <img 
                   src={item.favicon} 
@@ -146,9 +150,11 @@ export const MediaGrid = () => {
             variant="outline" 
             onClick={loadMore}
             disabled={isLoading}
-            className="px-8 py-2"
+            className="px-8 py-2 transition-all duration-300 hover:scale-105 hover:shadow-md"
           >
-            {isLoading ? "Laddar..." : "Visa fler artiklar"}
+            <span className={`transition-opacity duration-200 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+              {isLoading ? "Laddar..." : "Visa fler artiklar"}
+            </span>
           </Button>
         </div>
       )}
