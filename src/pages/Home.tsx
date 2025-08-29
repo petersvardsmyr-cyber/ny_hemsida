@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
 import profileImage from "@/assets/peter-profile.jpg";
-import { ImportButton } from "@/components/ImportButton";
 
 const Home = () => {
   return (
@@ -85,18 +84,9 @@ const Home = () => {
       <section id="contact" className="py-20 px-12">
         <div className="max-w-4xl">
           <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Kontakt</h2>
-          <div className="flex items-center gap-3 text-muted-foreground mb-8">
+          <div className="flex items-center gap-3 text-muted-foreground">
             <Mail className="w-5 h-5" />
             <span>Skriv till mig för samarbeten eller bara för att säga hej</span>
-          </div>
-          
-          {/* Import button - temporary for blog migration */}
-          <div className="p-4 border rounded-lg bg-muted/30">
-            <h3 className="text-lg font-medium mb-2">Importera blogginlägg</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Klicka här för att importera dina blogginlägg från din gamla hemsida
-            </p>
-            <ImportButton />
           </div>
         </div>
       </section>
