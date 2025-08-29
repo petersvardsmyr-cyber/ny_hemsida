@@ -42,16 +42,21 @@ const LeftNavigation = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -90% 0px', // Only trigger when section is in top 10% of viewport
+      rootMargin: '0px 0px -90% 0px',
       threshold: 0
     };
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
+      console.log('Intersection entries:', entries.map(e => ({ id: e.target.id, isIntersecting: e.isIntersecting, ratio: e.intersectionRatio })));
+      
+      // Find the entry with the highest intersection ratio that's actually intersecting
+      const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+      if (intersectingEntries.length > 0) {
+        // Sort by intersection ratio and take the one with highest ratio
+        const bestMatch = intersectingEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        console.log('Setting active section to:', bestMatch.target.id);
+        setActiveSection(bestMatch.target.id);
+      }
     }, observerOptions);
 
     navItems.forEach(({ id }) => {
