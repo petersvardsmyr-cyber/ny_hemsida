@@ -7,10 +7,15 @@ const LeftNavigation = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('about');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
   
   const scrollToSection = (sectionId: string) => {
     // Close mobile menu when navigating
     setIsMobileMenuOpen(false);
+    
+    // Set as active immediately when user clicks
+    setActiveSection(sectionId);
+    setIsScrolling(true);
     
     if (location.pathname !== '/') {
       navigate('/');
@@ -18,12 +23,16 @@ const LeftNavigation = () => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
+          // Allow observer to take over after scroll completes
+          setTimeout(() => setIsScrolling(false), 1000);
         }
       }, 100);
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+        // Allow observer to take over after scroll completes  
+        setTimeout(() => setIsScrolling(false), 1000);
       }
     }
   };
@@ -42,20 +51,19 @@ const LeftNavigation = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -90% 0px',
-      threshold: 0
+      rootMargin: '-10px 0px -70% 0px', // Much more restrictive - only top 30% of viewport
+      threshold: 0.1
     };
 
     const observer = new IntersectionObserver((entries) => {
-      console.log('Intersection entries:', entries.map(e => ({ id: e.target.id, isIntersecting: e.isIntersecting, ratio: e.intersectionRatio })));
+      // Don't update active section while user is actively scrolling from a click
+      if (isScrolling) return;
       
-      // Find the entry with the highest intersection ratio that's actually intersecting
       const intersectingEntries = entries.filter(entry => entry.isIntersecting);
       if (intersectingEntries.length > 0) {
-        // Sort by intersection ratio and take the one with highest ratio
-        const bestMatch = intersectingEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        console.log('Setting active section to:', bestMatch.target.id);
-        setActiveSection(bestMatch.target.id);
+        // Take the first intersecting entry (topmost)
+        const topSection = intersectingEntries[0];
+        setActiveSection(topSection.target.id);
       }
     }, observerOptions);
 
@@ -67,7 +75,7 @@ const LeftNavigation = () => {
     });
 
     return () => observer.disconnect();
-  }, [location.pathname]);
+  }, [location.pathname, isScrolling]);
 
   return (
     <>
