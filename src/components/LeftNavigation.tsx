@@ -23,8 +23,8 @@ const LeftNavigation = () => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
-          // Allow observer to take over after scroll completes
-          setTimeout(() => setIsScrolling(false), 1000);
+        // Allow observer to take over after scroll completes
+        setTimeout(() => setIsScrolling(false), 800);
         }
       }, 100);
     } else {
@@ -32,7 +32,7 @@ const LeftNavigation = () => {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
         // Allow observer to take over after scroll completes  
-        setTimeout(() => setIsScrolling(false), 1000);
+        setTimeout(() => setIsScrolling(false), 800);
       }
     }
   };
@@ -49,32 +49,58 @@ const LeftNavigation = () => {
   useEffect(() => {
     if (location.pathname !== '/') return;
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-10px 0px -70% 0px', // Much more restrictive - only top 30% of viewport
-      threshold: 0.1
+    const updateActiveSection = () => {
+      // Don't update while actively scrolling from a click
+      if (isScrolling) return;
+
+      const sections = navItems.map(({ id }) => {
+        const element = document.getElementById(id);
+        if (!element) return null;
+        
+        const rect = element.getBoundingClientRect();
+        const distanceFromTop = Math.abs(rect.top);
+        
+        return {
+          id,
+          distanceFromTop,
+          isVisible: rect.top < window.innerHeight && rect.bottom > 0
+        };
+      }).filter(Boolean);
+
+      // Find the section closest to the top that's actually visible
+      const visibleSections = sections.filter(section => section.isVisible);
+      if (visibleSections.length > 0) {
+        const closestSection = visibleSections.reduce((closest, current) => 
+          current.distanceFromTop < closest.distanceFromTop ? current : closest
+        );
+        
+        if (closestSection.distanceFromTop < 200) { // Only if reasonably close to top
+          setActiveSection(closestSection.id);
+        }
+      }
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      // Don't update active section while user is actively scrolling from a click
-      if (isScrolling) return;
-      
-      const intersectingEntries = entries.filter(entry => entry.isIntersecting);
-      if (intersectingEntries.length > 0) {
-        // Take the first intersecting entry (topmost)
-        const topSection = intersectingEntries[0];
-        setActiveSection(topSection.target.id);
+    // Update on scroll with throttling
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActiveSection();
+          ticking = false;
+        });
+        ticking = true;
       }
-    }, observerOptions);
+    };
 
-    navItems.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    return () => observer.disconnect();
+    // Initial check
+    updateActiveSection();
+    
+    // Listen to scroll
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [location.pathname, isScrolling]);
 
   return (
