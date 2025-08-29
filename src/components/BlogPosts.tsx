@@ -113,7 +113,7 @@ export const BlogPosts = () => {
                     />
                   </div>
                 )}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col mb-16">
                   <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
                     {post.title}
                   </h3>
