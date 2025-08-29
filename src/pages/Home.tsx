@@ -11,7 +11,7 @@ const Home = () => {
         <div className="max-w-4xl">
           <div className="mb-16">
             <img 
-              src="/lovable-uploads/cceda093-8476-4779-bed7-28a7ecee76a3.png" 
+              src="https://i0.wp.com/petersvardsmyr.se/wp-content/uploads/2021/05/119171678_3241052295929797_977144548847697978_n.jpeg?fit=768%2C769&ssl=1" 
               alt="Peter Svärdsmyr - Författare och berättare"
               className="w-32 h-32 rounded-full mb-8 object-cover"
             />
