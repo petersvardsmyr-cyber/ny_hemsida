@@ -76,20 +76,38 @@ const Home = () => {
             Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. En del dikt och poesi smyger sig in ibland också.
           </p>
           
-          <Card className="mb-8 border-0 shadow-none bg-transparent">
-            <CardContent className="p-4 md:p-8 md:pl-0 pl-0">
-              <Quote className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground mb-4" />
-              <blockquote className="text-lg md:text-xl leading-relaxed mb-4 font-serif italic">
-                Inget i naturen växer<br />
-                – med hjälp av kyla.<br />
-                Inga relationer blomstrar<br />
-                – utan värme.
-              </blockquote>
-              <cite className="text-sm text-muted-foreground">
-                — Ur min kommande bok
-              </cite>
-            </CardContent>
-          </Card>
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            <Card className="border-0 shadow-none bg-transparent">
+              <CardContent className="p-4 md:p-8 md:pl-0 pl-0">
+                <Quote className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground mb-4" />
+                <blockquote className="text-lg md:text-xl leading-relaxed mb-4 font-serif italic">
+                  Inget i naturen växer<br />
+                  – med hjälp av kyla.<br />
+                  Inga relationer blomstrar<br />
+                  – utan värme.
+                </blockquote>
+                <cite className="text-sm text-muted-foreground">
+                  — Ur min kommande bok
+                </cite>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-none bg-transparent">
+              <CardContent className="p-4 md:p-8 md:pr-0 pr-0">
+                <Quote className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground mb-4" />
+                <blockquote className="text-lg md:text-xl leading-relaxed mb-4 font-serif italic">
+                  Alla som andas kan älska,<br />
+                  Alla som älskar kan hjälpa,<br />
+                  Alla som hjälper kan rädda<br />
+                  – en värld som har<br />
+                  svårt att andas.
+                </blockquote>
+                <cite className="text-sm text-muted-foreground">
+                  — Ur min kommande bok
+                </cite>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
