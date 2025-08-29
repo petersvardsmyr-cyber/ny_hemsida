@@ -44,7 +44,7 @@ export const BlogPosts = () => {
 
   if (loading) {
     return (
-      <div className="space-y-12">
+      <div className="space-y-16">
       {[1, 2, 3].map((i) => (
         <article key={i} className="animate-pulse">
           <div className="flex gap-6">
@@ -63,7 +63,7 @@ export const BlogPosts = () => {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-16">
       {posts.map((post) => (
         <Link key={post.id} to={`/blogg/${post.slug}`}>
           <article className="group cursor-pointer">
