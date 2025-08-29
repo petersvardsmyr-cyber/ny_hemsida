@@ -64,15 +64,18 @@ export const BlogPosts = () => {
         return;
       }
 
-      if (data && data.length > 0) {
-        setPosts(prev => [...prev, ...data]);
-        setHasMore(data.length === POSTS_PER_PAGE);
-      } else {
-        setHasMore(false);
-      }
+      // Add a small delay for smoother animation
+      setTimeout(() => {
+        if (data && data.length > 0) {
+          setPosts(prev => [...prev, ...data]);
+          setHasMore(data.length === POSTS_PER_PAGE);
+        } else {
+          setHasMore(false);
+        }
+        setTimeout(() => setLoadingMore(false), 200);
+      }, 300);
     } catch (err) {
       console.error('Load more error:', err);
-    } finally {
       setLoadingMore(false);
     }
   };
@@ -99,14 +102,26 @@ export const BlogPosts = () => {
 
   return (
     <div>
-      <div className="space-y-64">
-        {posts.map((post, index) => (
-          <Link key={post.id} to={`/blogg/${post.slug}`}>
-            <article className="group cursor-pointer animate-fade-in" style={{
-              animationDelay: `${Math.min(index * 100, 500)}ms`,
-              animationFillMode: 'both'
-            }}>
-              <div className="flex gap-6 min-h-[120px]">
+      <div className="space-y-64 transition-all duration-500">
+        {posts.map((post, index) => {
+          const isNewPost = index >= posts.length - POSTS_PER_PAGE && posts.length > POSTS_PER_PAGE && !loadingMore;
+          return (
+            <Link key={post.id} to={`/blogg/${post.slug}`}>
+              <article className={`group cursor-pointer transition-all duration-500 ${
+                isNewPost 
+                  ? 'animate-fade-in opacity-0' 
+                  : index < POSTS_PER_PAGE 
+                    ? 'animate-fade-in' 
+                    : 'opacity-100'
+              }`} style={{
+                animationDelay: isNewPost 
+                  ? `${(index - (posts.length - POSTS_PER_PAGE)) * 200}ms`
+                  : index < POSTS_PER_PAGE 
+                    ? `${index * 150}ms`
+                    : '0ms',
+                animationFillMode: 'both'
+              }}>
+                <div className="flex gap-6 min-h-[120px]">
                 {post.featured_image_url && (
                   <div className="w-32 h-24 flex-shrink-0">
                     <img 
@@ -131,11 +146,34 @@ export const BlogPosts = () => {
                     {post.excerpt}
                   </p>
                 </div>
+                </div>
+              </article>
+            </Link>
+          );
+        })}
+      </div>
+      
+      {/* Loading skeleton for new posts */}
+      {loadingMore && (
+        <div className="space-y-64 mt-64">
+          {Array.from({ length: POSTS_PER_PAGE }).map((_, i) => (
+            <article key={`skeleton-${i}`} className="animate-pulse">
+              <div className="flex gap-6 min-h-[120px]">
+                <div className="w-32 h-24 bg-muted rounded-lg flex-shrink-0"></div>
+                <div className="flex-1 flex flex-col mb-16">
+                  <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-32 mb-4"></div>
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-muted rounded w-full"></div>
+                    <div className="h-4 bg-muted rounded w-5/6"></div>
+                    <div className="h-4 bg-muted rounded w-4/6"></div>
+                  </div>
+                </div>
               </div>
             </article>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       
       {hasMore && (
         <div className="flex justify-center mt-16">

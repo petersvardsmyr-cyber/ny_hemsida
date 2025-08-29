@@ -87,8 +87,8 @@ export const MediaGrid = () => {
     // Simulate loading delay for smooth UX
     setTimeout(() => {
       setVisibleCount(prev => Math.min(prev + 3, mediaItems.length));
-      setIsLoading(false);
-    }, 300);
+      setTimeout(() => setIsLoading(false), 100);
+    }, 600);
   };
 
   const hasMore = visibleCount < mediaItems.length;
@@ -96,20 +96,32 @@ export const MediaGrid = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        {visibleItems.map((item, index) => (
-          <a
-            key={item.id}
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block animate-fade-in"
-            style={{
-              animationDelay: `${Math.min(index * 100, 500)}ms`,
-              animationFillMode: 'both'
-            }}
-          >
-            <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 transition-all duration-500">
+        {visibleItems.map((item, index) => {
+          const isNewItem = index >= visibleCount - 3 && !isLoading;
+          return (
+            <a
+              key={item.id}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group block transition-all duration-500 ${
+                isNewItem 
+                  ? 'animate-fade-in opacity-0' 
+                  : index < 3 
+                    ? 'animate-fade-in' 
+                    : 'opacity-100'
+              }`}
+              style={{
+                animationDelay: isNewItem 
+                  ? `${(index - (visibleCount - 3)) * 150}ms`
+                  : index < 3 
+                    ? `${index * 100}ms`
+                    : '0ms',
+                animationFillMode: 'both'
+              }}
+            >
+              <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1">
               <div className="flex items-center gap-3 mb-4">
                 <img 
                   src={item.favicon} 
@@ -141,8 +153,35 @@ export const MediaGrid = () => {
               </div>
             </article>
           </a>
-        ))}
+          );
+        })}
       </div>
+      
+      {/* Loading skeleton for new items */}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-12">
+          {Array.from({ length: Math.min(3, mediaItems.length - visibleCount) }).map((_, i) => (
+            <div key={`skeleton-${i}`} className="animate-pulse">
+              <div className="bg-card border border-border rounded-lg p-6 h-full flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-6 h-6 bg-muted rounded-sm"></div>
+                  <div className="h-4 bg-muted rounded w-20"></div>
+                  <div className="w-4 h-4 bg-muted rounded ml-auto"></div>
+                </div>
+                <div className="h-5 bg-muted rounded w-3/4 mb-3"></div>
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-muted rounded w-full"></div>
+                  <div className="h-4 bg-muted rounded w-5/6"></div>
+                  <div className="h-4 bg-muted rounded w-4/6"></div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="h-5 bg-muted rounded-full w-16"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       
       {hasMore && (
         <div className="flex justify-center mt-16">
