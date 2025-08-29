@@ -37,6 +37,42 @@ const mediaItems: MediaItem[] = [
     domain: 'spotify.com',
     favicon: 'https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png',
     type: 'podcast'
+  },
+  {
+    id: '4',
+    title: 'Ge barnen ett äkta utrymme!',
+    description: 'Att ge barnen utrymme men inte lita på dem när de tar plats, det är inte ett äkta utrymme. Om barns särställning inom kyrkan och behovet av autentiskt deltagande.',
+    url: 'https://dagensseglora.se/2013/01/25/ge-barnen-ett-akta-utrymme/',
+    domain: 'dagensseglora.se',
+    favicon: 'https://dagensseglora.se/favicon.ico',
+    type: 'article'
+  },
+  {
+    id: '5',
+    title: 'Att bli till!',
+    description: 'En bokrecension av Peters bok "Att bli till – om människans innersta längtan och kyrkans yttersta uppdrag" i Svenska kyrkans diakoniblogg.',
+    url: 'https://blogg.svenskakyrkan.se/diakonibloggen/2015/03/08/att-bli-till/',
+    domain: 'svenskakyrkan.se',
+    favicon: 'https://blogg.svenskakyrkan.se/favicon.ico',
+    type: 'article'
+  },
+  {
+    id: '6',
+    title: 'Jag önskar mer resurser till lokala församlingar',
+    description: 'Om kyrkoavgiften och målet att tillföra mer resurser för lokala församlingar att sprida evangelium och bygga Guds rike.',
+    url: 'https://www.dagen.se/debatt/jag-onskar-mer-resurser-till-lokala-forsamlingar/3049951',
+    domain: 'dagen.se',
+    favicon: 'https://www.dagen.se/favicon.ico',
+    type: 'article'
+  },
+  {
+    id: '7',
+    title: 'Ta bort svaret i konfirmationsgudstjänsten',
+    description: 'En reflektion kring kyrkans pedagogiska trovärdighet och konfirmationens roll, med utgångspunkt i dopets centrala betydelse.',
+    url: 'https://www.kyrkanstidning.se/debatt/ta-bort-svaret-i-konfirmationsgudstjansten',
+    domain: 'kyrkanstidning.se',
+    favicon: 'https://www.kyrkanstidning.se/favicon.ico',
+    type: 'article'
   }
 ];
 
