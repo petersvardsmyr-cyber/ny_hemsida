@@ -21,6 +21,7 @@ export default {
 			fontFamily: {
 				'serif': ['var(--font-serif)'],
 				'sans': ['var(--font-sans)'],
+				'heading': ['var(--font-heading)'],
 			},
 			maxWidth: {
 				'reading': 'var(--reading-width)',

@@ -42,6 +42,7 @@ All colors MUST be HSL.
     /* Typografi variabler */
     --font-serif: 'Crimson Text', Georgia, serif;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading: 'Playfair Display', Georgia, serif;
     
     /* Särskilda färger för författartemat */
     --warm-cream: 40 15% 96%;
@@ -116,7 +117,7 @@ All colors MUST be HSL.
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-semibold;
+    @apply font-heading font-medium;
   }
 
   /* Vackra läs-typografi */
@@ -129,11 +130,11 @@ All colors MUST be HSL.
   }
 
   .prose h2 {
-    @apply text-2xl font-sans font-semibold mt-12 mb-6;
+    @apply text-2xl font-heading font-medium mt-12 mb-6;
   }
 
   .prose h3 {
-    @apply text-xl font-sans font-medium mt-8 mb-4;
+    @apply text-xl font-heading font-medium mt-8 mb-4;
   }
 
   /* Smooth animations */

@@ -14,7 +14,7 @@ const Home = () => {
               alt="Peter Svärdsmyr - Författare och berättare"
               className="w-32 h-32 rounded-full mb-8 object-cover"
             />
-            <h1 className="text-4xl md:text-5xl font-sans font-medium mb-6 text-foreground leading-tight">
+            <h1 className="text-4xl md:text-5xl font-heading font-medium mb-6 text-foreground leading-tight">
               Författare och berättare
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
@@ -28,7 +28,7 @@ const Home = () => {
       {/* Writing Section */}
       <section id="writing" className="py-20 px-12">
         <div className="max-w-4xl">
-          <h2 className="text-2xl font-sans font-medium mb-8 text-foreground">Skrivande</h2>
+          <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Skrivande</h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-12 max-w-2xl">
             Mina tankar om skrivprocessen, litteraturens roll i samhället och 
             de observationer som formar våra berättelser.
@@ -51,12 +51,12 @@ const Home = () => {
       {/* Blog Section */}
       <section id="blog" className="py-20 px-12">
         <div className="max-w-4xl">
-          <h2 className="text-2xl font-sans font-medium mb-8 text-foreground">Senaste inläggen</h2>
+          <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Senaste inläggen</h2>
           
           <div className="space-y-12">
             <article className="group cursor-pointer">
               <div className="text-sm text-muted-foreground mb-3">15 januari 2024</div>
-              <h3 className="text-xl font-sans font-medium mb-4 group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-heading font-medium mb-4 group-hover:text-accent transition-colors">
                 Skrivandets tystnad och ljudets betydelse
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -67,7 +67,7 @@ const Home = () => {
             
             <article className="group cursor-pointer">
               <div className="text-sm text-muted-foreground mb-3">8 januari 2024</div>
-              <h3 className="text-xl font-sans font-medium mb-4 group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-heading font-medium mb-4 group-hover:text-accent transition-colors">
                 Från WordPress till modern webbutveckling
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -82,7 +82,7 @@ const Home = () => {
       {/* Contact Section */}
       <section id="contact" className="py-20 px-12">
         <div className="max-w-4xl">
-          <h2 className="text-2xl font-sans font-medium mb-8 text-foreground">Kontakt</h2>
+          <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Kontakt</h2>
           <div className="flex items-center gap-3 text-muted-foreground">
             <Mail className="w-5 h-5" />
             <span>Skriv till mig för samarbeten eller bara för att säga hej</span>
