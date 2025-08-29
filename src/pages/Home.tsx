@@ -29,8 +29,7 @@ const Home = () => {
         <div className="max-w-4xl">
           <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Skrivande</h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-12 max-w-2xl">
-            Mina tankar om skrivprocessen, litteraturens roll i samhället och 
-            de observationer som formar våra berättelser.
+            Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. En del dikt och poesi smyger sig in ibland också.
           </p>
           
           <Card className="mb-8 border-0 shadow-none bg-transparent">
