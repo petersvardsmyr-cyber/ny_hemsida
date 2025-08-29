@@ -82,16 +82,16 @@ export const BlogPosts = () => {
 
   if (loading) {
     return (
-      <div className="space-y-48">
+      <div className="space-y-8 md:space-y-12">
       {[1, 2, 3].map((i) => (
         <article key={i} className="animate-pulse">
-          <div className="flex gap-6">
-            <div className="w-32 h-24 bg-muted rounded-lg flex-shrink-0"></div>
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
+            <div className="w-full sm:w-32 h-32 sm:h-24 bg-muted rounded-lg flex-shrink-0"></div>
             <div className="flex-1">
-              <div className="h-4 bg-muted rounded w-24 mb-3"></div>
-              <div className="h-6 bg-muted rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-muted rounded w-full mb-2"></div>
-              <div className="h-4 bg-muted rounded w-2/3"></div>
+              <div className="h-3 md:h-4 bg-muted rounded w-20 md:w-24 mb-2 md:mb-3"></div>
+              <div className="h-5 md:h-6 bg-muted rounded w-3/4 mb-3 md:mb-4"></div>
+              <div className="h-3 md:h-4 bg-muted rounded w-full mb-2"></div>
+              <div className="h-3 md:h-4 bg-muted rounded w-2/3"></div>
             </div>
           </div>
         </article>
@@ -102,7 +102,7 @@ export const BlogPosts = () => {
 
   return (
     <div>
-      <div className="space-y-64 transition-all duration-500">
+      <div className="space-y-12 md:space-y-16 transition-all duration-500">
         {posts.map((post, index) => {
           const isNewPost = index >= posts.length - POSTS_PER_PAGE && posts.length > POSTS_PER_PAGE && !loadingMore;
           return (
@@ -121,9 +121,9 @@ export const BlogPosts = () => {
                     : '0ms',
                 animationFillMode: 'both'
               }}>
-                <div className="flex gap-6 min-h-[120px]">
+                <div className="flex flex-col sm:flex-row gap-4 md:gap-6 min-h-[120px]">
                 {post.featured_image_url && (
-                  <div className="w-32 h-24 flex-shrink-0">
+                  <div className="w-full sm:w-32 h-32 sm:h-24 flex-shrink-0">
                     <img 
                       src={post.featured_image_url} 
                       alt={post.title}
@@ -131,18 +131,18 @@ export const BlogPosts = () => {
                     />
                   </div>
                 )}
-                <div className="flex-1 flex flex-col mb-16">
-                  <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-lg md:text-xl font-heading font-medium mb-2 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
                     {post.title}
                   </h3>
-                  <div className="text-sm text-muted-foreground mb-4">
+                  <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">
                     {new Date(post.published_date).toLocaleDateString('sv-SE', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
                     })}
                   </div>
-                  <p className="text-muted-foreground leading-relaxed flex-1">
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed flex-1">
                     {post.excerpt}
                   </p>
                 </div>
@@ -155,18 +155,18 @@ export const BlogPosts = () => {
       
       {/* Loading skeleton for new posts */}
       {loadingMore && (
-        <div className="space-y-64 mt-64">
+        <div className="space-y-12 md:space-y-16 mt-12 md:mt-16">
           {Array.from({ length: POSTS_PER_PAGE }).map((_, i) => (
             <article key={`skeleton-${i}`} className="animate-pulse">
-              <div className="flex gap-6 min-h-[120px]">
-                <div className="w-32 h-24 bg-muted rounded-lg flex-shrink-0"></div>
-                <div className="flex-1 flex flex-col mb-16">
-                  <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-muted rounded w-32 mb-4"></div>
+              <div className="flex flex-col sm:flex-row gap-4 md:gap-6 min-h-[120px]">
+                <div className="w-full sm:w-32 h-32 sm:h-24 bg-muted rounded-lg flex-shrink-0"></div>
+                <div className="flex-1 flex flex-col">
+                  <div className="h-5 md:h-6 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-3 md:h-4 bg-muted rounded w-24 md:w-32 mb-3 md:mb-4"></div>
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 bg-muted rounded w-full"></div>
-                    <div className="h-4 bg-muted rounded w-5/6"></div>
-                    <div className="h-4 bg-muted rounded w-4/6"></div>
+                    <div className="h-3 md:h-4 bg-muted rounded w-full"></div>
+                    <div className="h-3 md:h-4 bg-muted rounded w-5/6"></div>
+                    <div className="h-3 md:h-4 bg-muted rounded w-4/6"></div>
                   </div>
                 </div>
               </div>
@@ -176,12 +176,12 @@ export const BlogPosts = () => {
       )}
       
       {hasMore && (
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-12 md:mt-16">
           <Button 
             variant="outline" 
             onClick={loadMorePosts}
             disabled={loadingMore}
-            className="px-8 py-2 transition-all duration-300 hover:scale-105 hover:shadow-md"
+            className="px-6 md:px-8 py-2 text-sm md:text-base transition-all duration-300 hover:scale-105 hover:shadow-md"
           >
             <span className={`transition-opacity duration-200 ${loadingMore ? 'opacity-50' : 'opacity-100'}`}>
               {loadingMore ? "Laddar..." : "Visa fler inlägg"}

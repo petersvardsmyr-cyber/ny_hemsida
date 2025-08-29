@@ -96,7 +96,7 @@ export const MediaGrid = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 transition-all duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12 transition-all duration-500">
         {visibleItems.map((item, index) => {
           const isNewItem = index >= visibleCount - 3 && !isLoading;
           return (
@@ -121,24 +121,24 @@ export const MediaGrid = () => {
                 animationFillMode: 'both'
               }}
             >
-              <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1">
-              <div className="flex items-center gap-3 mb-4">
+              <article className="bg-card border border-border rounded-lg p-4 md:p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                 <img 
                   src={item.favicon} 
                   alt={`${item.domain} favicon`}
-                  className="w-6 h-6 rounded-sm"
+                  className="w-5 h-5 md:w-6 md:h-6 rounded-sm flex-shrink-0"
                   onError={(e) => {
                     // Fallback to a generic icon if favicon fails to load
                     e.currentTarget.src = `https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`;
                   }}
                 />
-                <span className="text-sm text-muted-foreground font-medium">
+                <span className="text-xs md:text-sm text-muted-foreground font-medium truncate">
                   {item.domain}
                 </span>
-                <ExternalLink className="w-4 h-4 text-muted-foreground ml-auto" />
+                <ExternalLink className="w-3 h-3 md:w-4 md:h-4 text-muted-foreground ml-auto flex-shrink-0" />
               </div>
               
-              <h3 className="text-lg font-heading font-medium mb-3 group-hover:text-accent transition-colors leading-tight">
+              <h3 className="text-base md:text-lg font-heading font-medium mb-2 md:mb-3 group-hover:text-accent transition-colors leading-tight">
                 {item.title}
               </h3>
               
@@ -146,7 +146,7 @@ export const MediaGrid = () => {
                 {item.description}
               </p>
               
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
                 <span className="text-xs text-muted-foreground capitalize bg-muted px-2 py-1 rounded-full">
                   {item.type}
                 </span>
@@ -159,23 +159,23 @@ export const MediaGrid = () => {
       
       {/* Loading skeleton for new items */}
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12 mt-8 md:mt-12">
           {Array.from({ length: Math.min(3, mediaItems.length - visibleCount) }).map((_, i) => (
             <div key={`skeleton-${i}`} className="animate-pulse">
-              <div className="bg-card border border-border rounded-lg p-6 h-full flex flex-col">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-6 h-6 bg-muted rounded-sm"></div>
-                  <div className="h-4 bg-muted rounded w-20"></div>
-                  <div className="w-4 h-4 bg-muted rounded ml-auto"></div>
+              <div className="bg-card border border-border rounded-lg p-4 md:p-6 h-full flex flex-col">
+                <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                  <div className="w-5 h-5 md:w-6 md:h-6 bg-muted rounded-sm flex-shrink-0"></div>
+                  <div className="h-3 md:h-4 bg-muted rounded w-16 md:w-20"></div>
+                  <div className="w-3 h-3 md:w-4 md:h-4 bg-muted rounded ml-auto flex-shrink-0"></div>
                 </div>
-                <div className="h-5 bg-muted rounded w-3/4 mb-3"></div>
+                <div className="h-4 md:h-5 bg-muted rounded w-3/4 mb-2 md:mb-3"></div>
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-muted rounded w-full"></div>
-                  <div className="h-4 bg-muted rounded w-5/6"></div>
-                  <div className="h-4 bg-muted rounded w-4/6"></div>
+                  <div className="h-3 md:h-4 bg-muted rounded w-full"></div>
+                  <div className="h-3 md:h-4 bg-muted rounded w-5/6"></div>
+                  <div className="h-3 md:h-4 bg-muted rounded w-4/6"></div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-border">
-                  <div className="h-5 bg-muted rounded-full w-16"></div>
+                <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
+                  <div className="h-4 md:h-5 bg-muted rounded-full w-12 md:w-16"></div>
                 </div>
               </div>
             </div>
@@ -184,12 +184,12 @@ export const MediaGrid = () => {
       )}
       
       {hasMore && (
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-12 md:mt-16">
           <Button 
             variant="outline" 
             onClick={loadMore}
             disabled={isLoading}
-            className="px-8 py-2 transition-all duration-300 hover:scale-105 hover:shadow-md"
+            className="px-6 md:px-8 py-2 text-sm md:text-base transition-all duration-300 hover:scale-105 hover:shadow-md"
           >
             <span className={`transition-opacity duration-200 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
               {isLoading ? "Laddar..." : "Visa fler artiklar"}
