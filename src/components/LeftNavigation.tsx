@@ -31,6 +31,7 @@ const LeftNavigation = () => {
   const navItems = [
     { id: 'about', label: 'Om', type: 'scroll' },
     { id: 'writing', label: 'Skrivande', type: 'scroll' },
+    { id: 'books', label: 'Böcker', type: 'scroll' },
     { id: 'blog', label: 'Blogg', type: 'scroll' },
     { id: 'media', label: 'Media', type: 'scroll' },
     { id: 'contact', label: 'Kontakt', type: 'scroll' }
