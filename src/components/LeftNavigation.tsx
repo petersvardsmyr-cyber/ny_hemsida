@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Feather } from "lucide-react";
 
 const LeftNavigation = () => {
   const location = useLocation();
@@ -93,7 +93,7 @@ const LeftNavigation = () => {
                 }`}
               >
                 {activeSection === item.id && (
-                  <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-full animate-scale-in"></span>
+                  <Feather className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
                 )}
                 {item.label}
               </button>
@@ -143,7 +143,7 @@ const LeftNavigation = () => {
                     }`}
                   >
                     {activeSection === item.id && (
-                      <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-full animate-scale-in"></span>
+                      <Feather className="absolute -left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
                     )}
                     {item.label}
                   </button>
