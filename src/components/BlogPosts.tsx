@@ -99,7 +99,7 @@ export const BlogPosts = () => {
 
   return (
     <div>
-      <div className="space-y-48">
+      <div className="space-y-64">
         {posts.map((post) => (
           <Link key={post.id} to={`/blogg/${post.slug}`}>
             <article className="group cursor-pointer">
