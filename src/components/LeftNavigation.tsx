@@ -42,8 +42,8 @@ const LeftNavigation = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: '-10% 0px -80% 0px',
-      threshold: 0.1
+      rootMargin: '0px 0px -90% 0px', // Only trigger when section is in top 10% of viewport
+      threshold: 0
     };
 
     const observer = new IntersectionObserver((entries) => {
