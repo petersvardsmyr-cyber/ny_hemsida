@@ -78,16 +78,16 @@ export const BlogPosts = () => {
                 </div>
               )}
               <div className="flex-1">
-                <div className="text-sm text-muted-foreground mb-3">
+                <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
+                  {post.title}
+                </h3>
+                <div className="text-sm text-muted-foreground mb-4">
                   {new Date(post.published_date).toLocaleDateString('sv-SE', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                   })}
                 </div>
-                <h3 className="text-xl font-heading font-medium mb-4 group-hover:text-accent transition-colors">
-                  {post.title}
-                </h3>
                 <p className="text-muted-foreground leading-relaxed">
                   {post.excerpt}
                 </p>
