@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface MediaItem {
   id: string;
@@ -77,49 +79,79 @@ const mediaItems: MediaItem[] = [
 ];
 
 export const MediaGrid = () => {
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadMore = () => {
+    setIsLoading(true);
+    // Simulate loading delay for smooth UX
+    setTimeout(() => {
+      setVisibleCount(prev => Math.min(prev + 3, mediaItems.length));
+      setIsLoading(false);
+    }, 300);
+  };
+
+  const hasMore = visibleCount < mediaItems.length;
+  const visibleItems = mediaItems.slice(0, visibleCount);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-      {mediaItems.map((item) => (
-        <a
-          key={item.id}
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block"
-        >
-          <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105">
-            <div className="flex items-center gap-3 mb-4">
-              <img 
-                src={item.favicon} 
-                alt={`${item.domain} favicon`}
-                className="w-6 h-6 rounded-sm"
-                onError={(e) => {
-                  // Fallback to a generic icon if favicon fails to load
-                  e.currentTarget.src = `https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`;
-                }}
-              />
-              <span className="text-sm text-muted-foreground font-medium">
-                {item.domain}
-              </span>
-              <ExternalLink className="w-4 h-4 text-muted-foreground ml-auto" />
-            </div>
-            
-            <h3 className="text-lg font-heading font-medium mb-3 group-hover:text-accent transition-colors leading-tight">
-              {item.title}
-            </h3>
-            
-            <p className="text-muted-foreground leading-relaxed flex-1 text-sm">
-              {item.description}
-            </p>
-            
-            <div className="mt-4 pt-4 border-t border-border">
-              <span className="text-xs text-muted-foreground capitalize bg-muted px-2 py-1 rounded-full">
-                {item.type}
-              </span>
-            </div>
-          </article>
-        </a>
-      ))}
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        {visibleItems.map((item) => (
+          <a
+            key={item.id}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block"
+          >
+            <article className="bg-card border border-border rounded-lg p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-105">
+              <div className="flex items-center gap-3 mb-4">
+                <img 
+                  src={item.favicon} 
+                  alt={`${item.domain} favicon`}
+                  className="w-6 h-6 rounded-sm"
+                  onError={(e) => {
+                    // Fallback to a generic icon if favicon fails to load
+                    e.currentTarget.src = `https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`;
+                  }}
+                />
+                <span className="text-sm text-muted-foreground font-medium">
+                  {item.domain}
+                </span>
+                <ExternalLink className="w-4 h-4 text-muted-foreground ml-auto" />
+              </div>
+              
+              <h3 className="text-lg font-heading font-medium mb-3 group-hover:text-accent transition-colors leading-tight">
+                {item.title}
+              </h3>
+              
+              <p className="text-muted-foreground leading-relaxed flex-1 text-sm">
+                {item.description}
+              </p>
+              
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs text-muted-foreground capitalize bg-muted px-2 py-1 rounded-full">
+                  {item.type}
+                </span>
+              </div>
+            </article>
+          </a>
+        ))}
+      </div>
+      
+      {hasMore && (
+        <div className="flex justify-center mt-16">
+          <Button 
+            variant="outline" 
+            onClick={loadMore}
+            disabled={isLoading}
+            className="px-8 py-2"
+          >
+            {isLoading ? "Laddar..." : "Visa fler artiklar"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

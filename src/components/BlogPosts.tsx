@@ -18,7 +18,7 @@ export const BlogPosts = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const POSTS_PER_PAGE = 5;
+  const POSTS_PER_PAGE = 3;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -80,7 +80,7 @@ export const BlogPosts = () => {
   if (loading) {
     return (
       <div className="space-y-48">
-      {[1, 2, 3, 4, 5].map((i) => (
+      {[1, 2, 3].map((i) => (
         <article key={i} className="animate-pulse">
           <div className="flex gap-6">
             <div className="w-32 h-24 bg-muted rounded-lg flex-shrink-0"></div>
