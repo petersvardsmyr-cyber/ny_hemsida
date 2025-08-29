@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
+import profileImage from "@/assets/peter-profile.jpg";
 
 const Home = () => {
   return (
@@ -8,7 +9,11 @@ const Home = () => {
       <section id="about" className="py-20 px-12">
         <div className="max-w-4xl">
           <div className="mb-16">
-            <div className="w-32 h-32 bg-muted rounded-full mb-8"></div>
+            <img 
+              src={profileImage} 
+              alt="Peter Svärdsmyr - Författare och berättare"
+              className="w-32 h-32 rounded-full mb-8 object-cover"
+            />
             <h1 className="text-4xl md:text-5xl font-sans font-medium mb-6 text-foreground leading-tight">
               Författare och berättare
             </h1>
