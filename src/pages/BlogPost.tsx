@@ -86,7 +86,7 @@ const BlogPost = () => {
           Det verkar som att det inlägg du letar efter inte finns.
         </p>
         <Button asChild>
-          <Link to="/blog">
+          <Link to="/blogg">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Tillbaka till bloggen
           </Link>
@@ -130,7 +130,7 @@ const BlogPost = () => {
   return (
     <article className="max-w-4xl mx-auto px-12 py-20">
       <Button variant="ghost" asChild className="mb-6">
-        <Link to="/blog">
+        <Link to="/blogg">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Tillbaka till bloggen
         </Link>
@@ -181,7 +181,7 @@ const BlogPost = () => {
       <footer className="mt-12 pt-8 border-t">
         <div className="flex justify-between items-center">
           <Button variant="outline" asChild>
-            <Link to="/blog">Läs fler inlägg</Link>
+            <Link to="/blogg">Läs fler inlägg</Link>
           </Button>
           
           <div className="text-sm text-muted-foreground">

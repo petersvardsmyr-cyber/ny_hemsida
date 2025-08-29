@@ -23,6 +23,7 @@ export const BlogList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        console.log('Fetching blog posts...');
         const { data, error } = await supabase
           .from('blog_posts')
           .select('*')
@@ -34,6 +35,7 @@ export const BlogList = () => {
           return;
         }
 
+        console.log('Fetched posts:', data);
         setPosts(data || []);
       } catch (err) {
         console.error('Fetch error:', err);
@@ -68,12 +70,12 @@ export const BlogList = () => {
       
       {posts.length === 0 ? (
         <p className="text-muted-foreground">
-          Inga inlägg hittades. Använd importknappen på startsidan för att importera dina blogginlägg.
+          Inga inlägg hittades. Kontrollera konsollen för felbuggar.
         </p>
       ) : (
         <div className="space-y-12">
           {posts.map((post) => (
-            <Link key={post.id} to={`/blog/${post.slug}`}>
+            <Link key={post.id} to={`/blogg/${post.slug}`}>
               <Card className="group cursor-pointer hover:shadow-lg transition-shadow duration-300">
                 {post.featured_image_url && (
                   <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -102,7 +104,7 @@ export const BlogList = () => {
                   <p className="text-muted-foreground leading-relaxed mb-4">
                     {post.excerpt}
                   </p>
-                  {post.tags && post.tags.length > 0 && (
+                  {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {post.tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-xs">
