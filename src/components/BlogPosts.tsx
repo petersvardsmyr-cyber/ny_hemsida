@@ -103,7 +103,7 @@ export const BlogPosts = () => {
         {posts.map((post) => (
           <Link key={post.id} to={`/blogg/${post.slug}`}>
             <article className="group cursor-pointer">
-              <div className="flex gap-6">
+              <div className="flex gap-6 min-h-[120px]">
                 {post.featured_image_url && (
                   <div className="w-32 h-24 flex-shrink-0">
                     <img 
@@ -113,7 +113,7 @@ export const BlogPosts = () => {
                     />
                   </div>
                 )}
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
                     {post.title}
                   </h3>
@@ -124,7 +124,7 @@ export const BlogPosts = () => {
                       day: 'numeric' 
                     })}
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed flex-1">
                     {post.excerpt}
                   </p>
                 </div>
