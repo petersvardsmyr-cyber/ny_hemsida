@@ -2,6 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
+import alltDetViDelarImg from "@/assets/book-allt-det-vi-delar.jpg";
+import detOrdnarSigImg from "@/assets/book-det-ordnar-sig.jpg";
+import alltDetViDelarAndraAretImg from "@/assets/book-allt-det-vi-delar-andra-aret.jpg";
+import attBlitillImg from "@/assets/book-att-bli-till.jpg";
 const Home = () => {
   return <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
       {/* About Section */}
@@ -79,6 +83,81 @@ const Home = () => {
                   svårt att andas.
                 </blockquote>
                 <cite className="text-sm text-muted-foreground">— Ur Det ordnar sig</cite>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Books Section */}
+      <section id="books" className="py-12 md:py-20 px-4 md:px-12">
+        <div className="max-w-6xl w-full">
+          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
+            Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer och andlighet.
+          </p>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* Allt det vi delar */}
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={alltDetViDelarImg} 
+                    alt="Allt det vi delar - bok av Peter Svärdsmyr" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar</h3>
+                <p className="text-primary font-medium text-lg">99 kr</p>
+              </CardContent>
+            </Card>
+
+            {/* Det ordnar sig */}
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={detOrdnarSigImg} 
+                    alt="Det ordnar sig - bok av Peter Svärdsmyr" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Det ordnar sig</h3>
+                <p className="text-primary font-medium text-lg">159 kr</p>
+              </CardContent>
+            </Card>
+
+            {/* Allt det vi delar - andra året */}
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={alltDetViDelarAndraAretImg} 
+                    alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar – andra året</h3>
+                <p className="text-primary font-medium text-lg">179 kr</p>
+              </CardContent>
+            </Card>
+
+            {/* Att bli till */}
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={attBlitillImg} 
+                    alt="Att bli till - bok av Peter Svärdsmyr" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Att bli till</h3>
+                <div className="flex items-center gap-2">
+                  <p className="text-muted-foreground line-through text-sm">99 kr</p>
+                  <p className="text-primary font-medium text-lg">49 kr</p>
+                </div>
               </CardContent>
             </Card>
           </div>
