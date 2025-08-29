@@ -15,11 +15,10 @@ const Home = () => {
               className="w-32 h-32 rounded-full mb-8 object-cover"
             />
             <h1 className="text-4xl md:text-5xl font-heading font-medium mb-6 text-foreground leading-tight">
-              Författare och berättare
+              Peter Svärdsmyr
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
-              Jag utforskar språkets magi och berättandets kraft genom skrivande. 
-              Här delar jag mina tankar, berättelser och reflektioner.
+              Jag älskar att skriva. Gärna om stora saker med få ord. Jag skriver också gärna musik. Här kan du läsa min blogg och annat.
             </p>
           </div>
         </div>
