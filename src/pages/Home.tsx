@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
-import profileImage from "@/assets/peter-profile.jpg";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
 
@@ -12,7 +11,7 @@ const Home = () => {
         <div className="max-w-4xl">
           <div className="mb-16">
             <img 
-              src={profileImage} 
+              src="/lovable-uploads/cceda093-8476-4779-bed7-28a7ecee76a3.png" 
               alt="Peter Svärdsmyr - Författare och berättare"
               className="w-32 h-32 rounded-full mb-8 object-cover"
             />

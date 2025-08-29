@@ -25,6 +25,7 @@ const LeftNavigation = () => {
     { id: 'about', label: 'Om', type: 'scroll' },
     { id: 'writing', label: 'Skrivande', type: 'scroll' },
     { id: 'blog', label: 'Blogg', type: 'link', path: '/blogg' },
+    { id: 'media', label: 'Media', type: 'scroll' },
     { id: 'contact', label: 'Kontakt', type: 'scroll' }
   ];
 
