@@ -36,7 +36,10 @@ const Home = () => {
             <CardContent className="p-8 pl-0">
               <Quote className="w-6 h-6 text-muted-foreground mb-4" />
               <blockquote className="text-xl leading-relaxed mb-4 font-serif italic">
-                "Varje ord är en byggsten i den värld vi skapar tillsammans genom berättelser."
+                Inget i naturen växer<br />
+                – med hjälp av kyla.<br />
+                Inga relationer blomstrar<br />
+                – utan värme.
               </blockquote>
               <cite className="text-sm text-muted-foreground">
                 — Ur min kommande bok
