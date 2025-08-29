@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
 import profileImage from "@/assets/peter-profile.jpg";
 import { BlogPosts } from "@/components/BlogPosts";
+import { MediaGrid } from "@/components/MediaGrid";
 
 const Home = () => {
   return (
@@ -56,6 +57,18 @@ const Home = () => {
           <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Senaste inläggen</h2>
           
           <BlogPosts />
+        </div>
+      </section>
+
+      {/* Media Section */}
+      <section id="media" className="py-20 px-12">
+        <div className="max-w-6xl">
+          <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Media</h2>
+          <p className="text-lg text-muted-foreground leading-relaxed mb-12 max-w-2xl">
+            Artiklar, poddar och andra medieframträdanden där jag delar tankar om livet, kreativitet och mänskliga relationer.
+          </p>
+          
+          <MediaGrid />
         </div>
       </section>
 
