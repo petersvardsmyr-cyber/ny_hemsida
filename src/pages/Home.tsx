@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
 import profileImage from "@/assets/peter-profile.jpg";
+import { BlogPosts } from "@/components/BlogPosts";
 
 const Home = () => {
   return (
@@ -54,29 +55,7 @@ const Home = () => {
         <div className="max-w-4xl">
           <h2 className="text-2xl font-heading font-medium mb-8 text-foreground">Senaste inläggen</h2>
           
-          <div className="space-y-12">
-            <article className="group cursor-pointer">
-              <div className="text-sm text-muted-foreground mb-3">15 januari 2024</div>
-              <h3 className="text-xl font-heading font-medium mb-4 group-hover:text-accent transition-colors">
-                Skrivandets tystnad och ljudets betydelse
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Om betydelsen av pausen, tystnaden mellan orden och hur vi som författare 
-                kan använda det outtalade för att säga mer än det sagda...
-              </p>
-            </article>
-            
-            <article className="group cursor-pointer">
-              <div className="text-sm text-muted-foreground mb-3">8 januari 2024</div>
-              <h3 className="text-xl font-heading font-medium mb-4 group-hover:text-accent transition-colors">
-                Från WordPress till modern webbutveckling
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Min resa från en traditionell WordPress-blogg till denna moderna, 
-                snabba och eleganta lösning för att dela mina tankar...
-              </p>
-            </article>
-          </div>
+          <BlogPosts />
         </div>
       </section>
 
