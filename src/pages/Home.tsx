@@ -4,7 +4,7 @@ import profileImage from "@/assets/peter-profile.jpg";
 
 const Home = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col justify-center">
       {/* About Section */}
       <section id="about" className="py-20 px-12">
         <div className="max-w-4xl">

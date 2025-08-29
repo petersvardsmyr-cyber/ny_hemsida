@@ -16,7 +16,7 @@ const LeftNavigation = () => {
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-48 bg-background border-r border-border/30 p-8 z-50">
+    <nav className="fixed left-0 top-0 h-full w-48 bg-background border-r border-border/30 p-8 z-50 flex flex-col justify-center">
       <div className="mb-12">
         <div className="flex items-center gap-2 text-lg font-sans font-medium text-foreground">
           <PenTool className="w-5 h-5" />
