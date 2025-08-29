@@ -18,6 +18,13 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'serif': ['var(--font-serif)'],
+				'sans': ['var(--font-sans)'],
+			},
+			maxWidth: {
+				'reading': 'var(--reading-width)',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +68,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Författar-specifika färger
+				'warm-cream': 'hsl(var(--warm-cream))',
+				'soft-gray': 'hsl(var(--soft-gray))', 
+				'deep-charcoal': 'hsl(var(--deep-charcoal))',
+				'golden-accent': 'hsl(var(--golden-accent))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
