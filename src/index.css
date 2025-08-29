@@ -8,34 +8,34 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Författar-tema med varma toner */
-    --background: 40 12% 98%;
-    --foreground: 25 20% 15%;
+    /* Minimal kräm-tema inspirerat av Mustafa Suleyman */
+    --background: 40 20% 96%;
+    --foreground: 0 0% 25%;
 
-    --card: 40 8% 97%;
-    --card-foreground: 25 20% 15%;
+    --card: 40 20% 96%;
+    --card-foreground: 0 0% 25%;
 
-    --popover: 40 8% 97%;
-    --popover-foreground: 25 20% 15%;
+    --popover: 40 20% 96%;
+    --popover-foreground: 0 0% 25%;
 
-    --primary: 25 20% 15%;
-    --primary-foreground: 40 12% 98%;
+    --primary: 0 0% 25%;
+    --primary-foreground: 40 20% 96%;
 
-    --secondary: 40 6% 92%;
-    --secondary-foreground: 25 20% 15%;
+    --secondary: 40 15% 90%;
+    --secondary-foreground: 0 0% 25%;
 
-    --muted: 40 6% 94%;
-    --muted-foreground: 25 8% 45%;
+    --muted: 40 15% 92%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 45 85% 60%;
-    --accent-foreground: 25 20% 15%;
+    --accent: 0 0% 25%;
+    --accent-foreground: 40 20% 96%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 40 12% 98%;
 
-    --border: 40 6% 88%;
-    --input: 40 6% 88%;
-    --ring: 45 85% 60%;
+    --border: 40 15% 85%;
+    --input: 40 15% 90%;
+    --ring: 0 0% 25%;
 
     --radius: 0.75rem;
 
