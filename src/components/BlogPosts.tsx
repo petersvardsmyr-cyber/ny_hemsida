@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 interface BlogPost {
   id: string;
@@ -15,6 +16,9 @@ interface BlogPost {
 export const BlogPosts = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const POSTS_PER_PAGE = 5;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,7 +28,7 @@ export const BlogPosts = () => {
           .select('id, title, excerpt, slug, published_date, author, featured_image_url')
           .eq('is_published', true)
           .order('published_date', { ascending: false })
-          .limit(3);
+          .limit(POSTS_PER_PAGE);
 
         if (error) {
           console.error('Error fetching posts:', error);
@@ -32,6 +36,7 @@ export const BlogPosts = () => {
         }
 
         setPosts(data || []);
+        setHasMore(data?.length === POSTS_PER_PAGE);
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
@@ -42,10 +47,40 @@ export const BlogPosts = () => {
     fetchPosts();
   }, []);
 
+  const loadMorePosts = async () => {
+    if (loadingMore || !hasMore) return;
+    
+    setLoadingMore(true);
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('id, title, excerpt, slug, published_date, author, featured_image_url')
+        .eq('is_published', true)
+        .order('published_date', { ascending: false })
+        .range(posts.length, posts.length + POSTS_PER_PAGE - 1);
+
+      if (error) {
+        console.error('Error fetching more posts:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setPosts(prev => [...prev, ...data]);
+        setHasMore(data.length === POSTS_PER_PAGE);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error('Load more error:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-48">
-      {[1, 2, 3].map((i) => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <article key={i} className="animate-pulse">
           <div className="flex gap-6">
             <div className="w-32 h-24 bg-muted rounded-lg flex-shrink-0"></div>
@@ -63,39 +98,54 @@ export const BlogPosts = () => {
   }
 
   return (
-    <div className="space-y-48">
-      {posts.map((post) => (
-        <Link key={post.id} to={`/blogg/${post.slug}`}>
-          <article className="group cursor-pointer">
-            <div className="flex gap-6">
-              {post.featured_image_url && (
-                <div className="w-32 h-24 flex-shrink-0">
-                  <img 
-                    src={post.featured_image_url} 
-                    alt={post.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
+    <div>
+      <div className="space-y-48">
+        {posts.map((post) => (
+          <Link key={post.id} to={`/blogg/${post.slug}`}>
+            <article className="group cursor-pointer">
+              <div className="flex gap-6">
+                {post.featured_image_url && (
+                  <div className="w-32 h-24 flex-shrink-0">
+                    <img 
+                      src={post.featured_image_url} 
+                      alt={post.title}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
+                    {post.title}
+                  </h3>
+                  <div className="text-sm text-muted-foreground mb-4">
+                    {new Date(post.published_date).toLocaleDateString('sv-SE', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {post.excerpt}
+                  </p>
                 </div>
-              )}
-              <div className="flex-1">
-                <h3 className="text-xl font-heading font-medium mb-2 group-hover:text-accent transition-colors">
-                  {post.title}
-                </h3>
-                <div className="text-sm text-muted-foreground mb-4">
-                  {new Date(post.published_date).toLocaleDateString('sv-SE', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </div>
-                <p className="text-muted-foreground leading-relaxed">
-                  {post.excerpt}
-                </p>
               </div>
-            </div>
-          </article>
-        </Link>
-      ))}
+            </article>
+          </Link>
+        ))}
+      </div>
+      
+      {hasMore && (
+        <div className="flex justify-center mt-16">
+          <Button 
+            variant="outline" 
+            onClick={loadMorePosts}
+            disabled={loadingMore}
+            className="px-8 py-2"
+          >
+            {loadingMore ? "Laddar..." : "Visa fler inlägg"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
