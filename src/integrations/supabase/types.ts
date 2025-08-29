@@ -16,35 +16,47 @@ export type Database = {
     Tables: {
       blog_posts: {
         Row: {
+          author: string | null
           content: string
           created_at: string
           excerpt: string | null
           featured_image_url: string | null
           id: string
+          is_published: boolean | null
+          meta_description: string | null
           published_date: string
           slug: string
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          author?: string | null
           content: string
           created_at?: string
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
           published_date?: string
           slug: string
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          author?: string | null
           content?: string
           created_at?: string
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
           published_date?: string
           slug?: string
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
