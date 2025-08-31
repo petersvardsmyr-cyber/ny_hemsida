@@ -27,7 +27,7 @@ export const BlogPosts = () => {
           .from('blog_posts')
           .select('id, title, excerpt, slug, published_date, author, featured_image_url')
           .eq('is_published', true)
-          .order('published_date', { ascending: false })
+          .order('random()')
           .limit(POSTS_PER_PAGE);
 
         if (error) {
@@ -56,8 +56,8 @@ export const BlogPosts = () => {
         .from('blog_posts')
         .select('id, title, excerpt, slug, published_date, author, featured_image_url')
         .eq('is_published', true)
-        .order('published_date', { ascending: false })
-        .range(posts.length, posts.length + POSTS_PER_PAGE - 1);
+        .order('random()')
+        .limit(POSTS_PER_PAGE);
 
       if (error) {
         console.error('Error fetching more posts:', error);

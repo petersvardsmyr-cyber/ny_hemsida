@@ -28,7 +28,7 @@ export const BlogList = () => {
           .from('blog_posts')
           .select('*')
           .eq('is_published', true)
-          .order('published_date', { ascending: false });
+          .order('random()');
 
         if (error) {
           console.error('Error fetching posts:', error);
