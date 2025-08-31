@@ -14,7 +14,7 @@ const Home = () => {
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex items-start gap-6 md:gap-8">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0">
                 <img 
                   src="/lovable-uploads/59b4d781-0b3b-4a2a-915f-016ca671204b.png" 
                   alt="Peter Svärdsmyr - Författare och berättare" 
