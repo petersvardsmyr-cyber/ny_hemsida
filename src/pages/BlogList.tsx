@@ -27,8 +27,12 @@ export const BlogList = () => {
         const { data, error } = await supabase
           .from('blog_posts')
           .select('*')
-          .eq('is_published', true)
-          .order('random()');
+          .eq('is_published', true);
+        
+        if (data) {
+          // Randomize the posts array
+          data.sort(() => Math.random() - 0.5);
+        }
 
         if (error) {
           console.error('Error fetching posts:', error);

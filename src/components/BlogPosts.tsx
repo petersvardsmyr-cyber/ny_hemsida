@@ -26,17 +26,22 @@ export const BlogPosts = () => {
         const { data, error } = await supabase
           .from('blog_posts')
           .select('id, title, excerpt, slug, published_date, author, featured_image_url')
-          .eq('is_published', true)
-          .order('random()')
-          .limit(POSTS_PER_PAGE);
+          .eq('is_published', true);
+        
+        if (data) {
+          // Randomize and take first POSTS_PER_PAGE posts
+          data.sort(() => Math.random() - 0.5);
+          const randomPosts = data.slice(0, POSTS_PER_PAGE);
+          setPosts(randomPosts);
+          setHasMore(data.length > POSTS_PER_PAGE);
+        }
 
         if (error) {
           console.error('Error fetching posts:', error);
           return;
         }
 
-        setPosts(data || []);
-        setHasMore(data?.length === POSTS_PER_PAGE);
+        // This is handled above in the randomization logic
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
@@ -52,12 +57,27 @@ export const BlogPosts = () => {
     
     setLoadingMore(true);
     try {
-      const { data, error } = await supabase
+      const { data: allData, error } = await supabase
         .from('blog_posts')
         .select('id, title, excerpt, slug, published_date, author, featured_image_url')
-        .eq('is_published', true)
-        .order('random()')
-        .limit(POSTS_PER_PAGE);
+        .eq('is_published', true);
+      
+      if (allData) {
+        // Get posts not already displayed
+        const currentPostIds = posts.map(p => p.id);
+        const availablePosts = allData.filter(post => !currentPostIds.includes(post.id));
+        
+        // Randomize and take POSTS_PER_PAGE posts
+        availablePosts.sort(() => Math.random() - 0.5);
+        const newPosts = availablePosts.slice(0, POSTS_PER_PAGE);
+        
+        if (newPosts.length > 0) {
+          setPosts(prev => [...prev, ...newPosts]);
+          setHasMore(availablePosts.length > POSTS_PER_PAGE);
+        } else {
+          setHasMore(false);
+        }
+      }
 
       if (error) {
         console.error('Error fetching more posts:', error);
@@ -66,12 +86,6 @@ export const BlogPosts = () => {
 
       // Add a small delay for smoother animation
       setTimeout(() => {
-        if (data && data.length > 0) {
-          setPosts(prev => [...prev, ...data]);
-          setHasMore(data.length === POSTS_PER_PAGE);
-        } else {
-          setHasMore(false);
-        }
         setTimeout(() => setLoadingMore(false), 200);
       }, 300);
     } catch (err) {
