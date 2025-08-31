@@ -16,7 +16,8 @@ const Home = () => {
               <img 
                 src="/lovable-uploads/59b4d781-0b3b-4a2a-915f-016ca671204b.png" 
                 alt="Peter Svärdsmyr - Författare och berättare" 
-                className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover flex-shrink-0" 
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover object-top flex-shrink-0 scale-150" 
+                style={{ objectPosition: '50% 20%' }}
               />
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight">
                 Peter Svärdsmyr
