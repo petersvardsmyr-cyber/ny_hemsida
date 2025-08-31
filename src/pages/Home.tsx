@@ -18,7 +18,6 @@ const Home = () => {
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">Det finns en rytm i allt. När jag skriver tänker jag på rytm, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen att förstår vad jag vill säga. 
 
-
 För ord är ju så mycket mer än ord, eller hur? </p>
             
             {/* Social Links */}
