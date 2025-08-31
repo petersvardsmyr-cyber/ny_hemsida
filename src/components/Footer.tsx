@@ -1,18 +1,31 @@
 const Footer = () => {
+  // Obfuskera e-postadressen för att skydda mot spammare
+  const getEmail = () => {
+    const user = "hej";
+    const domain = "petersvardsmyr.se";
+    return `${user}@${domain}`;
+  };
+
+  const handleEmailClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.location.href = `mailto:${getEmail()}`;
+  };
+
   return (
     <footer className="border-t border-border bg-background py-8 px-4 md:px-12">
       <div className="max-w-4xl mx-auto">
         {/* Email */}
         <div className="flex items-center justify-center gap-2 mb-4">
           <a 
-            href="mailto:hej@petersvardsmyr.se" 
+            href="#" 
+            onClick={handleEmailClick}
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Email till Peter Svärdsmyr"
           >
             <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <span className="text-sm md:text-base">hej@petersvardsmyr.se</span>
+            <span className="text-sm md:text-base">{getEmail()}</span>
           </a>
         </div>
 
@@ -30,7 +43,7 @@ const Footer = () => {
             </svg>
           </a>
           
-          <a href="mailto:hej@petersvardsmyr.se" className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Email">
+          <a href="#" onClick={handleEmailClick} className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Email">
             <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
