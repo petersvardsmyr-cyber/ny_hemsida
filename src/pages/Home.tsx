@@ -13,19 +13,23 @@ const Home = () => {
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex items-start gap-6 md:gap-8 mb-6 md:mb-8">
-              <img 
-                src="/lovable-uploads/59b4d781-0b3b-4a2a-915f-016ca671204b.png" 
-                alt="Peter Svärdsmyr - Författare och berättare" 
-                className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover object-top flex-shrink-0 scale-150" 
-                style={{ objectPosition: '50% 20%' }}
-              />
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight">
-                Peter Svärdsmyr
-              </h1>
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden flex-shrink-0">
+                <img 
+                  src="/lovable-uploads/59b4d781-0b3b-4a2a-915f-016ca671204b.png" 
+                  alt="Peter Svärdsmyr - Författare och berättare" 
+                  className="w-full h-full object-cover transform scale-150" 
+                  style={{ objectPosition: '50% 20%' }}
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-4 md:mb-6">
+                  Peter Svärdsmyr
+                </h1>
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">Det finns en rytm i allt. När jag skriver tänker jag på rytm, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen att förstår vad jag vill säga. 
+                <br /><br />
+                För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
+              </div>
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">Det finns en rytm i allt. När jag skriver tänker jag på rytm, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen att förstår vad jag vill säga. 
-            <br /><br />
-            För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
             
             {/* Social Links */}
             <div className="flex gap-3 md:gap-4">
