@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, PenTool, Quote, Mail } from "lucide-react";
+import { BookOpen, PenTool, Quote } from "lucide-react";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
 import alltDetViDelarImg from "@/assets/book-allt-det-vi-delar.jpg";
@@ -170,17 +170,6 @@ const Home = () => {
           </p>
           
           <MediaGrid />
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-12 md:py-20 px-4 md:px-12">
-        <div className="max-w-4xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Kontakt</h2>
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <Mail className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-sm md:text-base">Skriv till mig för samarbeten eller bara för att säga hej</span>
-          </div>
         </div>
       </section>
     </div>;
