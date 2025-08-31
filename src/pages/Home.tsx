@@ -136,29 +136,7 @@ const Home = () => {
                 <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Att bli till</h3>
                 <div className="flex items-center gap-2">
                   <p className="text-muted-foreground line-through text-sm">99 kr</p>
-                  <p className="text-primary font-medium text-lg">Media
-
-Här samlar jag artiklar, poddar och andra medieframträdanden där jag delar tankar om livet, kreativitet och mänskliga relationer.
-
-dagen.se
-Peter Svärdsmyr gör succé på Instagram med tänkvärda bilder
-
-Utan att skriva någon på näsan vill musikkommunikatören och pedagogen Peter Svärdsmyr beröra livets stora frågor. Hans Instagram-konto med tänkvärda ord har tusentals följare.
-
-Article
-kyrkanstidning.se
-Kommer AI göra oss mer mänskliga?
-
-Tänk om tekniksprånget denna gång inte blir en källa till fler arbetstimmar utan en källa till mer gemenskap och djupare relationer.
-
-Article
-spotify.com
-Kreativitet med Peter Svärdsmyr
-
-Detta samtal om kreativitet började för några veckor sedan på en kurs och har för min del pågått sedan dess. En spännande diskussion om kreativitet, rädsla och perfektionskrav.
-
-Podcast
-Visa fler artiklar</p>
+                  <p className="text-primary font-medium text-lg">79 kr</p>
                 </div>
               </CardContent>
             </Card>
