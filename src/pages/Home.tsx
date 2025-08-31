@@ -16,9 +16,10 @@ const Home = () => {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-4 md:mb-6 text-foreground leading-tight">
               Peter Svärdsmyr
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">
-              Jag älskar att skriva. Gärna om stora saker med få ord. Jag skriver också gärna musik. Här kan du läsa min blogg och annat.
-            </p>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">Jag skriver gärna. Helst med så få ord som möjligt. Det är nog det roligaste med skrivandet. Att verkligen försöka vara kortfattad.
+
+
+Men det ska också finnas en rytm i  Jag skriver också gärna musik. Här kan du läsa min blogg och annat.</p>
             
             {/* Social Links */}
             <div className="flex gap-3 md:gap-4">
@@ -54,9 +55,7 @@ const Home = () => {
       <section id="writing" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-4xl w-full">
           <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Skrivande</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
-            Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. En del dikt och poesi smyger sig in ibland också.
-          </p>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. Ibland i form av dikter och poesi, ibland i form av debattartiklar eller böcker. Att skriva om stora saker med små medel. Så få ord som möjligt, helst. Det har blivit en längtan och den stora utmaningen när jag skriver. </p>
           
           <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Card className="border-0 shadow-none bg-transparent">
@@ -93,20 +92,14 @@ const Home = () => {
       <section id="books" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
           <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
-            Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer och andlighet.
-          </p>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Allt det vi delar */}
             <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6">
                 <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                  <img 
-                    src={alltDetViDelarImg} 
-                    alt="Allt det vi delar - bok av Peter Svärdsmyr" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={alltDetViDelarImg} alt="Allt det vi delar - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar</h3>
                 <p className="text-primary font-medium text-lg">99 kr</p>
@@ -117,11 +110,7 @@ const Home = () => {
             <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6">
                 <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                  <img 
-                    src={detOrdnarSigImg} 
-                    alt="Det ordnar sig - bok av Peter Svärdsmyr" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={detOrdnarSigImg} alt="Det ordnar sig - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Det ordnar sig</h3>
                 <p className="text-primary font-medium text-lg">159 kr</p>
@@ -132,11 +121,7 @@ const Home = () => {
             <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6">
                 <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                  <img 
-                    src={alltDetViDelarAndraAretImg} 
-                    alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={alltDetViDelarAndraAretImg} alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar – andra året</h3>
                 <p className="text-primary font-medium text-lg">179 kr</p>
@@ -147,11 +132,7 @@ const Home = () => {
             <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6">
                 <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                  <img 
-                    src={attBlitillImg} 
-                    alt="Att bli till - bok av Peter Svärdsmyr" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={attBlitillImg} alt="Att bli till - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Att bli till</h3>
                 <div className="flex items-center gap-2">
