@@ -16,10 +16,11 @@ const Home = () => {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-4 md:mb-6 text-foreground leading-tight">
               Peter Svärdsmyr
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">Jag skriver gärna. Helst med så få ord som möjligt. Det är nog det roligaste med skrivandet. Att verkligen försöka vara kortfattad.
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-8">Det finns en rytm i allt. När jag skriver tänker jag på rytm, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen att förstår vad jag vill säga.
 
 
-Men det ska också finnas en rytm i  Jag skriver också gärna musik. Här kan du läsa min blogg och annat.</p>
+För ord är ju så mycket mer än ord, eller hur? 
+Jag skriver gärna. Helst med så få ord som möjligt. Det är nog det roligaste med skrivandet. Att verkligen försöka vara kortfattad. Men det ska också finnas en rytm i  Jag skriver också gärna musik. Här kan du läsa min blogg och annat.</p>
             
             {/* Social Links */}
             <div className="flex gap-3 md:gap-4">
