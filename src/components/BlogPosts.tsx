@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogPost {
   id: string;
@@ -26,22 +27,17 @@ export const BlogPosts = () => {
         const { data, error } = await supabase
           .from('blog_posts')
           .select('id, title, excerpt, slug, published_date, author, featured_image_url')
-          .eq('is_published', true);
-        
-        if (data) {
-          // Randomize and take first POSTS_PER_PAGE posts
-          data.sort(() => Math.random() - 0.5);
-          const randomPosts = data.slice(0, POSTS_PER_PAGE);
-          setPosts(randomPosts);
-          setHasMore(data.length > POSTS_PER_PAGE);
-        }
+          .eq('is_published', true)
+          .order('published_date', { ascending: false })
+          .limit(POSTS_PER_PAGE);
 
         if (error) {
           console.error('Error fetching posts:', error);
           return;
         }
 
-        // This is handled above in the randomization logic
+        setPosts(data || []);
+        setHasMore(data?.length === POSTS_PER_PAGE);
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
@@ -57,27 +53,12 @@ export const BlogPosts = () => {
     
     setLoadingMore(true);
     try {
-      const { data: allData, error } = await supabase
+      const { data, error } = await supabase
         .from('blog_posts')
         .select('id, title, excerpt, slug, published_date, author, featured_image_url')
-        .eq('is_published', true);
-      
-      if (allData) {
-        // Get posts not already displayed
-        const currentPostIds = posts.map(p => p.id);
-        const availablePosts = allData.filter(post => !currentPostIds.includes(post.id));
-        
-        // Randomize and take POSTS_PER_PAGE posts
-        availablePosts.sort(() => Math.random() - 0.5);
-        const newPosts = availablePosts.slice(0, POSTS_PER_PAGE);
-        
-        if (newPosts.length > 0) {
-          setPosts(prev => [...prev, ...newPosts]);
-          setHasMore(availablePosts.length > POSTS_PER_PAGE);
-        } else {
-          setHasMore(false);
-        }
-      }
+        .eq('is_published', true)
+        .order('published_date', { ascending: false })
+        .range(posts.length, posts.length + POSTS_PER_PAGE - 1);
 
       if (error) {
         console.error('Error fetching more posts:', error);
@@ -86,6 +67,12 @@ export const BlogPosts = () => {
 
       // Add a small delay for smoother animation
       setTimeout(() => {
+        if (data && data.length > 0) {
+          setPosts(prev => [...prev, ...data]);
+          setHasMore(data.length === POSTS_PER_PAGE);
+        } else {
+          setHasMore(false);
+        }
         setTimeout(() => setLoadingMore(false), 200);
       }, 300);
     } catch (err) {
@@ -149,12 +136,20 @@ export const BlogPosts = () => {
                   <h3 className="text-lg md:text-xl font-heading font-medium mb-2 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
                     {post.title}
                   </h3>
-                  <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">
-                    {new Date(post.published_date).toLocaleDateString('sv-SE', { 
+                  <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 flex items-center gap-2">
+                    <span>{new Date(post.published_date).toLocaleDateString('sv-SE', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
-                    })}
+                    })}</span>
+                    {new Date(post.published_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
+                      <>
+                        <span>•</span>
+                        <Badge variant="secondary" className="bg-accent/10 text-accent text-xs animate-pulse">
+                          Nytt
+                        </Badge>
+                      </>
+                    )}
                   </div>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed flex-1">
                     {post.excerpt}

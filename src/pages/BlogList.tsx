@@ -27,12 +27,8 @@ export const BlogList = () => {
         const { data, error } = await supabase
           .from('blog_posts')
           .select('*')
-          .eq('is_published', true);
-        
-        if (data) {
-          // Randomize the posts array
-          data.sort(() => Math.random() - 0.5);
-        }
+          .eq('is_published', true)
+          .order('published_date', { ascending: false });
 
         if (error) {
           console.error('Error fetching posts:', error);
@@ -78,49 +74,61 @@ export const BlogList = () => {
         </p>
       ) : (
         <div className="space-y-12">
-          {posts.map((post) => (
-            <Link key={post.id} to={`/blogg/${post.slug}`}>
-              <Card className="group cursor-pointer hover:shadow-lg transition-shadow duration-300">
-                {post.featured_image_url && (
-                  <div className="aspect-video overflow-hidden rounded-t-lg">
-                    <img 
-                      src={post.featured_image_url} 
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <time>{new Date(post.published_date).toLocaleDateString('sv-SE', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}</time>
-                    <span>•</span>
-                    <span>{post.author}</span>
-                  </div>
-                  <CardTitle className="group-hover:text-accent transition-colors">
-                    {post.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    {post.excerpt}
-                  </p>
-                  {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
+          {posts.map((post) => {
+            const isNew = new Date(post.published_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            
+            return (
+              <Link key={post.id} to={`/blogg/${post.slug}`}>
+                <Card className="group cursor-pointer hover:shadow-lg transition-shadow duration-300">
+                  {post.featured_image_url && (
+                    <div className="aspect-video overflow-hidden rounded-t-lg">
+                      <img 
+                        src={post.featured_image_url} 
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                  <CardHeader>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <time>{new Date(post.published_date).toLocaleDateString('sv-SE', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}</time>
+                      <span>•</span>
+                      <span>{post.author}</span>
+                      {isNew && (
+                        <>
+                          <span>•</span>
+                          <Badge variant="secondary" className="bg-accent/10 text-accent text-xs animate-pulse">
+                            Nytt
+                          </Badge>
+                        </>
+                      )}
+                    </div>
+                    <CardTitle className="group-hover:text-accent transition-colors">
+                      {post.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground leading-relaxed mb-4">
+                      {post.excerpt}
+                    </p>
+                    {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {post.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
