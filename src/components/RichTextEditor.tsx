@@ -33,7 +33,8 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4 text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-em:text-foreground',
+        class: 'focus:outline-none min-h-[300px] p-4 text-foreground',
+        style: 'color: hsl(var(--foreground));',
       },
     },
   });
@@ -143,7 +144,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       </div>
       <EditorContent 
         editor={editor} 
-        className="bg-background min-h-[300px]"
+        className="bg-background min-h-[300px] [&_.ProseMirror]:text-foreground [&_.ProseMirror]:outline-none [&_.ProseMirror_p]:text-foreground [&_.ProseMirror_h1]:text-foreground [&_.ProseMirror_h2]:text-foreground [&_.ProseMirror_h3]:text-foreground [&_.ProseMirror_strong]:text-foreground [&_.ProseMirror_em]:text-foreground"
       />
     </div>
   );
