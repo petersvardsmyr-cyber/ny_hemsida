@@ -35,8 +35,12 @@ export default function AdminLogin() {
     e.preventDefault();
     setIsLoading(true);
 
+    console.log('Försöker:', isSignUp ? 'registrera' : 'logga in', 'med email:', email);
+
     try {
       const { error } = isSignUp ? await signUp(email, password) : await signIn(email, password);
+      
+      console.log('Resultat:', { error, isSignUp });
       
       if (error) {
         toast({
