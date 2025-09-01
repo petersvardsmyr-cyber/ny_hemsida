@@ -12,7 +12,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-background py-8 px-4 md:px-12">
+    <footer className="ml-0 md:ml-48 transition-all duration-300 bg-background py-8 px-4 md:px-12">
       <div>
         {/* Email */}
         <div className="flex items-center gap-2 mb-4">
