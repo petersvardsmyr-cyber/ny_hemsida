@@ -9,9 +9,7 @@ const Layout = () => {
       <main className="ml-0 md:ml-48 transition-all duration-300 flex-1">
         <Outlet />
       </main>
-      <div className="ml-0 md:ml-48 transition-all duration-300">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
