@@ -12,7 +12,8 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, user, loading } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,22 +36,31 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
+      const { error } = isSignUp ? await signUp(email, password) : await signIn(email, password);
       
       if (error) {
         toast({
-          title: "Inloggning misslyckades",
+          title: isSignUp ? "Registrering misslyckades" : "Inloggning misslyckades",
           description: error.message === 'Invalid login credentials' 
             ? "Ogiltiga inloggningsuppgifter" 
+            : error.message === 'User already registered'
+            ? "Användaren är redan registrerad"
             : error.message,
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Välkommen!",
-          description: "Du är nu inloggad i admin-panelen.",
-        });
-        navigate('/admin');
+        if (isSignUp) {
+          toast({
+            title: "Konto skapat!",
+            description: "Kontrollera din e-post för att verifiera kontot.",
+          });
+        } else {
+          toast({
+            title: "Välkommen!",
+            description: "Du är nu inloggad i admin-panelen.",
+          });
+          navigate('/admin');
+        }
       }
     } catch (error) {
       toast({
@@ -67,9 +77,11 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <CardTitle className="text-2xl">
+            {isSignUp ? 'Skapa Admin-konto' : 'Admin Login'}
+          </CardTitle>
           <CardDescription>
-            Logga in för att hantera blogginlägg
+            {isSignUp ? 'Skapa ditt första admin-konto' : 'Logga in för att hantera blogginlägg'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -104,12 +116,22 @@ export default function AdminLogin() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loggar in...
+                  {isSignUp ? 'Skapar konto...' : 'Loggar in...'}
                 </>
               ) : (
-                'Logga in'
+                isSignUp ? 'Skapa konto' : 'Logga in'
               )}
             </Button>
+            <div className="text-center">
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-sm"
+                onClick={() => setIsSignUp(!isSignUp)}
+              >
+                {isSignUp ? 'Har redan ett konto? Logga in' : 'Behöver skapa ett konto? Registrera dig'}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
