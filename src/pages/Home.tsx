@@ -26,7 +26,7 @@ const Home = () => {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
                   Peter Svärdsmyr
                 </h1>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 md:mb-8">Det finns en rytm i allt. När jag skriver tänker jag på rytm, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen att förstår vad jag vill säga. 
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 md:mb-8">Det finns en rytm i allt. När jag skriver tänker jag ofta på det, mer än på exakt innehåll. Självklart ska det vara rätt innehåll, men om rytmen inte finns där kommer ändå ingen förstå vad jag vill säga.
                 <br /><br />
                 För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
                 
