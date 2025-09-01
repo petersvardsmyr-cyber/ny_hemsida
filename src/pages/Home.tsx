@@ -61,13 +61,6 @@ const Home = () => {
                   </a>
                 </div>
 
-                <div className="flex flex-wrap gap-4">
-                  <Link to="/blogg">
-                    <Button size="lg" className="font-medium">
-                      Läs bloggen
-                    </Button>
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
