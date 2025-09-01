@@ -4,6 +4,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Button } from '@/components/ui/button';
 import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface RichTextEditorProps {
   content: string;
@@ -38,6 +39,13 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       },
     },
   });
+
+  // Update editor content when prop changes
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || '');
+    }
+  }, [editor, content]);
 
   if (!editor) {
     return null;
