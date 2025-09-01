@@ -16,7 +16,7 @@ const Home = () => {
             <div className="flex items-start gap-6 md:gap-8">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0">
                 <img 
-                  src="/lovable-uploads/59b4d781-0b3b-4a2a-915f-016ca671204b.png" 
+                  src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" 
                   alt="Peter Svärdsmyr - Författare och berättare" 
                   className="w-full h-full object-cover transform scale-110" 
                   style={{ objectPosition: '50% 0%' }}
