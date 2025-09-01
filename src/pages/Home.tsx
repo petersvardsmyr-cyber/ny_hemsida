@@ -67,11 +67,6 @@ const Home = () => {
                       Läs bloggen
                     </Button>
                   </Link>
-                  <Link to="/admin/login">
-                    <Button variant="outline" size="lg" className="font-medium">
-                      Admin
-                    </Button>
-                  </Link>
                 </div>
               </div>
             </div>

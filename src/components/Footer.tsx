@@ -59,8 +59,14 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div>
+        <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">© 2025 Peter Svärdsmyr</p>
+          <a 
+            href="/admin/login" 
+            className="text-xs text-muted-foreground/70 hover:text-muted-foreground transition-colors"
+          >
+            Admin
+          </a>
         </div>
       </div>
     </footer>
