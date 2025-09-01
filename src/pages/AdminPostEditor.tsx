@@ -169,15 +169,16 @@ export default function AdminPostEditor() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <Button
           variant="ghost"
           onClick={() => navigate('/admin')}
+          className="self-start sm:self-auto"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Tillbaka
         </Button>
-        <h1 className="text-3xl font-bold flex-1">
+        <h1 className="text-2xl sm:text-3xl font-bold flex-1">
           {isEditing ? 'Redigera inlägg' : 'Nytt blogginlägg'}
         </h1>
       </div>
@@ -185,7 +186,7 @@ export default function AdminPostEditor() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
             <Card>
               <CardHeader>
                 <CardTitle>Innehåll</CardTitle>
@@ -236,7 +237,7 @@ export default function AdminPostEditor() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 order-1 lg:order-2">
             <Card>
               <CardHeader>
                 <CardTitle>Publicering</CardTitle>

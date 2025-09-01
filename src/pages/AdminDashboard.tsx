@@ -115,10 +115,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Alla blogginlägg</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Alla blogginlägg</h1>
         <Link to="/admin/posts/new">
-          <Button>
+          <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Nytt inlägg
           </Button>
@@ -160,14 +160,14 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>
+                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                    <span className="whitespace-nowrap">
                       {format(new Date(post.published_date), 'PPP', { locale: sv })}
                     </span>
-                    <span>av {post.author}</span>
+                    <span className="whitespace-nowrap">av {post.author}</span>
                     {post.tags && post.tags.length > 0 && (
-                      <div className="flex gap-1">
+                      <div className="flex flex-wrap gap-1">
                         {post.tags.slice(0, 3).map((tag, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
                             {tag}
@@ -182,11 +182,12 @@ export default function AdminDashboard() {
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-end lg:justify-start">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => togglePublished(post.id, post.is_published)}
+                      title={post.is_published ? 'Dölj inlägg' : 'Publicera inlägg'}
                     >
                       {post.is_published ? (
                         <EyeOff className="h-4 w-4" />
@@ -196,7 +197,7 @@ export default function AdminDashboard() {
                     </Button>
                     
                     <Link to={`/admin/posts/edit/${post.id}`}>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" title="Redigera inlägg">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
@@ -206,6 +207,7 @@ export default function AdminDashboard() {
                       size="sm"
                       onClick={() => deletePost(post.id, post.title)}
                       className="text-destructive hover:text-destructive"
+                      title="Radera inlägg"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
