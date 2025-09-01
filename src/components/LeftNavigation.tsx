@@ -105,7 +105,7 @@ const LeftNavigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex fixed left-0 top-0 h-full w-48 bg-background border-r border-border/30 p-8 z-50 flex-col justify-center">
+      <nav className="hidden md:flex fixed left-0 top-0 h-full w-48 bg-background p-8 z-50 flex-col justify-center">
         <ul className="space-y-6">
           {navItems.map((item) => (
             <li key={item.id}>
