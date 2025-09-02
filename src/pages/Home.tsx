@@ -4,6 +4,7 @@ import { BookOpen, PenTool, Quote } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import alltDetViDelarImg from "@/assets/book-allt-det-vi-delar.jpg";
 import detOrdnarSigImg from "@/assets/book-det-ordnar-sig.jpg";
 import alltDetViDelarAndraAretImg from "@/assets/book-allt-det-vi-delar-andra-aret.jpg";
@@ -187,6 +188,20 @@ const Home = () => {
           </p>
           
           <MediaGrid />
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section id="newsletter" className="py-12 md:py-20 px-4 md:px-12">
+        <div className="max-w-4xl w-full">
+          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground text-center">Nyhetsbrev</h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl mx-auto text-center">
+            Få de senaste nyheterna och uppdateringarna om mina böcker, artiklar och tankar direkt i din inkorg.
+          </p>
+          
+          <div className="flex justify-center">
+            <NewsletterSignup />
+          </div>
         </div>
       </section>
     </div>
