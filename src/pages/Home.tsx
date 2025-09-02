@@ -16,8 +16,8 @@ const Home = () => {
       <section id="about" className="min-h-screen py-12 md:py-20 px-4 md:px-12 flex items-center">
         <div className="max-w-4xl w-full">
           <div className="mb-16">
-            <div className="flex items-start gap-6 md:gap-8">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0">
+            <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0 mx-auto md:mx-0">
                 <img 
                   src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" 
                   alt="Peter Svärdsmyr - Författare och berättare" 
@@ -25,7 +25,7 @@ const Home = () => {
                   style={{ objectPosition: '50% 0%' }}
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
                   Peter Svärdsmyr
                 </h1>
@@ -34,7 +34,7 @@ const Home = () => {
                 För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
                 
                 {/* Social Links */}
-                <div className="flex gap-3 md:gap-4 mb-6">
+                <div className="flex gap-3 md:gap-4 mb-6 justify-center md:justify-start">
                   <a href="https://www.instagram.com/petersvardsmyr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Instagram">
                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -71,8 +71,8 @@ const Home = () => {
       {/* Writing Section */}
       <section id="writing" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-4xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Skrivande</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. Ibland i form av dikter och poesi, ibland i form av debattartiklar eller böcker. Att skriva om stora saker med små medel. Så få ord som möjligt, helst. Det har blivit en längtan och den stora utmaningen när jag skriver. </p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Skrivande</h2>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. Ibland i form av dikter och poesi, ibland i form av debattartiklar eller böcker. Att skriva om stora saker med små medel. Så få ord som möjligt, helst. Det har blivit en längtan och den stora utmaningen när jag skriver. </p>
           
           <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Card className="border-0 shadow-none bg-transparent">
@@ -108,8 +108,8 @@ const Home = () => {
       {/* Books Section */}
       <section id="books" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Allt det vi delar */}
@@ -173,7 +173,7 @@ const Home = () => {
       {/* Blog Section */}
       <section id="blog" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-4xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Senaste inläggen</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Senaste inläggen</h2>
           
           <BlogPosts />
         </div>
@@ -182,8 +182,8 @@ const Home = () => {
       {/* Media Section */}
       <section id="media" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground">Media</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Media</h2>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
             Artiklar, poddar och andra medieframträdanden där jag delar tankar om livet, kreativitet och mänskliga relationer.
           </p>
           
@@ -194,8 +194,8 @@ const Home = () => {
       {/* Newsletter Section */}
       <section id="newsletter" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-4xl w-full">
-          <h2 className="text-xl md:text-2xl font-heading font-medium mb-6 md:mb-8 text-foreground text-center">Nyhetsbrev</h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground text-center">Nyhetsbrev</h2>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl mx-auto text-center">
             Få de senaste nyheterna och uppdateringarna om mina böcker, artiklar och tankar direkt i din inkorg.
           </p>
           
