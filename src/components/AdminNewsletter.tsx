@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Users, Send } from 'lucide-react';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 export function AdminNewsletter() {
   const [subject, setSubject] = useState('');
@@ -149,17 +149,12 @@ export function AdminNewsletter() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Innehåll (HTML)</label>
-              <Textarea
-                placeholder="Skriv innehållet för ditt nyhetsbrev här. Du kan använda HTML-taggar för formatering."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={10}
-                required
+              <label className="text-sm font-medium">Innehåll</label>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Skriv innehållet för ditt nyhetsbrev här. Använd verktygsfältet för formatering."
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Du kan använda HTML för formatering: &lt;p&gt;, &lt;br&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt;, etc.
-              </p>
             </div>
             <Button 
               type="submit" 
