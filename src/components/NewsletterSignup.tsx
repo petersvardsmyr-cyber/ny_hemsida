@@ -61,8 +61,8 @@ export function NewsletterSignup() {
         if (error) throw error;
 
         toast({
-          title: "Tack för din prenumeration!",
-          description: "Du kommer nu att få våra nyhetsbrev.",
+          title: "Tack!",
+          description: "Du kommer nu att få mina nyhetsbrev. Vi ses i inkorgen! :) /Peter",
         });
       }
 
