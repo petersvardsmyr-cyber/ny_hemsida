@@ -25,7 +25,7 @@ const Home = () => {
                   style={{ objectPosition: '50% 0%' }}
                 />
               </div>
-              <div className="flex-1 text-center md:text-left">
+              <div className="flex-1">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
                   Peter Svärdsmyr
                 </h1>
@@ -34,7 +34,7 @@ const Home = () => {
                 För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
                 
                 {/* Social Links */}
-                <div className="flex gap-3 md:gap-4 mb-6 justify-center md:justify-start">
+                <div className="flex gap-3 md:gap-4 mb-6">
                   <a href="https://www.instagram.com/petersvardsmyr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Instagram">
                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
