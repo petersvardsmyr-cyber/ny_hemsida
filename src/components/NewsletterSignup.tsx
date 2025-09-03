@@ -81,7 +81,7 @@ export function NewsletterSignup() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-2">
           <Mail className="h-8 w-8 text-primary" />
