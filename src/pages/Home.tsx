@@ -22,7 +22,7 @@ const Home = () => {
                   src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" 
                   alt="Peter Svärdsmyr - Författare och berättare" 
                   className="w-full h-full object-cover transform scale-110" 
-                  style={{ objectPosition: '35% 20%' }}
+                  style={{ objectPosition: '50% 0%' }}
                 />
               </div>
               <div className="flex-1">
