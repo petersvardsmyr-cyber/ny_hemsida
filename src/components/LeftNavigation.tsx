@@ -111,10 +111,10 @@ const LeftNavigation = () => {
             <li key={item.id}>
               <button
                 onClick={() => scrollToSection(item.id)}
-                className={`text-left font-medium transition-all duration-300 hover:scale-105 hover:translate-x-1 relative ${
+                className={`text-left font-medium transition-all duration-300 relative ${
                   activeSection === item.id 
                     ? 'text-primary font-semibold' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:scale-105 hover:translate-x-1'
                 }`}
               >
                 {activeSection === item.id && (
@@ -161,10 +161,10 @@ const LeftNavigation = () => {
                 <li key={item.id}>
                   <button
                     onClick={() => scrollToSection(item.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:translate-x-1 relative ${
+                    className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 relative ${
                       activeSection === item.id 
                         ? 'bg-accent text-accent-foreground shadow-lg scale-105' 
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50 hover:scale-105 hover:translate-x-1'
                     }`}
                   >
                     {activeSection === item.id && (
