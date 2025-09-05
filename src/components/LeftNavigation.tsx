@@ -111,14 +111,14 @@ const LeftNavigation = () => {
             <li key={item.id}>
               <button
                 onClick={() => scrollToSection(item.id)}
-                className={`text-left font-medium transition-all duration-300 relative ${
+                className={`text-left font-semibold transition-all duration-300 relative leading-6 ${
                   activeSection === item.id 
-                    ? 'text-primary font-semibold' 
+                    ? 'text-primary' 
                     : 'text-muted-foreground hover:text-foreground hover:scale-105 hover:translate-x-1'
                 }`}
               >
                 {activeSection === item.id && (
-                  <Feather className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                  <Feather className="absolute -left-4 top-3 w-3 h-3 text-primary animate-scale-in" />
                 )}
                 {item.label}
               </button>
