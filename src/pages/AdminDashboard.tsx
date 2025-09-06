@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, Mail, FileText } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Mail, FileText, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { AdminNewsletter } from '@/components/AdminNewsletter';
@@ -22,21 +23,45 @@ interface BlogPost {
   tags: string[];
 }
 
+type SortOption = 'newest' | 'oldest' | 'recent' | 'title-asc' | 'title-desc';
+
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>('recent');
   const { toast } = useToast();
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [sortBy]);
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, is_published, published_date, author, tags')
-        .order('created_at', { ascending: false });
+        .select('id, title, slug, excerpt, is_published, published_date, author, tags');
+
+      // Apply sorting based on selected option
+      switch (sortBy) {
+        case 'newest':
+          query = query.order('published_date', { ascending: false });
+          break;
+        case 'oldest':
+          query = query.order('published_date', { ascending: true });
+          break;
+        case 'title-asc':
+          query = query.order('title', { ascending: true });
+          break;
+        case 'title-desc':
+          query = query.order('title', { ascending: false });
+          break;
+        case 'recent':
+        default:
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setPosts(data || []);
@@ -136,12 +161,27 @@ export default function AdminDashboard() {
         <TabsContent value="posts" className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <h2 className="text-xl font-semibold">Alla blogginlägg</h2>
-            <Link to="/admin/posts/new">
-              <Button className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" />
-                Nytt inlägg
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <ArrowUpDown className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Sortera efter..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Senast skapade</SelectItem>
+                  <SelectItem value="newest">Nyast datum</SelectItem>
+                  <SelectItem value="oldest">Äldst datum</SelectItem>
+                  <SelectItem value="title-asc">Titel A-Ö</SelectItem>
+                  <SelectItem value="title-desc">Titel Ö-A</SelectItem>
+                </SelectContent>
+              </Select>
+              <Link to="/admin/posts/new">
+                <Button className="w-full sm:w-auto">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nytt inlägg
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="grid gap-4">
