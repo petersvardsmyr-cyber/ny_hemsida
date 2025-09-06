@@ -168,7 +168,7 @@ const LeftNavigation = () => {
                     }`}
                   >
                     {activeSection === item.id && (
-                      <Feather className="absolute -left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                      <Feather className="absolute -left-6 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
                     )}
                     {item.label}
                   </button>
