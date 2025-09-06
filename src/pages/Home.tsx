@@ -116,9 +116,16 @@ const Home = () => {
             <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
               <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                    <img src={alltDetViDelarImg} alt="Allt det vi delar - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
+                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                     <img 
+                       src={alltDetViDelarImg} 
+                       alt="Allt det vi delar - bok av Peter Svärdsmyr" 
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy"
+                       decoding="async"
+                       style={{ imageRendering: 'crisp-edges' }}
+                     />
+                   </div>
                   <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar</h3>
                   <p className="text-primary font-medium text-lg">99 kr</p>
                 </CardContent>
@@ -129,9 +136,16 @@ const Home = () => {
             <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
               <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                    <img src={detOrdnarSigImg} alt="Det ordnar sig - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
+                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                     <img 
+                       src={detOrdnarSigImg} 
+                       alt="Det ordnar sig - bok av Peter Svärdsmyr" 
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy"
+                       decoding="async"
+                       style={{ imageRendering: 'crisp-edges' }}
+                     />
+                   </div>
                   <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Det ordnar sig</h3>
                   <p className="text-primary font-medium text-lg">159 kr</p>
                 </CardContent>
@@ -142,9 +156,16 @@ const Home = () => {
             <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
               <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                    <img src={alltDetViDelarAndraAretImg} alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
+                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                     <img 
+                       src={alltDetViDelarAndraAretImg} 
+                       alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" 
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy"
+                       decoding="async"
+                       style={{ imageRendering: 'crisp-edges' }}
+                     />
+                   </div>
                   <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar – andra året</h3>
                   <p className="text-primary font-medium text-lg">179 kr</p>
                 </CardContent>
@@ -155,9 +176,16 @@ const Home = () => {
             <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
               <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                    <img src={attBlitillImg} alt="Att bli till - bok av Peter Svärdsmyr" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
+                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                     <img 
+                       src={attBlitillImg} 
+                       alt="Att bli till - bok av Peter Svärdsmyr" 
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy"
+                       decoding="async"
+                       style={{ imageRendering: 'crisp-edges' }}
+                     />
+                   </div>
                   <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Att bli till</h3>
                   <div className="flex items-center gap-2">
                     <p className="text-muted-foreground line-through text-sm">99 kr</p>
