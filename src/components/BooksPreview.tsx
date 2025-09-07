@@ -145,7 +145,7 @@ export const BooksPreview = () => {
         <Link to="/butik">
           <Button size="lg" className="flex items-center gap-2">
             <ShoppingCart className="w-5 h-5" />
-            Se alla böcker i butiken
+            Gå till varukorg
           </Button>
         </Link>
       </div>
