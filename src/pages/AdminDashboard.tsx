@@ -7,10 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, Mail, FileText, ArrowUpDown } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Mail, FileText, ArrowUpDown, BookOpen } from 'lucide-react';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { AdminNewsletter } from '@/components/AdminNewsletter';
+import { AdminProducts } from '@/components/AdminProducts';
 
 interface BlogPost {
   id: string;
@@ -147,10 +148,14 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="posts" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="posts" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
             Blogginlägg
+          </TabsTrigger>
+          <TabsTrigger value="products" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            Produkter
           </TabsTrigger>
           <TabsTrigger value="newsletter" className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
@@ -277,6 +282,10 @@ export default function AdminDashboard() {
               ))
             )}
           </div>
+        </TabsContent>
+
+        <TabsContent value="products">
+          <AdminProducts />
         </TabsContent>
 
         <TabsContent value="newsletter">

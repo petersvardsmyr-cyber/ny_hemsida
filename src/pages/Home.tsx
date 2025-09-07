@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { BooksPreview } from "@/components/BooksPreview";
 // High-resolution product images stored in public directory
 const alltDetViDelarImg = "/lovable-uploads/0290e479-7e17-4147-98cf-68745458f273.png";
 const detOrdnarSigImg = "/lovable-uploads/764ef977-eac5-4ecb-9a99-886c0a473b5f.png";
@@ -112,90 +113,7 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {/* Allt det vi delar */}
-            <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                     <img 
-                       src={alltDetViDelarImg} 
-                       alt="Allt det vi delar - bok av Peter Svärdsmyr" 
-                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       loading="lazy"
-                       decoding="async"
-                       style={{ imageRendering: 'crisp-edges' }}
-                     />
-                   </div>
-                  <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar</h3>
-                  <p className="text-primary font-medium text-lg">99 kr</p>
-                </CardContent>
-              </Card>
-            </a>
-
-            {/* Det ordnar sig */}
-            <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                     <img 
-                       src={detOrdnarSigImg} 
-                       alt="Det ordnar sig - bok av Peter Svärdsmyr" 
-                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       loading="lazy"
-                       decoding="async"
-                       style={{ imageRendering: 'crisp-edges' }}
-                     />
-                   </div>
-                  <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Det ordnar sig</h3>
-                  <p className="text-primary font-medium text-lg">159 kr</p>
-                </CardContent>
-              </Card>
-            </a>
-
-            {/* Allt det vi delar - andra året */}
-            <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                     <img 
-                       src={alltDetViDelarAndraAretImg} 
-                       alt="Allt det vi delar - andra året, bok av Peter Svärdsmyr" 
-                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       loading="lazy"
-                       decoding="async"
-                       style={{ imageRendering: 'crisp-edges' }}
-                     />
-                   </div>
-                  <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Allt det vi delar – andra året</h3>
-                  <p className="text-primary font-medium text-lg">179 kr</p>
-                </CardContent>
-              </Card>
-            </a>
-
-            {/* Att bli till */}
-            <a href="https://petersvardsmyr.se/butik" target="_blank" rel="noopener noreferrer" className="block">
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                   <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                     <img 
-                       src={attBlitillImg} 
-                       alt="Att bli till - bok av Peter Svärdsmyr" 
-                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       loading="lazy"
-                       decoding="async"
-                       style={{ imageRendering: 'crisp-edges' }}
-                     />
-                   </div>
-                  <h3 className="font-heading font-medium text-lg mb-2 text-foreground">Att bli till</h3>
-                  <div className="flex items-center gap-2">
-                    <p className="text-muted-foreground line-through text-sm">99 kr</p>
-                    <p className="text-primary font-medium text-lg">79 kr</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          </div>
+          <BooksPreview />
         </div>
       </section>
 
