@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Package, Home } from 'lucide-react';
+import { CheckCircle, Package, Home, Download, Info } from 'lucide-react';
 
 const Success = () => {
   const [searchParams] = useSearchParams();
@@ -40,12 +40,42 @@ const Success = () => {
               </p>
             </div>
           )}
+
+          {/* VAT Information */}
+          <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 text-left">
+            <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300 mb-3">
+              <Info className="w-4 h-4" />
+              <h3 className="font-medium">Momsinformation</h3>
+            </div>
+            <div className="text-sm space-y-2 text-blue-600 dark:text-blue-400">
+              <div className="flex items-center justify-between">
+                <span>Böcker (momssats):</span>
+                <span className="font-medium">6%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Frakt inom Sverige/EU:</span>
+                <span className="font-medium">25% moms</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Frakt utanför EU:</span>
+                <span className="font-medium">Momsfri export (0%)</span>
+              </div>
+              <div className="text-xs text-blue-500 dark:text-blue-500 mt-3 pt-2 border-t border-blue-200 dark:border-blue-700">
+                Fullständig momsspecifikation och kvitto finns i din e-postbekräftelse
+              </div>
+            </div>
+          </div>
           
           <div className="space-y-3">
             <Button asChild className="w-full">
               <Link to="/butik">
                 Fortsätt handla
               </Link>
+            </Button>
+            
+            <Button variant="outline" className="w-full">
+              <Download className="w-4 h-4 mr-2" />
+              Ladda ner kvitto
             </Button>
             
             <Button variant="outline" asChild className="w-full">

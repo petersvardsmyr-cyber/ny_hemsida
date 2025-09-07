@@ -22,12 +22,29 @@ interface CartItem extends Product {
   quantity: number;
 }
 
+interface ShippingOption {
+  id: 'sweden' | 'europe' | 'world';
+  name: string;
+  price: number;
+  vatRate: number;
+  region: 'sweden' | 'eu' | 'non-eu';
+}
+
+const SHIPPING_OPTIONS: ShippingOption[] = [
+  { id: 'sweden', name: 'Inom Sverige', price: 39, vatRate: 0.25, region: 'sweden' },
+  { id: 'europe', name: 'Europa (utanför Sverige)', price: 100, vatRate: 0.25, region: 'eu' },
+  { id: 'world', name: 'Utanför Europa', price: 100, vatRate: 0, region: 'non-eu' }
+];
+
+const BOOK_VAT_RATE = 0.06;
+
 const Shop = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [discountCode, setDiscountCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [selectedShipping, setSelectedShipping] = useState<ShippingOption>(SHIPPING_OPTIONS[0]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { toast } = useToast();
 
@@ -124,13 +141,46 @@ const Shop = () => {
     }
   };
 
-  const calculateTotal = () => {
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = Math.round(subtotal * (discountAmount / 100));
+  const calculateVATBreakdown = () => {
+    // Calculate products (ex VAT prices)
+    const productsExVAT = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const productsVAT = Math.round(productsExVAT * BOOK_VAT_RATE);
+    const productsIncVAT = productsExVAT + productsVAT;
+    
+    // Apply discount to products
+    const discountAmountSEK = Math.round(productsIncVAT * (discountAmount / 100));
+    const finalProductsIncVAT = productsIncVAT - discountAmountSEK;
+    const finalProductsExVAT = Math.round(finalProductsIncVAT / (1 + BOOK_VAT_RATE));
+    const finalProductsVAT = finalProductsIncVAT - finalProductsExVAT;
+    
+    // Calculate shipping
+    const shippingExVAT = selectedShipping.price;
+    const shippingVAT = Math.round(shippingExVAT * selectedShipping.vatRate);
+    const shippingIncVAT = shippingExVAT + shippingVAT;
+    
+    const totalExVAT = finalProductsExVAT + shippingExVAT;
+    const totalVAT = finalProductsVAT + shippingVAT;
+    const totalIncVAT = totalExVAT + totalVAT;
+    
     return {
-      subtotal,
-      discount,
-      total: subtotal - discount
+      products: {
+        exVAT: finalProductsExVAT,
+        vat: finalProductsVAT,
+        incVAT: finalProductsIncVAT,
+        originalIncVAT: productsIncVAT,
+        discount: discountAmountSEK
+      },
+      shipping: {
+        exVAT: shippingExVAT,
+        vat: shippingVAT,
+        incVAT: shippingIncVAT,
+        vatRate: selectedShipping.vatRate
+      },
+      total: {
+        exVAT: totalExVAT,
+        vat: totalVAT,
+        incVAT: totalIncVAT
+      }
     };
   };
 
@@ -139,7 +189,7 @@ const Shop = () => {
 
     setIsCheckingOut(true);
     try {
-      const { subtotal, discount, total } = calculateTotal();
+      const breakdown = calculateVATBreakdown();
       
       const orderData = {
         items: cart.map(item => ({
@@ -148,9 +198,17 @@ const Shop = () => {
           price: item.price,
           quantity: item.quantity
         })),
-        total_amount: total,
-        discount_amount: discount,
+        shipping: {
+          option_id: selectedShipping.id,
+          name: selectedShipping.name,
+          price_ex_vat: selectedShipping.price,
+          vat_rate: selectedShipping.vatRate,
+          region: selectedShipping.region
+        },
+        total_amount: breakdown.total.incVAT,
+        discount_amount: breakdown.products.discount,
         discount_code: discountCode || null,
+        vat_breakdown: breakdown,
         email: 'guest@example.com' // Will be updated after Stripe checkout
       };
 
@@ -176,7 +234,7 @@ const Shop = () => {
     }
   };
 
-  const { subtotal, discount, total } = calculateTotal();
+  const vatBreakdown = calculateVATBreakdown();
 
   if (loading) {
     return (
@@ -231,14 +289,19 @@ const Shop = () => {
                     )}
                     
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {product.original_price && product.original_price > product.price && (
-                          <span className="text-muted-foreground line-through text-sm">
-                            {product.original_price} kr
+                     <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          {product.original_price && product.original_price > product.price && (
+                            <span className="text-muted-foreground line-through text-sm">
+                              {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                            </span>
+                          )}
+                          <span className="text-primary font-medium text-lg">
+                            {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
                           </span>
-                        )}
-                        <span className="text-primary font-medium text-lg">
-                          {product.price} kr
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          ({product.price} kr ex moms + {Math.round(product.price * BOOK_VAT_RATE)} kr moms 6%)
                         </span>
                       </div>
                       
@@ -282,7 +345,8 @@ const Shop = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-sm truncate">{item.title}</h4>
-                            <p className="text-primary font-medium">{item.price} kr</p>
+                            <p className="text-primary font-medium">{Math.round(item.price * (1 + BOOK_VAT_RATE))} kr</p>
+                            <p className="text-xs text-muted-foreground">({item.price} kr ex moms)</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <Button
@@ -315,6 +379,34 @@ const Shop = () => {
                       ))}
                     </div>
 
+                    {/* Shipping Options */}
+                    <div className="mb-6">
+                      <h3 className="font-medium mb-3">Frakt</h3>
+                      <div className="space-y-2">
+                        {SHIPPING_OPTIONS.map((option) => (
+                          <label key={option.id} className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-accent">
+                            <input
+                              type="radio"
+                              name="shipping"
+                              checked={selectedShipping.id === option.id}
+                              onChange={() => setSelectedShipping(option)}
+                              className="text-primary"
+                            />
+                            <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium">{option.name}</span>
+                                <span className="font-medium">{Math.round(option.price * (1 + option.vatRate))} kr</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                {option.price} kr ex moms + {Math.round(option.price * option.vatRate)} kr moms ({Math.round(option.vatRate * 100)}%)
+                                {option.vatRate === 0 && " - Momsfri export"}
+                              </p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
                     {/* Discount Code */}
                     <div className="mb-6">
                       <div className="flex gap-2 mb-2">
@@ -340,21 +432,51 @@ const Shop = () => {
                       )}
                     </div>
 
-                    {/* Totals */}
+                    {/* VAT Breakdown */}
                     <div className="space-y-2 mb-6 pt-4 border-t">
+                      <div className="text-sm font-medium mb-2">Prisuppdelning</div>
+                      
                       <div className="flex justify-between text-sm">
-                        <span>Delsumma:</span>
-                        <span>{subtotal} kr</span>
+                        <span>Böcker (ex moms):</span>
+                        <span>{vatBreakdown.products.exVAT} kr</span>
                       </div>
-                      {discount > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span>Moms böcker (6%):</span>
+                        <span>{vatBreakdown.products.vat} kr</span>
+                      </div>
+                      {vatBreakdown.products.discount > 0 && (
                         <div className="flex justify-between text-sm text-green-600">
                           <span>Rabatt:</span>
-                          <span>-{discount} kr</span>
+                          <span>-{vatBreakdown.products.discount} kr</span>
                         </div>
                       )}
+                      <div className="flex justify-between text-sm border-b pb-1">
+                        <span>Böcker totalt:</span>
+                        <span>{vatBreakdown.products.incVAT} kr</span>
+                      </div>
+                      
+                      <div className="flex justify-between text-sm">
+                        <span>Frakt (ex moms):</span>
+                        <span>{vatBreakdown.shipping.exVAT} kr</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Moms frakt ({Math.round(vatBreakdown.shipping.vatRate * 100)}%):</span>
+                        <span>{vatBreakdown.shipping.vat} kr {vatBreakdown.shipping.vatRate === 0 && "(momsfri export)"}</span>
+                      </div>
+                      <div className="flex justify-between text-sm border-b pb-1">
+                        <span>Frakt totalt:</span>
+                        <span>{vatBreakdown.shipping.incVAT} kr</span>
+                      </div>
+                      
                       <div className="flex justify-between font-medium text-lg pt-2 border-t">
-                        <span>Totalt:</span>
-                        <span>{total} kr</span>
+                        <span>Att betala:</span>
+                        <span>{vatBreakdown.total.incVAT} kr</span>
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground pt-2">
+                        <div>Total moms: {vatBreakdown.total.vat} kr</div>
+                        <div>Varav moms böcker (6%): {vatBreakdown.products.vat} kr</div>
+                        <div>Varav moms frakt ({Math.round(vatBreakdown.shipping.vatRate * 100)}%): {vatBreakdown.shipping.vat} kr</div>
                       </div>
                     </div>
 

@@ -14,9 +14,17 @@ interface OrderRequest {
     price: number;
     quantity: number;
   }>;
+  shipping: {
+    option_id: string;
+    name: string;
+    price_ex_vat: number;
+    vat_rate: number;
+    region: string;
+  };
   total_amount: number;
   discount_amount?: number;
   discount_code?: string;
+  vat_breakdown: any;
   email?: string;
 }
 
@@ -43,17 +51,33 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    // Create line items for Stripe
-    const lineItems = orderData.items.map(item => ({
+    // Create line items for Stripe (including VAT)
+    const lineItems = orderData.items.map(item => {
+      const priceIncVAT = Math.round(item.price * 1.06 * 100); // 6% VAT on books
+      return {
+        price_data: {
+          currency: "sek",
+          product_data: {
+            name: `${item.title} (inkl. 6% moms)`,
+          },
+          unit_amount: priceIncVAT,
+        },
+        quantity: item.quantity,
+      };
+    });
+
+    // Add shipping as line item
+    const shippingPriceIncVAT = Math.round(orderData.shipping.price_ex_vat * (1 + orderData.shipping.vat_rate) * 100);
+    lineItems.push({
       price_data: {
         currency: "sek",
         product_data: {
-          name: item.title,
+          name: `${orderData.shipping.name} ${orderData.shipping.vat_rate === 0 ? '(momsfri export)' : `(inkl. ${Math.round(orderData.shipping.vat_rate * 100)}% moms)`}`,
         },
-        unit_amount: item.price * 100, // Convert to öre (SEK cents)
+        unit_amount: shippingPriceIncVAT,
       },
-      quantity: item.quantity,
-    }));
+      quantity: 1,
+    });
 
     // Add discount as a line item if applicable
     if (orderData.discount_amount && orderData.discount_amount > 0) {
@@ -84,14 +108,18 @@ serve(async (req) => {
       payment_intent_data: {
         metadata: {
           order_items: JSON.stringify(orderData.items),
+          shipping: JSON.stringify(orderData.shipping),
           discount_code: orderData.discount_code || '',
           discount_amount: (orderData.discount_amount || 0).toString(),
+          vat_breakdown: JSON.stringify(orderData.vat_breakdown),
         }
       },
       metadata: {
         order_items: JSON.stringify(orderData.items),
+        shipping: JSON.stringify(orderData.shipping),
         discount_code: orderData.discount_code || '',
         discount_amount: (orderData.discount_amount || 0).toString(),
+        vat_breakdown: JSON.stringify(orderData.vat_breakdown),
       }
     });
 
@@ -113,6 +141,7 @@ serve(async (req) => {
         discount_amount: (orderData.discount_amount || 0) * 100,
         discount_code: orderData.discount_code,
         items: orderData.items,
+        shipping_address: orderData.shipping,
         status: 'pending',
       });
 
