@@ -12,20 +12,16 @@ const detOrdnarSigImg = "/lovable-uploads/764ef977-eac5-4ecb-9a99-886c0a473b5f.p
 const alltDetViDelarAndraAretImg = "/lovable-uploads/d46f78be-5cd0-4056-a65d-0315a8ca0464.png";
 const attBlitillImg = "/lovable-uploads/945ace33-dadc-46c4-907c-ab6bb84a1c3b.png";
 const Home = () => {
-  return (
-    <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
+  return <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
       {/* About Section */}
       <section id="about" className="min-h-screen py-12 md:py-20 px-4 md:px-12 flex items-center">
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0">
-                <img 
-                  src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" 
-                  alt="Peter Svärdsmyr - Författare och berättare" 
-                  className="w-full h-full object-cover transform scale-110" 
-                  style={{ objectPosition: '50% 0%' }}
-                />
+                <img src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" alt="Peter Svärdsmyr - Författare och berättare" className="w-full h-full object-cover transform scale-110" style={{
+                objectPosition: '50% 0%'
+              }} />
               </div>
               <div className="flex-1">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
@@ -39,9 +35,9 @@ const Home = () => {
                 <div className="flex gap-3 md:gap-4 mb-6">
                   <a href="https://www.instagram.com/petersvardsmyr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Instagram">
                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                     </svg>
                   </a>
                   
@@ -110,7 +106,7 @@ const Home = () => {
       {/* Books Section */}
       <section id="books" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Mina böcker</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Böcker</h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
           
           <BooksPreview />
@@ -149,8 +145,6 @@ const Home = () => {
           <NewsletterSignup />
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
