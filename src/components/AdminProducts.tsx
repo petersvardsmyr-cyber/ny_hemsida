@@ -90,8 +90,8 @@ export const AdminProducts = () => {
     setFormData({
       title: product.title,
       description: product.description || '',
-      price: product.price.toString(),
-      original_price: product.original_price?.toString() || '',
+      price: Math.round(product.price * (1 + BOOK_VAT_RATE)).toString(),
+      original_price: product.original_price ? Math.round(product.original_price * (1 + BOOK_VAT_RATE)).toString() : '',
       image_url: product.image_url,
       in_stock: product.in_stock,
       featured: product.featured,
@@ -113,8 +113,8 @@ export const AdminProducts = () => {
       const productData = {
         title: formData.title,
         description: formData.description || null,
-        price: parseInt(formData.price),
-        original_price: formData.original_price ? parseInt(formData.original_price) : null,
+        price: Math.round(parseInt(formData.price) / (1 + BOOK_VAT_RATE)),
+        original_price: formData.original_price ? Math.round(parseInt(formData.original_price) / (1 + BOOK_VAT_RATE)) : null,
         image_url: formData.image_url,
         in_stock: formData.in_stock,
         featured: formData.featured,
@@ -386,7 +386,7 @@ export const AdminProducts = () => {
               {editingProduct ? 'Redigera produkt' : 'Skapa ny produkt'}
             </DialogTitle>
             <DialogDescription>
-              Fyll i produktinformationen nedan. Priser anges exklusive moms (6% läggs till automatiskt).
+              Fyll i produktinformationen nedan. Priser anges inklusive 6% moms.
             </DialogDescription>
           </DialogHeader>
           
@@ -413,24 +413,24 @@ export const AdminProducts = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">Pris (ex moms) *</Label>
+                <Label htmlFor="price">Rabatterat pris (inkl 6% moms) *</Label>
                 <Input
                   id="price"
                   type="number"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="9900"
+                  placeholder="105"
                 />
               </div>
               
               <div>
-                <Label htmlFor="original_price">Ordinarie pris (ex moms)</Label>
+                <Label htmlFor="original_price">Ordinarie pris (inkl 6% moms)</Label>
                 <Input
                   id="original_price"
                   type="number"
                   value={formData.original_price}
                   onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
-                  placeholder="12900"
+                  placeholder="137"
                 />
               </div>
             </div>
