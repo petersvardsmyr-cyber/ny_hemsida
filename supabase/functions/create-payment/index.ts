@@ -98,6 +98,7 @@ serve(async (req) => {
       payment_method_types: ["card", "klarna"],
       line_items: lineItems,
       mode: "payment",
+      locale: "sv", // Force Swedish language
       success_url: `${req.headers.get("origin") || "http://localhost:3000"}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin") || "http://localhost:3000"}/butik`,
       customer_email: orderData.email === 'guest@example.com' ? undefined : orderData.email,
