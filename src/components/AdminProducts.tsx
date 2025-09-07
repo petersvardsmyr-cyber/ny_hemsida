@@ -21,6 +21,7 @@ interface Product {
   in_stock: boolean;
   featured: boolean;
   sort_order: number;
+  discount_active: boolean;
 }
 
 const BOOK_VAT_RATE = 0.06;
@@ -38,7 +39,8 @@ export const AdminProducts = () => {
     image_url: '',
     in_stock: true,
     featured: false,
-    sort_order: 0
+    sort_order: 0,
+    discount_active: false
   });
   const { toast } = useToast();
 
@@ -75,7 +77,8 @@ export const AdminProducts = () => {
       image_url: '',
       in_stock: true,
       featured: false,
-      sort_order: products.length
+      sort_order: products.length,
+      discount_active: false
     });
     setEditingProduct(null);
   };
@@ -95,7 +98,8 @@ export const AdminProducts = () => {
       image_url: product.image_url,
       in_stock: product.in_stock,
       featured: product.featured,
-      sort_order: product.sort_order
+      sort_order: product.sort_order,
+      discount_active: product.discount_active
     });
     setIsDialogOpen(true);
   };
@@ -118,7 +122,8 @@ export const AdminProducts = () => {
         image_url: formData.image_url,
         in_stock: formData.in_stock,
         featured: formData.featured,
-        sort_order: formData.sort_order
+        sort_order: formData.sort_order,
+        discount_active: formData.discount_active
       };
 
       if (editingProduct) {
@@ -301,18 +306,27 @@ export const AdminProducts = () => {
                   <div className="flex items-center gap-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        {product.original_price && product.original_price > product.price && (
-                          <span className="text-muted-foreground line-through text-sm">
-                            {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                        {product.discount_active && product.original_price ? (
+                          <>
+                            <span className="text-muted-foreground line-through text-sm">
+                              {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                            </span>
+                            <span className="font-medium text-green-600">
+                              {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-medium">
+                            {Math.round((product.original_price || product.price) * (1 + BOOK_VAT_RATE))} kr
                           </span>
                         )}
-                        <span className="font-medium">
-                          {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
-                        </span>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        ({product.price} kr ex moms)
+                        ({product.discount_active ? product.price : (product.original_price || product.price)} kr ex moms)
                       </span>
+                      {product.discount_active && (
+                        <span className="text-xs text-green-600 font-medium">Rabatt aktivt</span>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -413,7 +427,7 @@ export const AdminProducts = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">Rabatterat pris (inkl 6% moms) *</Label>
+                <Label htmlFor="price">Rabattpris (inkl 6% moms) *</Label>
                 <Input
                   id="price"
                   type="number"
@@ -433,6 +447,15 @@ export const AdminProducts = () => {
                   placeholder="137"
                 />
               </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="discount_active"
+                checked={formData.discount_active}
+                onCheckedChange={(checked) => setFormData({ ...formData, discount_active: checked })}
+              />
+              <Label htmlFor="discount_active">Aktivera rabattpris</Label>
             </div>
             
             <div>

@@ -16,6 +16,7 @@ interface Product {
   image_url: string;
   in_stock: boolean;
   featured: boolean;
+  discount_active: boolean;
 }
 
 interface CartItem extends Product {
@@ -87,16 +88,20 @@ const Shop = () => {
   };
 
   const addToCart = (product: Product) => {
+    // Use discount price if active, otherwise use original price
+    const effectivePrice = product.discount_active ? product.price : (product.original_price || product.price);
+    const productWithEffectivePrice = { ...product, price: effectivePrice };
+    
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
       const newCart = cart.map(item =>
         item.id === product.id 
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + 1, price: effectivePrice }
           : item
       );
       saveCart(newCart);
     } else {
-      const newCart = [...cart, { ...product, quantity: 1 }];
+      const newCart = [...cart, { ...productWithEffectivePrice, quantity: 1 }];
       saveCart(newCart);
     }
     toast({
@@ -291,17 +296,23 @@ const Shop = () => {
                     <div className="flex items-center justify-between">
                      <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
-                          {product.original_price && product.original_price > product.price && (
-                            <span className="text-muted-foreground line-through text-sm">
-                              {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                          {product.discount_active && product.original_price ? (
+                            <>
+                              <span className="text-muted-foreground line-through text-sm">
+                                {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                              </span>
+                              <span className="text-primary font-medium text-lg">
+                                {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-primary font-medium text-lg">
+                              {Math.round((product.original_price || product.price) * (1 + BOOK_VAT_RATE))} kr
                             </span>
                           )}
-                          <span className="text-primary font-medium text-lg">
-                            {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
-                          </span>
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          ({product.price} kr ex moms + {Math.round(product.price * BOOK_VAT_RATE)} kr moms 6%)
+                          ({product.discount_active ? product.price : (product.original_price || product.price)} kr ex moms + {Math.round((product.discount_active ? product.price : (product.original_price || product.price)) * BOOK_VAT_RATE)} kr moms 6%)
                         </span>
                       </div>
                       
