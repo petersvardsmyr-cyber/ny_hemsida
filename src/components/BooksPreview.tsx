@@ -89,55 +89,61 @@ export const BooksPreview = () => {
     <div className="space-y-6">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {products.map((product) => (
-          <Card key={product.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                <img 
-                  src={product.image_url} 
-                  alt={product.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-              
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-heading font-medium text-lg text-foreground flex-1">
-                  {product.title}
-                </h3>
-                {product.featured && (
-                  <Badge variant="secondary" className="ml-2">Populär</Badge>
-                )}
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  {product.discount_active && product.original_price ? (
-                    <>
-                      <span className="text-muted-foreground line-through text-sm">
-                        {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
-                      </span>
-                      <span className="text-primary font-medium text-lg">
-                        {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-primary font-medium text-lg">
-                      {Math.round((product.original_price || product.price) * (1 + BOOK_VAT_RATE))} kr
-                    </span>
+          <Link key={product.id} to="/butik" className="block">
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <CardContent className="p-6">
+                <div className="aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={product.image_url} 
+                    alt={product.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+                
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="font-heading font-medium text-lg text-foreground flex-1">
+                    {product.title}
+                  </h3>
+                  {product.featured && (
+                    <Badge variant="secondary" className="ml-2">Populär</Badge>
                   )}
                 </div>
                 
-                <Button 
-                  onClick={() => addToCart(product)}
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Lägg till
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    {product.discount_active && product.original_price ? (
+                      <>
+                        <span className="text-muted-foreground line-through text-sm">
+                          {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                        </span>
+                        <span className="text-primary font-medium text-lg">
+                          {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-primary font-medium text-lg">
+                        {Math.round((product.original_price || product.price) * (1 + BOOK_VAT_RATE))} kr
+                      </span>
+                    )}
+                  </div>
+                  
+                  <Button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(product);
+                    }}
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Lägg till
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
       
