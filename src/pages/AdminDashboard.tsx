@@ -4,13 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, BookOpen, Mail, Plus, Users, Eye } from 'lucide-react';
+import { FileText, BookOpen, Mail, Plus, Users, Eye, Package } from 'lucide-react';
 
 interface DashboardStats {
   totalPosts: number;
   publishedPosts: number;
   totalProducts: number;
   totalSubscribers: number;
+  totalOrders: number;
 }
 
 export default function AdminDashboard() {
@@ -18,7 +19,8 @@ export default function AdminDashboard() {
     totalPosts: 0,
     publishedPosts: 0,
     totalProducts: 0,
-    totalSubscribers: 0
+    totalSubscribers: 0,
+    totalOrders: 0
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -51,16 +53,25 @@ export default function AdminDashboard() {
       
       if (subscribersError) throw subscribersError;
 
+      // Fetch orders stats
+      const { data: ordersData, error: ordersError } = await supabase
+        .from('orders')
+        .select('id');
+      
+      if (ordersError) throw ordersError;
+
       const totalPosts = postsData?.length || 0;
       const publishedPosts = postsData?.filter(post => post.is_published).length || 0;
       const totalProducts = productsData?.length || 0;
       const totalSubscribers = subscribersData?.length || 0;
+      const totalOrders = ordersData?.length || 0;
 
       setStats({
         totalPosts,
         publishedPosts,
         totalProducts,
-        totalSubscribers
+        totalSubscribers,
+        totalOrders
       });
     } catch (error) {
       toast({
@@ -89,7 +100,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -116,6 +127,21 @@ export default function AdminDashboard() {
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
             <p className="text-xs text-muted-foreground">
               I butiken
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Beställningar
+            </CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalOrders}</div>
+            <p className="text-xs text-muted-foreground">
+              Totalt antal
             </p>
           </CardContent>
         </Card>
@@ -181,36 +207,27 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Produkter
+              <Package className="h-5 w-5" />
+              Butik
             </CardTitle>
             <CardDescription>
-              Hantera produkter i din butik
+              Hantera produkter, beställningar och nyhetsbrev
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
             <Link to="/admin/products">
               <Button variant="outline" className="w-full">
                 Hantera produkter
               </Button>
             </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Nyhetsbrev
-            </CardTitle>
-            <CardDescription>
-              Hantera nyhetsbrevsprenumeranter
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            <Link to="/admin/orders">
+              <Button variant="outline" className="w-full">
+                Visa beställningar
+              </Button>
+            </Link>
             <Link to="/admin/newsletter">
               <Button variant="outline" className="w-full">
-                Visa prenumeranter
+                Nyhetsbrevsprenumeranter
               </Button>
             </Link>
           </CardContent>

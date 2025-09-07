@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail } from 'lucide-react';
+import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout() {
@@ -11,6 +11,7 @@ export default function AdminLayout() {
   const location = useLocation();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [shopMenuOpen, setShopMenuOpen] = useState(true);
 
   const handleSignOut = async () => {
     await signOut();
@@ -25,6 +26,12 @@ export default function AdminLayout() {
     if (path === '/admin' && location.pathname === '/admin') return true;
     if (path !== '/admin' && location.pathname.startsWith(path)) return true;
     return false;
+  };
+
+  const isShopSectionActive = () => {
+    return location.pathname.includes('/admin/products') || 
+           location.pathname.includes('/admin/orders') || 
+           location.pathname.includes('/admin/newsletter');
   };
 
   return (
@@ -115,26 +122,6 @@ export default function AdminLayout() {
                 </Button>
               </Link>
               
-              <Link to="/admin/products" onClick={() => setSidebarOpen(false)}>
-                <Button
-                  variant={isActive('/admin/products') ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                >
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Produkter
-                </Button>
-              </Link>
-              
-              <Link to="/admin/newsletter" onClick={() => setSidebarOpen(false)}>
-                <Button
-                  variant={isActive('/admin/newsletter') ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                >
-                  <Mail className="mr-2 h-4 w-4" />
-                  Nyhetsbrev
-                </Button>
-              </Link>
-              
               <Link to="/admin/posts/new" onClick={() => setSidebarOpen(false)}>
                 <Button
                   variant={isActive('/admin/posts/new') ? 'secondary' : 'ghost'}
@@ -144,6 +131,59 @@ export default function AdminLayout() {
                   Nytt inlägg
                 </Button>
               </Link>
+
+              {/* Butik Section */}
+              <div className="pt-2">
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${isShopSectionActive() ? 'bg-muted' : ''}`}
+                  onClick={() => setShopMenuOpen(!shopMenuOpen)}
+                >
+                  <Package className="mr-2 h-4 w-4" />
+                  Butik
+                  {shopMenuOpen ? 
+                    <ChevronDown className="ml-auto h-4 w-4" /> : 
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  }
+                </Button>
+                
+                {shopMenuOpen && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link to="/admin/products" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/products') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Produkter
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/orders" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/orders') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Package className="mr-2 h-4 w-4" />
+                        Beställningar
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/newsletter" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/newsletter') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Mail className="mr-2 h-4 w-4" />
+                        Nyhetsbrev
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </nav>
           </div>
 
