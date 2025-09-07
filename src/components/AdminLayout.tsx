@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, PenTool, Home, Plus, List, Menu, X } from 'lucide-react';
+import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout() {
@@ -21,7 +21,11 @@ export default function AdminLayout() {
     navigate('/admin/login');
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/admin' && location.pathname === '/admin') return true;
+    if (path !== '/admin' && location.pathname.startsWith(path)) return true;
+    return false;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,7 +101,37 @@ export default function AdminLayout() {
                   className="w-full justify-start"
                 >
                   <List className="mr-2 h-4 w-4" />
-                  Alla inlägg
+                  Översikt
+                </Button>
+              </Link>
+              
+              <Link to="/admin/posts" onClick={() => setSidebarOpen(false)}>
+                <Button
+                  variant={isActive('/admin/posts') ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Blogginlägg
+                </Button>
+              </Link>
+              
+              <Link to="/admin/products" onClick={() => setSidebarOpen(false)}>
+                <Button
+                  variant={isActive('/admin/products') ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Produkter
+                </Button>
+              </Link>
+              
+              <Link to="/admin/newsletter" onClick={() => setSidebarOpen(false)}>
+                <Button
+                  variant={isActive('/admin/newsletter') ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  Nyhetsbrev
                 </Button>
               </Link>
               
