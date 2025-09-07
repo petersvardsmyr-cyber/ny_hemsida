@@ -26,7 +26,7 @@ const Success = () => {
           </h1>
           
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            Din betalning har behandlats framgångsrikt. Du kommer att få en bekräftelse via email inom kort.
+            Din betalning har behandlats framgångsrikt. En orderbekräftelse med fullständiga detaljer och momsspecifikation har skickats till din e-postadress.
           </p>
           
           {sessionId && (

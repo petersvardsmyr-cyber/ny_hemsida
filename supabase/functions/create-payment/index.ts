@@ -153,6 +153,32 @@ serve(async (req) => {
       console.log("Order saved to database");
     }
 
+    // Send order confirmation emails (don't await to avoid blocking response)
+    try {
+      const emailClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      );
+      
+      // Call email function in background
+      emailClient.functions.invoke('send-order-confirmation', {
+        body: {
+          session_id: session.id,
+          customer_email: orderData.email || 'guest@example.com'
+        }
+      }).then((result) => {
+        if (result.error) {
+          console.error("Error calling email function:", result.error);
+        } else {
+          console.log("Order confirmation emails triggered");
+        }
+      }).catch((error) => {
+        console.error("Failed to call email function:", error);
+      });
+    } catch (emailError) {
+      console.error("Error setting up email function call:", emailError);
+    }
+
     return new Response(
       JSON.stringify({ 
         url: session.url,
