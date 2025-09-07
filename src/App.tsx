@@ -10,6 +10,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Shop from "./pages/Shop";
+import Success from "./pages/Success";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPostEditor from "./pages/AdminPostEditor";
@@ -29,6 +31,8 @@ const App = () => (
               <Route index element={<Home />} />
               <Route path="blogg" element={<Blog />} />
               <Route path="blogg/:slug" element={<BlogPost />} />
+              <Route path="butik" element={<Shop />} />
+              <Route path="success" element={<Success />} />
             </Route>
             
             {/* Admin routes */}

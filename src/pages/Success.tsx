@@ -1,0 +1,71 @@
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { CheckCircle, Package, Home } from 'lucide-react';
+
+const Success = () => {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  
+  useEffect(() => {
+    // Clear cart on successful payment
+    localStorage.removeItem('cart');
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <Card className="max-w-md w-full">
+        <CardContent className="p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-8 h-8 text-green-600" />
+          </div>
+          
+          <h1 className="text-2xl font-heading font-medium text-foreground mb-4">
+            Tack för din beställning!
+          </h1>
+          
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            Din betalning har behandlats framgångsrikt. Du kommer att få en bekräftelse via email inom kort.
+          </p>
+          
+          {sessionId && (
+            <div className="bg-muted p-4 rounded-lg mb-6">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                <Package className="w-4 h-4" />
+                Ordernummer
+              </div>
+              <p className="font-mono text-sm font-medium">
+                {sessionId.slice(-8).toUpperCase()}
+              </p>
+            </div>
+          )}
+          
+          <div className="space-y-3">
+            <Button asChild className="w-full">
+              <Link to="/butik">
+                Fortsätt handla
+              </Link>
+            </Button>
+            
+            <Button variant="outline" asChild className="w-full">
+              <Link to="/" className="flex items-center gap-2">
+                <Home className="w-4 h-4" />
+                Tillbaka till start
+              </Link>
+            </Button>
+          </div>
+          
+          <p className="text-xs text-muted-foreground mt-6">
+            Har du frågor? Kontakta oss på{' '}
+            <a href="mailto:hej@petersvardsmyr.se" className="text-primary hover:underline">
+              hej@petersvardsmyr.se
+            </a>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default Success;

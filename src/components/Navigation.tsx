@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { PenTool, BookOpen, Home } from "lucide-react";
+import { PenTool, BookOpen, Home, ShoppingBag } from "lucide-react";
 
 const Navigation = () => {
   return (
@@ -34,6 +34,18 @@ const Navigation = () => {
             >
               <BookOpen className="w-4 h-4" />
               Blogg
+            </NavLink>
+            
+            <NavLink 
+              to="/butik"
+              className={({ isActive }) => 
+                `flex items-center gap-2 text-sm font-medium transition-smooth ${
+                  isActive ? 'text-accent' : 'text-muted-foreground hover:text-foreground'
+                }`
+              }
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Butik
             </NavLink>
           </div>
         </div>
