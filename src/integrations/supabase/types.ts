@@ -92,6 +92,102 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          discount_amount: number | null
+          discount_code: string | null
+          email: string
+          id: string
+          items: Json
+          shipping_address: Json | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          discount_amount?: number | null
+          discount_code?: string | null
+          email: string
+          id?: string
+          items: Json
+          shipping_address?: Json | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          discount_amount?: number | null
+          discount_code?: string | null
+          email?: string
+          id?: string
+          items?: Json
+          shipping_address?: Json | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          featured: boolean | null
+          id: string
+          image_url: string
+          in_stock: boolean | null
+          original_price: number | null
+          price: number
+          sort_order: number | null
+          stripe_price_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url: string
+          in_stock?: boolean | null
+          original_price?: number | null
+          price: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string
+          in_stock?: boolean | null
+          original_price?: number | null
+          price?: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
