@@ -158,10 +158,10 @@ const Shop = () => {
     const finalProductsExVAT = Math.round(finalProductsIncVAT / (1 + BOOK_VAT_RATE));
     const finalProductsVAT = finalProductsIncVAT - finalProductsExVAT;
     
-    // Calculate shipping
-    const shippingExVAT = selectedShipping.price;
-    const shippingVAT = Math.round(shippingExVAT * selectedShipping.vatRate);
-    const shippingIncVAT = shippingExVAT + shippingVAT;
+    // Calculate shipping (prices are inclusive of VAT)
+    const shippingIncVAT = selectedShipping.price;
+    const shippingExVAT = Math.round(shippingIncVAT / (1 + selectedShipping.vatRate));
+    const shippingVAT = shippingIncVAT - shippingExVAT;
     
     const totalExVAT = finalProductsExVAT + shippingExVAT;
     const totalVAT = finalProductsVAT + shippingVAT;
