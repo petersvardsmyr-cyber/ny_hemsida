@@ -406,10 +406,10 @@ const Shop = () => {
                             <div className="flex-1">
                               <div className="flex justify-between items-center">
                                 <span className="font-medium">{option.name}</span>
-                                <span className="font-medium">{Math.round(option.price * (1 + option.vatRate))} kr</span>
+                                <span className="font-medium">{option.price} kr</span>
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                {option.price} kr ex moms + {Math.round(option.price * option.vatRate)} kr moms ({Math.round(option.vatRate * 100)}%)
+                                {Math.round(option.price / (1 + option.vatRate))} kr ex moms + {option.price - Math.round(option.price / (1 + option.vatRate))} kr moms ({Math.round(option.vatRate * 100)}%)
                                 {option.vatRate === 0 && " - Momsfri export"}
                               </p>
                             </div>
