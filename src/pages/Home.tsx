@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import alltDetViDelarImg from "@/assets/book-allt-det-vi-delar.jpg";
-import detOrdnarSigImg from "@/assets/book-det-ordnar-sig.jpg";
-import alltDetViDelarAndraAretImg from "@/assets/book-allt-det-vi-delar-andra-aret.jpg";
-import attBlitillImg from "@/assets/book-att-bli-till.jpg";
+// High-resolution product images stored in public directory
+const alltDetViDelarImg = "/lovable-uploads/0290e479-7e17-4147-98cf-68745458f273.png";
+const detOrdnarSigImg = "/lovable-uploads/764ef977-eac5-4ecb-9a99-886c0a473b5f.png";
+const alltDetViDelarAndraAretImg = "/lovable-uploads/d46f78be-5cd0-4056-a65d-0315a8ca0464.png";
+const attBlitillImg = "/lovable-uploads/945ace33-dadc-46c4-907c-ab6bb84a1c3b.png";
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
