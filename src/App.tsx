@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Shop from "./pages/Shop";
+import Newsletter from "./pages/Newsletter";
 import Success from "./pages/Success";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="blogg" element={<Blog />} />
               <Route path="blogg/:slug" element={<BlogPost />} />
               <Route path="butik" element={<Shop />} />
+              <Route path="nyhetsbrev" element={<Newsletter />} />
               <Route path="success" element={<Success />} />
             </Route>
             
