@@ -12,6 +12,7 @@ const corsHeaders = {
 interface OrderConfirmationRequest {
   session_id: string;
   customer_email: string;
+  newsletter_subscribed?: boolean;
 }
 
 const formatCurrency = (amount: number) => {
@@ -30,7 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log("Processing order confirmation email...");
     
-    const { session_id, customer_email }: OrderConfirmationRequest = await req.json();
+    const { session_id, customer_email, newsletter_subscribed = false }: OrderConfirmationRequest = await req.json();
     
     if (!session_id || !customer_email) {
       throw new Error("session_id and customer_email are required");
@@ -143,6 +144,13 @@ const handler = async (req: Request): Promise<Response> => {
                 ${session.shipping_details.address?.postal_code} ${session.shipping_details.address?.city}<br>
                 ${session.shipping_details.address?.country}
               </p>
+            </div>
+          ` : ''}
+
+          ${newsletter_subscribed ? `
+            <div style="background-color: #e8f5e8; border-left: 4px solid #4caf50; padding: 15px; margin-bottom: 25px;">
+              <h4 style="margin: 0 0 10px 0; color: #2e7d32;">📧 Nyhetsbrev</h4>
+              <p style="margin: 0; color: #2e7d32;">Tack för att du prenumererar på mitt nyhetsbrev! Du kommer få uppdateringar om nya böcker, artiklar och tankar direkt i din inkorg.</p>
             </div>
           ` : ''}
 

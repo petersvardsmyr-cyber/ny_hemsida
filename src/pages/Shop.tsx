@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ShoppingCart, Plus, Minus, Trash2, Percent } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -46,6 +47,7 @@ const Shop = () => {
   const [discountCode, setDiscountCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [selectedShipping, setSelectedShipping] = useState<ShippingOption>(SHIPPING_OPTIONS[0]);
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { toast } = useToast();
 
@@ -213,6 +215,7 @@ const Shop = () => {
         total_amount: breakdown.total.incVAT,
         discount_amount: breakdown.products.discount,
         discount_code: discountCode || null,
+        newsletter_optin: newsletterOptIn,
         vat_breakdown: breakdown,
         email: 'guest@example.com' // Will be updated after Stripe checkout
       };
@@ -441,6 +444,28 @@ const Shop = () => {
                           {discountAmount}% rabatt tillämpad
                         </p>
                       )}
+                    </div>
+
+                    {/* Newsletter Opt-in */}
+                    <div className="mb-6">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox 
+                          id="newsletter" 
+                          checked={newsletterOptIn}
+                          onCheckedChange={(checked) => setNewsletterOptIn(checked === true)}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <label 
+                            htmlFor="newsletter" 
+                            className="text-sm font-medium leading-none cursor-pointer"
+                          >
+                            Prenumerera på mitt nyhetsbrev
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            Få uppdateringar om nya böcker, artiklar och tankar direkt i din inkorg.
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     {/* VAT Breakdown */}

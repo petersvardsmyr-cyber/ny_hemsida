@@ -24,6 +24,7 @@ interface OrderRequest {
   total_amount: number;
   discount_amount?: number;
   discount_code?: string;
+  newsletter_optin?: boolean;
   vat_breakdown: any;
   email?: string;
 }
@@ -153,6 +154,33 @@ serve(async (req) => {
       console.log("Order saved to database");
     }
 
+    // Handle newsletter subscription if opted in
+    if (orderData.newsletter_optin) {
+      try {
+        console.log('Adding customer to newsletter:', orderData.email || 'guest@example.com');
+        const { error: newsletterError } = await supabaseClient
+          .from('newsletter_subscribers')
+          .insert({
+            email: orderData.email || 'guest@example.com',
+            name: null, // No name collected during checkout
+            is_active: true
+          });
+        
+        if (newsletterError) {
+          // Don't throw error if email already exists
+          if (newsletterError.code !== '23505') { // Not a unique constraint violation
+            console.error('Error adding to newsletter:', newsletterError);
+          } else {
+            console.log('Email already subscribed to newsletter');
+          }
+        } else {
+          console.log('Successfully added to newsletter');
+        }
+      } catch (newsletterError) {
+        console.error('Newsletter subscription error:', newsletterError);
+      }
+    }
+
     // Send order confirmation emails (don't await to avoid blocking response)
     try {
       const emailClient = createClient(
@@ -164,7 +192,8 @@ serve(async (req) => {
       emailClient.functions.invoke('send-order-confirmation', {
         body: {
           session_id: session.id,
-          customer_email: orderData.email || 'guest@example.com'
+          customer_email: orderData.email || 'guest@example.com',
+          newsletter_subscribed: orderData.newsletter_optin || false
         }
       }).then((result) => {
         if (result.error) {
