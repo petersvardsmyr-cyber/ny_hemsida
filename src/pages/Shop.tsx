@@ -526,7 +526,7 @@ const Shop = () => {
                     </Button>
                     
                     <p className="text-xs text-muted-foreground text-center mt-2">
-                      Säker betalning via Stripe • Apple Pay stöds
+                      Säker betalning via Stripe
                     </p>
                   </>
                 )}
