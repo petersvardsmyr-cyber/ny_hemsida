@@ -96,7 +96,7 @@ serve(async (req) => {
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "klarna", "apple_pay"],
+      payment_method_types: ["card", "klarna"],
       line_items: lineItems,
       mode: "payment",
       locale: "sv", // Force Swedish language
