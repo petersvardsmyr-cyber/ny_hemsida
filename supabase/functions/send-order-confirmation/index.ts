@@ -249,7 +249,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send customer confirmation email
     const customerEmailResult = await resend.emails.send({
-      from: "Peter Svärdsmyr <noreply@resend.dev>",
+      from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [customer_email],
       subject: `Orderbekräftelse ${orderNumber} - Tack för din beställning!`,
       html: customerEmailHtml,
@@ -259,7 +259,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send admin notification email
     const adminEmailResult = await resend.emails.send({
-      from: "Peter Svärdsmyr <noreply@resend.dev>",
+      from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: ["hej@petersvardsmyr.se"],
       subject: `Ny beställning ${orderNumber} från ${customer_email}`,
       html: adminEmailHtml,
