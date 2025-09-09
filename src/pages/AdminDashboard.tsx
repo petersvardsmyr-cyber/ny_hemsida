@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { FileText, BookOpen, Mail, Plus, Users, Eye, Package } from 'lucide-react';
+import { TestOrderEmail } from "@/components/TestOrderEmail";
 
 interface DashboardStats {
   totalPosts: number;
@@ -230,6 +231,21 @@ export default function AdminDashboard() {
                 Nyhetsbrevsprenumeranter
               </Button>
             </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              E-post Test
+            </CardTitle>
+            <CardDescription>
+              Testa orderbekräftelse-mejl
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TestOrderEmail />
           </CardContent>
         </Card>
       </div>
