@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, Feather } from "lucide-react";
+import { Menu, X, Feather, PenTool } from "lucide-react";
 
 const LeftNavigation = () => {
   const location = useLocation();
@@ -155,7 +155,10 @@ const LeftNavigation = () => {
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <div className="p-6 pt-20">
-            <h2 className="text-lg font-semibold text-foreground mb-8">Navigation</h2>
+            <div className="flex items-center gap-2 mb-8">
+              <PenTool className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-semibold text-foreground">Din Digitala Penna</h2>
+            </div>
             <ul className="space-y-4">
               {navItems.map((item) => (
                 <li key={item.id}>
