@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight } from 'lucide-react';
+import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight, Bell, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout() {
@@ -14,6 +14,7 @@ export default function AdminLayout() {
   const [blogMenuOpen, setBlogMenuOpen] = useState(true);
   const [shopMenuOpen, setShopMenuOpen] = useState(true);
   const [newsletterMenuOpen, setNewsletterMenuOpen] = useState(true);
+  const [emailMenuOpen, setEmailMenuOpen] = useState(true);
 
   const handleSignOut = async () => {
     await signOut();
@@ -40,8 +41,14 @@ export default function AdminLayout() {
   };
 
   const isNewsletterSectionActive = () => {
-    return location.pathname.includes('/admin/newsletter') || 
-           location.pathname.includes('/admin/email-templates');
+    return location.pathname.includes('/admin/newsletter');
+  };
+
+  const isEmailSectionActive = () => {
+    return location.pathname.includes('/admin/email-notifications') || 
+           location.pathname.includes('/admin/order-notifications') || 
+           location.pathname.includes('/admin/newsletter-notifications') ||
+           location.pathname.includes('/admin/email-settings');
   };
 
   return (
@@ -233,15 +240,57 @@ export default function AdminLayout() {
                         Skicka nyhetsbrev
                       </Button>
                     </Link>
-                    
-                    <Link to="/admin/email-templates" onClick={() => setSidebarOpen(false)}>
+                  </div>
+                )}
+              </div>
+
+              {/* E-postnotiser Section */}
+              <div className="pt-2">
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${isEmailSectionActive() ? 'bg-muted' : ''}`}
+                  onClick={() => setEmailMenuOpen(!emailMenuOpen)}
+                >
+                  <Bell className="mr-2 h-4 w-4" />
+                  E-postnotiser
+                  {emailMenuOpen ? 
+                    <ChevronDown className="ml-auto h-4 w-4" /> : 
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  }
+                </Button>
+                
+                {emailMenuOpen && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link to="/admin/order-notifications" onClick={() => setSidebarOpen(false)}>
                       <Button
-                        variant={isActive('/admin/email-templates') ? 'secondary' : 'ghost'}
+                        variant={isActive('/admin/order-notifications') ? 'secondary' : 'ghost'}
                         className="w-full justify-start"
                         size="sm"
                       >
-                        <FileText className="mr-2 h-4 w-4" />
-                        E-postmallar
+                        <Package className="mr-2 h-4 w-4" />
+                        Orderbekräftelser
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/newsletter-notifications" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/newsletter-notifications') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Mail className="mr-2 h-4 w-4" />
+                        Nyhetsbrevbekräftelser
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/email-settings" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/email-settings') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        Inställningar
                       </Button>
                     </Link>
                   </div>

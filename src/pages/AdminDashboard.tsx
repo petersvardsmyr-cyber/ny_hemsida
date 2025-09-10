@@ -4,8 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, BookOpen, Mail, Plus, Users, Eye, Package } from 'lucide-react';
-import { TestOrderEmail } from "@/components/TestOrderEmail";
+import { FileText, BookOpen, Mail, Plus, Users, Eye, Package, Bell } from 'lucide-react';
 
 interface DashboardStats {
   totalPosts: number;
@@ -234,18 +233,38 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        {/* E-postnotiser Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              E-post Test
+              <Bell className="h-5 w-5" />
+              E-postnotiser
             </CardTitle>
             <CardDescription>
-              Testa orderbekräftelse-mejl
+              Hantera e-postutskick och notifikationer
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <TestOrderEmail />
+            <div className="space-y-2">
+              <Link to="/admin/order-notifications">
+                <Button variant="outline" className="w-full justify-start">
+                  <Package className="h-4 w-4 mr-2" />
+                  Orderbekräftelser
+                </Button>
+              </Link>
+              <Link to="/admin/newsletter-notifications">
+                <Button variant="outline" className="w-full justify-start">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Nyhetsbrevbekräftelser
+                </Button>
+              </Link>
+              <Link to="/admin/email-settings">
+                <Button variant="outline" className="w-full justify-start">
+                  <Bell className="h-4 w-4 mr-2" />
+                  E-postinställningar
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -20,6 +20,9 @@ import AdminProductsPage from "./pages/AdminProductsPage";
 import AdminNewsletterPage from "./pages/AdminNewsletterPage";
 import AdminOrders from "./pages/AdminOrders";
 import AdminEmailTemplatesPage from "./pages/AdminEmailTemplatesPage";
+import AdminOrderNotifications from "./pages/AdminOrderNotifications";
+import AdminNewsletterNotifications from "./pages/AdminNewsletterNotifications";
+import AdminEmailSettings from "./pages/AdminEmailSettings";
 import AdminPostEditor from "./pages/AdminPostEditor";
 import NotFound from "./pages/NotFound";
 
@@ -54,6 +57,9 @@ const App = () => (
               <Route path="products" element={<AdminProductsPage />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="newsletter" element={<AdminNewsletterPage />} />
+              <Route path="order-notifications" element={<AdminOrderNotifications />} />
+              <Route path="newsletter-notifications" element={<AdminNewsletterNotifications />} />
+              <Route path="email-settings" element={<AdminEmailSettings />} />
               <Route path="email-templates" element={<AdminEmailTemplatesPage />} />
               <Route path="posts/new" element={<AdminPostEditor />} />
               <Route path="posts/edit/:id" element={<AdminPostEditor />} />
