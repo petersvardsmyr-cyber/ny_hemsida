@@ -11,7 +11,9 @@ export default function AdminLayout() {
   const location = useLocation();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [blogMenuOpen, setBlogMenuOpen] = useState(true);
   const [shopMenuOpen, setShopMenuOpen] = useState(true);
+  const [newsletterMenuOpen, setNewsletterMenuOpen] = useState(true);
 
   const handleSignOut = async () => {
     await signOut();
@@ -28,10 +30,18 @@ export default function AdminLayout() {
     return false;
   };
 
+  const isBlogSectionActive = () => {
+    return location.pathname.includes('/admin/posts');
+  };
+
   const isShopSectionActive = () => {
     return location.pathname.includes('/admin/products') || 
-           location.pathname.includes('/admin/orders') || 
-           location.pathname.includes('/admin/newsletter');
+           location.pathname.includes('/admin/orders');
+  };
+
+  const isNewsletterSectionActive = () => {
+    return location.pathname.includes('/admin/newsletter') || 
+           location.pathname.includes('/admin/email-templates');
   };
 
   return (
@@ -112,25 +122,47 @@ export default function AdminLayout() {
                 </Button>
               </Link>
               
-              <Link to="/admin/posts" onClick={() => setSidebarOpen(false)}>
+              {/* Blogg Section */}
+              <div className="pt-2">
                 <Button
-                  variant={isActive('/admin/posts') ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
+                  variant="ghost"
+                  className={`w-full justify-start ${isBlogSectionActive() ? 'bg-muted' : ''}`}
+                  onClick={() => setBlogMenuOpen(!blogMenuOpen)}
                 >
                   <FileText className="mr-2 h-4 w-4" />
-                  Blogginlägg
+                  Blogg
+                  {blogMenuOpen ? 
+                    <ChevronDown className="ml-auto h-4 w-4" /> : 
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  }
                 </Button>
-              </Link>
-              
-              <Link to="/admin/posts/new" onClick={() => setSidebarOpen(false)}>
-                <Button
-                  variant={isActive('/admin/posts/new') ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nytt inlägg
-                </Button>
-              </Link>
+                
+                {blogMenuOpen && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    <Link to="/admin/posts" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/posts') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        Blogginlägg
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/posts/new" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/posts/new') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Nytt inlägg
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
 
               {/* Butik Section */}
               <div className="pt-2">
@@ -170,7 +202,27 @@ export default function AdminLayout() {
                         Beställningar
                       </Button>
                     </Link>
-                    
+                  </div>
+                )}
+              </div>
+
+              {/* Nyhetsbrev Section */}
+              <div className="pt-2">
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${isNewsletterSectionActive() ? 'bg-muted' : ''}`}
+                  onClick={() => setNewsletterMenuOpen(!newsletterMenuOpen)}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  Nyhetsbrev
+                  {newsletterMenuOpen ? 
+                    <ChevronDown className="ml-auto h-4 w-4" /> : 
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  }
+                </Button>
+                
+                {newsletterMenuOpen && (
+                  <div className="ml-6 mt-1 space-y-1">
                     <Link to="/admin/newsletter" onClick={() => setSidebarOpen(false)}>
                       <Button
                         variant={isActive('/admin/newsletter') ? 'secondary' : 'ghost'}
@@ -178,7 +230,7 @@ export default function AdminLayout() {
                         size="sm"
                       >
                         <Mail className="mr-2 h-4 w-4" />
-                        Nyhetsbrev
+                        Skicka nyhetsbrev
                       </Button>
                     </Link>
                     
@@ -188,7 +240,7 @@ export default function AdminLayout() {
                         className="w-full justify-start"
                         size="sm"
                       >
-                        <Mail className="mr-2 h-4 w-4" />
+                        <FileText className="mr-2 h-4 w-4" />
                         E-postmallar
                       </Button>
                     </Link>
