@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { subject, content, from = "Peter Svärdsmyr <noreply@resend.dev>", template_id }: NewsletterRequest = await req.json();
+    const { subject, content, from = "Peter Svärdsmyr <hej@petersvardsmyr.se>", template_id }: NewsletterRequest = await req.json();
 
     let emailSubject = subject;
     let emailContent = content;

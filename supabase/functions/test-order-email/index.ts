@@ -24,6 +24,15 @@ serve(async (req) => {
   try {
     console.log('Testing order confirmation email...');
 
+    // Get customer email from request
+    const { customer_email } = await req.json();
+    
+    if (!customer_email) {
+      throw new Error('Customer email is required');
+    }
+
+    console.log('Sending test email to:', customer_email);
+
     // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -49,7 +58,6 @@ serve(async (req) => {
 
     // Mock test data
     const orderNumber = 'TEST1234';
-    const customer_email = 'test@example.com'; // Change to your email for testing
     const totalAmount = 29900; // 299 SEK
     
     const testOrderItems = [
@@ -156,8 +164,9 @@ serve(async (req) => {
     `;
 
     // Send test email
+    console.log('Sending email with from address: Peter Svärdsmyr <hej@petersvardsmyr.se>');
     const emailResult = await resend.emails.send({
-      from: "Testmeddelande <onboarding@resend.dev>",
+      from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [customer_email],
       subject: emailSubject,
       html: customerEmailHtml,
