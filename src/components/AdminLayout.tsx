@@ -181,6 +181,17 @@ export default function AdminLayout() {
                         Nyhetsbrev
                       </Button>
                     </Link>
+                    
+                    <Link to="/admin/email-templates" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/email-templates') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Mail className="mr-2 h-4 w-4" />
+                        E-postmallar
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>

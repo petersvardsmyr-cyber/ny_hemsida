@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import Stripe from "https://esm.sh/stripe@14.21.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.56.0'
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -37,6 +38,21 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("session_id and customer_email are required");
     }
 
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get order confirmation template from database
+    const { data: template } = await supabase
+      .from('email_templates')
+      .select('subject, content')
+      .eq('template_type', 'order_confirmation')
+      .eq('is_active', true)
+      .limit(1)
+      .single();
+
     // Initialize Stripe to get session details
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
@@ -64,11 +80,15 @@ const handler = async (req: Request): Promise<Response> => {
     const orderNumber = session_id.slice(-8).toUpperCase();
     const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
 
-    // Generate customer email HTML
+    // Use template content if available, otherwise use default
+    let emailSubject = template?.subject || 'Tack för din beställning!';
+    let templateContent = template?.content || '<h1>Tack för din beställning!</h1><p>Vi har mottagit din beställning och kommer att behandla den så snart som möjligt.</p>';
+
+    // Generate customer email HTML with template content
     const customerEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
-          <h1 style="color: #2c3e50; margin: 0;">Tack för din beställning!</h1>
+          <h1 style="color: #2c3e50; margin: 0;">${emailSubject}</h1>
           <p style="color: #7f8c8d; margin: 10px 0 0 0;">Orderbekräftelse från Peter Svärdsmyr</p>
         </div>
         
@@ -76,6 +96,11 @@ const handler = async (req: Request): Promise<Response> => {
           <div style="background-color: #e8f5e8; border-left: 4px solid #27ae60; padding: 15px; margin-bottom: 25px;">
             <p style="margin: 0; color: #27ae60; font-weight: bold;">Din order har behandlats framgångsrikt!</p>
             <p style="margin: 5px 0 0 0; color: #2c3e50;">Ordernummer: <strong>${orderNumber}</strong></p>
+          </div>
+
+          <!-- Template content -->
+          <div style="margin-bottom: 25px;">
+            ${templateContent}
           </div>
 
           <h2 style="color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Orderdetaljer</h2>
@@ -251,7 +276,7 @@ const handler = async (req: Request): Promise<Response> => {
     const customerEmailResult = await resend.emails.send({
       from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [customer_email],
-      subject: `Orderbekräftelse ${orderNumber} - Tack för din beställning!`,
+      subject: `${emailSubject} - ${orderNumber}`,
       html: customerEmailHtml,
     });
 

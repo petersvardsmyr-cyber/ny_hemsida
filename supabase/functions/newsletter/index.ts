@@ -11,9 +11,10 @@ const corsHeaders = {
 };
 
 interface NewsletterRequest {
-  subject: string;
-  content: string;
+  subject?: string;
+  content?: string;
   from?: string;
+  template_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -39,9 +40,52 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { subject, content, from = "Peter Svärdsmyr <noreply@resend.dev>" }: NewsletterRequest = await req.json();
+    const { subject, content, from = "Peter Svärdsmyr <noreply@resend.dev>", template_id }: NewsletterRequest = await req.json();
 
-    if (!subject || !content) {
+    let emailSubject = subject;
+    let emailContent = content;
+
+    // If template_id is provided, use template from database
+    if (template_id) {
+      const { data: template, error: templateError } = await supabase
+        .from('email_templates')
+        .select('subject, content')
+        .eq('id', template_id)
+        .eq('is_active', true)
+        .single();
+
+      if (templateError) {
+        console.error("Template error:", templateError);
+        return new Response(
+          JSON.stringify({ error: "Failed to fetch email template" }),
+          { 
+            status: 500, 
+            headers: { "Content-Type": "application/json", ...corsHeaders } 
+          }
+        );
+      }
+
+      if (template) {
+        emailSubject = template.subject;
+        emailContent = template.content;
+      }
+    } else {
+      // Fallback: try to get the default newsletter template
+      const { data: defaultTemplate } = await supabase
+        .from('email_templates')
+        .select('subject, content')
+        .eq('template_type', 'newsletter')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+
+      if (defaultTemplate) {
+        emailSubject = emailSubject || defaultTemplate.subject;
+        emailContent = emailContent || defaultTemplate.content;
+      }
+    }
+
+    if (!emailSubject || !emailContent) {
       return new Response(
         JSON.stringify({ error: "Subject and content are required" }),
         { 
@@ -83,11 +127,11 @@ const handler = async (req: Request): Promise<Response> => {
       resend.emails.send({
         from,
         to: [subscriber.email],
-        subject,
+         subject: emailSubject,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             ${subscriber.name ? `<p>Hej ${subscriber.name}!</p>` : '<p>Hej!</p>'}
-            ${content}
+            ${emailContent}
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <p style="font-size: 12px; color: #666;">
               Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.

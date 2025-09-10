@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.56.0'
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -23,9 +24,32 @@ serve(async (req) => {
   try {
     console.log('Testing order confirmation email...');
 
-    // Mock test data - skipping Stripe API call for test
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get test email template from database
+    const { data: template, error: templateError } = await supabase
+      .from('email_templates')
+      .select('subject, content')
+      .eq('template_type', 'test_email')
+      .eq('is_active', true)
+      .limit(1)
+      .single();
+
+    let emailSubject = 'TEST - Orderbekräftelse från Peter Svärdsmyr';
+    let emailContent = '<h1>Test av e-postfunktion</h1><p>Detta är ett testmeddelande för att kontrollera att e-postfunktionen fungerar korrekt.</p>';
+
+    if (template && !templateError) {
+      emailSubject = `TEST - ${template.subject}`;
+      emailContent = template.content;
+    }
+
+    // Mock test data
     const orderNumber = 'TEST1234';
-    const customer_email = 'test@example.com'; // Ändra till din mejl för att testa
+    const customer_email = 'test@example.com'; // Change to your email for testing
     const totalAmount = 29900; // 299 SEK
     
     const testOrderItems = [
@@ -38,12 +62,6 @@ serve(async (req) => {
       region: 'sweden',
       price_ex_vat: 49,
       vat_rate: 0.25
-    };
-
-    const testVatBreakdown = {
-      products: { exVAT: 468, vat: 28, incVAT: 496 },
-      shipping: { exVAT: 49, vat: 12, incVAT: 61, vatRate: 0.25 },
-      total: { exVAT: 517, vat: 40, incVAT: 557 }
     };
 
     const testShippingDetails = {
@@ -61,17 +79,18 @@ serve(async (req) => {
     const customerEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
-          <h1 style="color: #2c3e50; margin: 0;">Tack för din beställning!</h1>
-          <p style="color: #7f8c8d; margin: 10px 0 0 0;">TEST - Orderbekräftelse från Peter Svärdsmyr</p>
+          <h1 style="color: #2c3e50; margin: 0;">TEST E-POST</h1>
         </div>
         
         <div style="padding: 30px 20px;">
-          <div style="background-color: #fff3cd; border-left: 4px solid #f39c12; padding: 15px; margin-bottom: 25px;">
+          ${emailContent}
+          
+          <div style="background-color: #fff3cd; border-left: 4px solid #f39c12; padding: 15px; margin: 25px 0;">
             <p style="margin: 0; color: #856404; font-weight: bold;">DETTA ÄR ETT TEST-EMAIL</p>
-            <p style="margin: 5px 0 0 0; color: #2c3e50;">Ordernummer: <strong>${orderNumber}</strong></p>
+            <p style="margin: 5px 0 0 0; color: #2c3e50;">Test-ordernummer: <strong>${orderNumber}</strong></p>
           </div>
 
-          <h2 style="color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Orderdetaljer</h2>
+          <h2 style="color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Test-orderdetaljer</h2>
           
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
@@ -99,12 +118,12 @@ serve(async (req) => {
 
           <div style="background-color: #f8f9fa; padding: 15px; margin-bottom: 25px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <strong style="font-size: 18px; color: #2c3e50;">Totalt att betala:</strong>
+              <strong style="font-size: 18px; color: #2c3e50;">Test-totalt:</strong>
               <strong style="font-size: 18px; color: #27ae60;">${formatCurrency(totalAmount / 100)}</strong>
             </div>
           </div>
 
-          <h3 style="color: #2c3e50;">Leveransadress</h3>
+          <h3 style="color: #2c3e50;">Test-leveransadress</h3>
           <div style="background-color: #f8f9fa; padding: 15px; margin-bottom: 25px;">
             <p style="margin: 0; line-height: 1.6;">
               ${testShippingDetails.name}<br>
@@ -115,22 +134,21 @@ serve(async (req) => {
           </div>
 
           <div style="background-color: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin-bottom: 25px;">
-            <h4 style="margin: 0 0 10px 0; color: #1976d2;">Vad händer nu?</h4>
+            <h4 style="margin: 0 0 10px 0; color: #1976d2;">Om detta vore en riktig beställning:</h4>
             <ul style="margin: 0; padding-left: 20px; color: #424242;">
-              <li>Din beställning bearbetas inom 1-2 arbetsdagar</li>
-              <li>Du får en försändelseavis när paketet skickas</li>
+              <li>Din beställning skulle bearbetas inom 1-2 arbetsdagar</li>
+              <li>Du skulle få en försändelseavis när paketet skickas</li>
               <li>Leveranstid: 2-3 arbetsdagar</li>
             </ul>
           </div>
 
           <p style="color: #7f8c8d; margin-top: 30px;">
-            Har du frågor om din beställning? Kontakta mig gärna på 
+            Detta var ett test av e-postfunktionen. Kontakta mig på 
             <a href="mailto:hej@petersvardsmyr.se" style="color: #3498db;">hej@petersvardsmyr.se</a>
           </p>
 
           <p style="color: #7f8c8d;">
-            Tack för att du handlar från mig!<br>
-            Vänliga hälsningar,<br>
+            Med vänliga hälsningar,<br>
             <strong>Peter Svärdsmyr</strong>
           </p>
         </div>
@@ -139,9 +157,9 @@ serve(async (req) => {
 
     // Send test email
     const emailResult = await resend.emails.send({
-      from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
+      from: "Testmeddelande <onboarding@resend.dev>",
       to: [customer_email],
-      subject: `TEST - Orderbekräftelse ${orderNumber}`,
+      subject: emailSubject,
       html: customerEmailHtml,
     });
 
