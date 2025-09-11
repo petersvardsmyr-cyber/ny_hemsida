@@ -58,11 +58,19 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
 max_frequency = "1m"
+secure_email_change_enabled = true
+otp_expiry = 300
 
 [auth.sms]
 enable_signup = false
 enable_confirmations = false
 max_frequency = "5m"
+otp_expiry = 300
+
+[auth.password]
+min_length = 8
+score_threshold = 3
+hibp_enabled = true
 
 [functions.newsletter]
 verify_jwt = false
