@@ -157,7 +157,7 @@ const LeftNavigation = () => {
           <div className="p-6 pt-20">
             <div className="flex items-center gap-2 mb-8">
               <PenTool className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Din Digitala Penna</h2>
+              <h2 className="text-lg font-semibold text-foreground">Meny</h2>
             </div>
             <ul className="space-y-4">
               {navItems.map((item) => (
