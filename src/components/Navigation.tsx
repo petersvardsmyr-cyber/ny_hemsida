@@ -20,8 +20,12 @@ const Navigation = () => {
                 }`
               }
             >
-              <Home className="w-4 h-4" />
-              Hem
+              {({ isActive }) => (
+                <>
+                  {isActive ? <PenTool className="w-4 h-4" /> : <Home className="w-4 h-4" />}
+                  Hem
+                </>
+              )}
             </NavLink>
             
             <NavLink 
@@ -32,8 +36,12 @@ const Navigation = () => {
                 }`
               }
             >
-              <BookOpen className="w-4 h-4" />
-              Blogg
+              {({ isActive }) => (
+                <>
+                  {isActive ? <PenTool className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                  Blogg
+                </>
+              )}
             </NavLink>
             
             <NavLink 
@@ -44,8 +52,12 @@ const Navigation = () => {
                 }`
               }
             >
-              <ShoppingBag className="w-4 h-4" />
-              Butik
+              {({ isActive }) => (
+                <>
+                  {isActive ? <PenTool className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+                  Butik
+                </>
+              )}
             </NavLink>
             
             <NavLink 
@@ -56,8 +68,12 @@ const Navigation = () => {
                 }`
               }
             >
-              <Mail className="w-4 h-4" />
-              Nyhetsbrev
+              {({ isActive }) => (
+                <>
+                  {isActive ? <PenTool className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
+                  Nyhetsbrev
+                </>
+              )}
             </NavLink>
           </div>
         </div>
