@@ -133,7 +133,9 @@ export type Database = {
           email: string
           id: string
           items: Json
+          shipped_at: string | null
           shipping_address: Json | null
+          shipping_tracking_number: string | null
           status: string | null
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
@@ -148,7 +150,9 @@ export type Database = {
           email: string
           id?: string
           items: Json
+          shipped_at?: string | null
           shipping_address?: Json | null
+          shipping_tracking_number?: string | null
           status?: string | null
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
@@ -163,7 +167,9 @@ export type Database = {
           email?: string
           id?: string
           items?: Json
+          shipped_at?: string | null
           shipping_address?: Json | null
+          shipping_tracking_number?: string | null
           status?: string | null
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null

@@ -3,8 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, Package, Calendar, CreditCard, Mail } from 'lucide-react';
+import { Eye, Package, Calendar, CreditCard, Mail, Truck, Send } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface Order {
@@ -18,12 +20,17 @@ interface Order {
   items: any;
   shipping_address: any;
   stripe_session_id: string;
+  shipped_at?: string;
+  shipping_tracking_number?: string;
 }
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [shippingOrder, setShippingOrder] = useState<Order | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [isShipping, setIsShipping] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -65,6 +72,43 @@ export default function AdminOrders() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleShipOrder = async () => {
+    if (!shippingOrder) return;
+    
+    setIsShipping(true);
+    try {
+      const { error } = await supabase.functions.invoke('ship-order', {
+        body: {
+          order_id: shippingOrder.id,
+          tracking_number: trackingNumber.trim() || undefined
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Beställning skickad",
+        description: "Kunden har informerats via e-post om att beställningen är skickad.",
+      });
+
+      // Reset form
+      setShippingOrder(null);
+      setTrackingNumber('');
+      
+      // Refresh orders
+      fetchOrders();
+    } catch (error) {
+      console.error('Error shipping order:', error);
+      toast({
+        title: "Fel",
+        description: "Kunde inte skicka beställningen. Försök igen.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsShipping(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -147,7 +191,61 @@ export default function AdminOrders() {
                     <CreditCard className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Stripe</span>
                   </div>
-                  <div className="flex justify-end">
+                  <div className="flex justify-end gap-2">
+                    {order.status === 'paid' && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="default" 
+                            size="sm"
+                            onClick={() => setShippingOrder(order)}
+                          >
+                            <Truck className="h-4 w-4 mr-2" />
+                            Skicka
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Markera som skickad</DialogTitle>
+                            <DialogDescription>
+                              Beställning #{order.id.slice(0, 8)} kommer att markeras som skickad och kunden får ett bekräftelsemail.
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="tracking">Spårningsnummer (valfritt)</Label>
+                              <Input
+                                id="tracking"
+                                value={trackingNumber}
+                                onChange={(e) => setTrackingNumber(e.target.value)}
+                                placeholder="T.ex. 1234567890"
+                              />
+                            </div>
+                            
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="outline" 
+                                onClick={() => {
+                                  setShippingOrder(null);
+                                  setTrackingNumber('');
+                                }}
+                              >
+                                Avbryt
+                              </Button>
+                              <Button 
+                                onClick={handleShipOrder}
+                                disabled={isShipping}
+                              >
+                                <Send className="h-4 w-4 mr-2" />
+                                {isShipping ? 'Skickar...' : 'Skicka beställning'}
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                    
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
@@ -176,10 +274,15 @@ export default function AdminOrders() {
                                 <h4 className="font-medium mb-2">Kundinfo</h4>
                                 <p className="text-sm text-muted-foreground">{selectedOrder.email}</p>
                               </div>
-                              <div>
-                                <h4 className="font-medium mb-2">Status</h4>
-                                {getStatusBadge(selectedOrder.status)}
-                              </div>
+                            <div>
+                              <h4 className="font-medium mb-2">Status</h4>
+                              {getStatusBadge(selectedOrder.status)}
+                              {selectedOrder.shipped_at && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  Skickad: {formatDate(selectedOrder.shipped_at)}
+                                </p>
+                              )}
+                            </div>
                             </div>
 
                             <div>
@@ -224,6 +327,15 @@ export default function AdminOrders() {
                                 </div>
                               </div>
                             </div>
+
+                            {selectedOrder.shipping_tracking_number && (
+                              <div>
+                                <h4 className="font-medium mb-2">Spårningsnummer</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedOrder.shipping_tracking_number}
+                                </p>
+                              </div>
+                            )}
 
                             <div>
                               <h4 className="font-medium mb-2">Stripe Session ID</h4>

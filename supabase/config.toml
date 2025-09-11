@@ -66,3 +66,6 @@ max_frequency = "5m"
 
 [functions.newsletter]
 verify_jwt = false
+
+[functions.ship-order]
+verify_jwt = false

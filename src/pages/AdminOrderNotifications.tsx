@@ -40,7 +40,7 @@ export default function AdminOrderNotifications() {
       const { data, error } = await supabase
         .from('email_templates')
         .select('*')
-        .in('template_type', ['order_confirmation', 'test_email'])
+        .in('template_type', ['order_confirmation', 'order_shipped', 'test_email'])
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -240,6 +240,7 @@ export default function AdminOrderNotifications() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="order_confirmation">Orderbekräftelse</SelectItem>
+                      <SelectItem value="order_shipped">Leveransbekräftelse</SelectItem>
                       <SelectItem value="test_email">Test e-post</SelectItem>
                     </SelectContent>
                   </Select>
@@ -294,7 +295,8 @@ export default function AdminOrderNotifications() {
                       <div>
                         <CardTitle className="text-lg">{template.name}</CardTitle>
                         <CardDescription>
-                          Typ: {template.template_type === 'order_confirmation' ? 'Orderbekräftelse' : 'Test e-post'}
+                          Typ: {template.template_type === 'order_confirmation' ? 'Orderbekräftelse' : 
+                                template.template_type === 'order_shipped' ? 'Leveransbekräftelse' : 'Test e-post'}
                         </CardDescription>
                       </div>
                       <div className="flex gap-2">
