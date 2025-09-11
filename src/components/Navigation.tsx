@@ -8,7 +8,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between">
           <NavLink to="/" className="flex items-center gap-2 text-xl font-sans font-semibold hover:text-accent transition-smooth">
             <PenTool className="w-6 h-6" />
-            <span>Din Digitala Penna</span>
+            <span>Meny</span>
           </NavLink>
           
           <div className="flex items-center gap-8">
