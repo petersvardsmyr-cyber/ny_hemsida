@@ -131,6 +131,7 @@ serve(async (req) => {
           discount_code: orderData.discount_code || '',
           discount_amount: (orderData.discount_amount || 0).toString(),
           vat_breakdown: JSON.stringify(orderData.vat_breakdown),
+          newsletter_optin: (orderData.newsletter_optin || false).toString(),
         }
       },
       metadata: {
@@ -139,6 +140,7 @@ serve(async (req) => {
         discount_code: orderData.discount_code || '',
         discount_amount: (orderData.discount_amount || 0).toString(),
         vat_breakdown: JSON.stringify(orderData.vat_breakdown),
+        newsletter_optin: (orderData.newsletter_optin || false).toString(),
       }
     });
 
@@ -198,32 +200,8 @@ serve(async (req) => {
       }
     }
 
-    // Send order confirmation emails (don't await to avoid blocking response)
-    try {
-      const emailClient = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-      );
-      
-      // Call email function in background
-      emailClient.functions.invoke('send-order-confirmation', {
-        body: {
-          session_id: session.id,
-          customer_email: orderData.email || 'guest@example.com',
-          newsletter_subscribed: orderData.newsletter_optin || false
-        }
-      }).then((result) => {
-        if (result.error) {
-          console.error("Error calling email function:", result.error);
-        } else {
-          console.log("Order confirmation emails triggered");
-        }
-      }).catch((error) => {
-        console.error("Failed to call email function:", error);
-      });
-    } catch (emailError) {
-      console.error("Error setting up email function call:", emailError);
-    }
+    // Order confirmation emails are now sent via Stripe webhook after successful payment
+    // This avoids sending emails before the customer completes checkout and ensures we use the final email from Stripe.
 
     return new Response(
       JSON.stringify({ 

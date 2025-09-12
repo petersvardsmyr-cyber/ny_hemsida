@@ -16,6 +16,8 @@ serve(async (req) => {
   try {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnon = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
     
     if (!stripeKey) {
       throw new Error("STRIPE_SECRET_KEY is not configured");
@@ -66,6 +68,7 @@ serve(async (req) => {
           .update({
             status: 'completed',
             stripe_payment_intent_id: session.payment_intent as string,
+            email: session.customer_details?.email || session.customer_email || null
           })
           .eq('stripe_session_id', session.id);
 
@@ -74,6 +77,30 @@ serve(async (req) => {
         } else {
           console.log("Order updated to completed for session:", session.id);
         }
+
+        // Trigger order confirmation emails now that payment is completed
+        try {
+          const functionsClient = createClient(supabaseUrl, supabaseAnon);
+          const newsletterOptin = (session.metadata?.newsletter_optin === 'true');
+          const email = session.customer_details?.email || session.customer_email || '';
+
+          const { error: fnError } = await functionsClient.functions.invoke('send-order-confirmation', {
+            body: {
+              session_id: session.id,
+              customer_email: email,
+              newsletter_subscribed: newsletterOptin,
+            }
+          });
+
+          if (fnError) {
+            console.error('Failed to trigger confirmation emails:', fnError);
+          } else {
+            console.log('Order confirmation emails sent for session:', session.id);
+          }
+        } catch (e) {
+          console.error('Error invoking confirmation email function:', e);
+        }
+
         break;
       }
 
