@@ -208,7 +208,7 @@ const Shop = () => {
         shipping: {
           option_id: selectedShipping.id,
           name: selectedShipping.name,
-          price_ex_vat: selectedShipping.price,
+          price_ex_vat: breakdown.shipping.exVAT,
           vat_rate: selectedShipping.vatRate,
           region: selectedShipping.region
         },

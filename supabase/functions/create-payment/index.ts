@@ -97,23 +97,13 @@ serve(async (req) => {
       quantity: 1,
     });
 
-    // Add discount as a line item if applicable
-    if (orderData.discount_amount && orderData.discount_amount > 0) {
-      lineItems.push({
-        price_data: {
-          currency: "sek",
-          product_data: {
-            name: `Rabatt (${orderData.discount_code || 'Kod'})`,
-          },
-          unit_amount: -orderData.discount_amount * 100, // Negative amount for discount
-        },
-        quantity: 1,
-      });
-    }
+    // NOTE: Discounts are carried in metadata only for now to avoid Stripe negative line item errors.
+    // If you need cart-level discounts, we can implement Stripe Coupons/Promotion Codes.
+
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "klarna"],
+      payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       locale: "sv", // Force Swedish language
