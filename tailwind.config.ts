@@ -76,6 +76,9 @@ export default {
 				'deep-charcoal': 'hsl(var(--deep-charcoal))',
 				'golden-accent': 'hsl(var(--golden-accent))'
 			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)'
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',

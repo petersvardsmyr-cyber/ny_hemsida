@@ -50,6 +50,9 @@ All colors MUST be HSL.
     --deep-charcoal: 25 20% 15%;
     --golden-accent: 45 85% 60%;
     --reading-width: 65ch;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
 
     --sidebar-background: 0 0% 98%;
 
