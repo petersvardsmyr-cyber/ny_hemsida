@@ -43,9 +43,26 @@ serve(async (req) => {
       throw new Error("STRIPE_SECRET_KEY is not configured");
     }
 
-    // Parse request body
-    const orderData: OrderRequest = await req.json();
-    console.log("Order data:", JSON.stringify(orderData, null, 2));
+    // Parse request body with validation
+    let orderData: OrderRequest;
+    try {
+      orderData = await req.json();
+      console.log("Order data:", JSON.stringify(orderData, null, 2));
+      
+      // Validate required fields
+      if (!orderData.items || orderData.items.length === 0) {
+        throw new Error("No items in order");
+      }
+      if (!orderData.shipping) {
+        throw new Error("No shipping option selected");
+      }
+      if (!orderData.total_amount || orderData.total_amount <= 0) {
+        throw new Error("Invalid total amount");
+      }
+    } catch (parseError) {
+      console.error("Failed to parse request body:", parseError);
+      throw new Error("Invalid request data");
+    }
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, {
@@ -221,13 +238,35 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Error creating payment session:", error);
+    
+    // Provide more specific error messages based on the error type
+    let errorMessage = "Unknown error occurred";
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Handle specific error types
+      if (error.message.includes("STRIPE_SECRET_KEY")) {
+        errorMessage = "Stripe configuration error: Missing or invalid secret key";
+        statusCode = 500;
+      } else if (error.message.includes("Invalid request")) {
+        errorMessage = "Invalid order data provided";
+        statusCode = 400;
+      } else if (error.message.includes("Network")) {
+        errorMessage = "Network error occurred while processing payment";
+        statusCode = 502;
+      }
+    }
+    
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : "Unknown error occurred"
+        error: errorMessage,
+        details: error instanceof Error ? error.message : "Unknown error"
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        status: statusCode,
       }
     );
   }

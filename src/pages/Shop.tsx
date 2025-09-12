@@ -232,9 +232,27 @@ const Shop = () => {
       }
     } catch (error) {
       console.error('Checkout error:', error);
+      
+      // Try to extract a more specific error message
+      let errorMessage = "Något gick fel. Försök igen.";
+      
+      if (error instanceof Error) {
+        console.error('Error details:', error.message);
+        // Show specific error for common issues
+        if (error.message.includes('STRIPE_SECRET_KEY')) {
+          errorMessage = "Betalningssystemet är inte korrekt konfigurerat.";
+        } else if (error.message.includes('network')) {
+          errorMessage = "Nätverksfel. Kontrollera din internetanslutning.";
+        } else if (error.message.includes('validation')) {
+          errorMessage = "Ogiltig beställningsdata. Kontrollera dina uppgifter.";
+        } else if (error.message.includes('insufficient_permissions')) {
+          errorMessage = "Behörighetsfel. Försök igen eller kontakta support.";
+        }
+      }
+      
       toast({
         title: "Fel vid beställning",
-        description: "Något gick fel. Försök igen.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
