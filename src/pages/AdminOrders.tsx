@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, Package, Calendar, CreditCard, Mail, Truck, Send } from 'lucide-react';
+import { Eye, Package, Calendar, CreditCard, Mail, Truck, Send, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Order {
   id: string;
@@ -31,10 +32,13 @@ export default function AdminOrders() {
   const [shippingOrder, setShippingOrder] = useState<Order | null>(null);
   const [trackingNumber, setTrackingNumber] = useState('');
   const [isShipping, setIsShipping] = useState(false);
+  const [stripeStatus, setStripeStatus] = useState<'checking' | 'success' | 'error' | null>(null);
+  const [stripeDetails, setStripeDetails] = useState<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchOrders();
+    checkStripeHealth();
   }, []);
 
   const fetchOrders = async () => {
@@ -54,6 +58,21 @@ export default function AdminOrders() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkStripeHealth = async () => {
+    setStripeStatus('checking');
+    try {
+      const { data, error } = await supabase.functions.invoke('stripe-health-check');
+      if (error) throw error;
+      
+      setStripeStatus(data.status === 'success' ? 'success' : 'error');
+      setStripeDetails(data);
+    } catch (error: any) {
+      console.error('Stripe health check failed:', error);
+      setStripeStatus('error');
+      setStripeDetails({ error: error.message || 'Connection failed' });
     }
   };
 
@@ -137,10 +156,47 @@ export default function AdminOrders() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">Beställningar</h1>
-        <Button onClick={fetchOrders} variant="outline">
-          Uppdatera
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={fetchOrders} variant="outline">
+            Uppdatera
+          </Button>
+          <Button onClick={checkStripeHealth} variant="outline" size="sm">
+            {stripeStatus === 'checking' ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              'Testa Stripe'
+            )}
+          </Button>
+        </div>
       </div>
+
+      {/* Stripe Status Alert */}
+      {stripeStatus && (
+        <Alert className={stripeStatus === 'success' ? 'border-green-200 bg-green-50' : stripeStatus === 'error' ? 'border-red-200 bg-red-50' : 'border-blue-200 bg-blue-50'}>
+          {stripeStatus === 'success' ? (
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          ) : stripeStatus === 'error' ? (
+            <AlertCircle className="h-4 w-4 text-red-600" />
+          ) : (
+            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          )}
+          <AlertDescription>
+            {stripeStatus === 'success' && stripeDetails && (
+              <div>
+                <strong>Stripe anslutning OK</strong> - {stripeDetails.key_type === 'live' ? 'Live-läge' : 'Test-läge'} 
+                {stripeDetails.account && ` (${stripeDetails.account.country})`}
+                {stripeDetails.webhook_secret_configured && ' • Webhook konfigurerad'}
+              </div>
+            )}
+            {stripeStatus === 'error' && (
+              <div>
+                <strong>Stripe anslutningsproblem:</strong> {stripeDetails?.error || 'Okänt fel'}
+              </div>
+            )}
+            {stripeStatus === 'checking' && 'Kontrollerar Stripe anslutning...'}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {orders.length === 0 ? (
         <Card>

@@ -86,3 +86,6 @@ verify_jwt = false
 
 [functions.send-order-confirmation]
 verify_jwt = false
+
+[functions.stripe-health-check]
+verify_jwt = false

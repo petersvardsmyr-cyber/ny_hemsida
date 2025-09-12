@@ -233,27 +233,28 @@ const Shop = () => {
     } catch (error) {
       console.error('Checkout error:', error);
       
-      // Try to extract a more specific error message
-      let errorMessage = "Något gick fel. Försök igen.";
+      let errorMessage = "Kunde inte skapa betalning. Försök igen senare.";
+      let errorTitle = "Ett fel uppstod";
       
       if (error instanceof Error) {
-        console.error('Error details:', error.message);
-        // Show specific error for common issues
-        if (error.message.includes('STRIPE_SECRET_KEY')) {
-          errorMessage = "Betalningssystemet är inte korrekt konfigurerat.";
-        } else if (error.message.includes('network')) {
-          errorMessage = "Nätverksfel. Kontrollera din internetanslutning.";
-        } else if (error.message.includes('validation')) {
-          errorMessage = "Ogiltig beställningsdata. Kontrollera dina uppgifter.";
-        } else if (error.message.includes('insufficient_permissions')) {
-          errorMessage = "Behörighetsfel. Försök igen eller kontakta support.";
+        if (error.message?.includes('Invalid API Key')) {
+          errorTitle = "Betalning ej konfigurerad";
+          errorMessage = "Stripe betalning är inte korrekt konfigurerad. Kontakta supporten.";
+        } else if (error.message?.includes('network') || error.message?.includes('timeout')) {
+          errorTitle = "Nätverksfel";
+          errorMessage = "Kontrollera din internetanslutning och försök igen.";
+        } else if (error.message?.includes('validation')) {
+          errorTitle = "Ogiltiga uppgifter";
+          errorMessage = "Kontrollera dina uppgifter och försök igen.";
+        } else if (error.message) {
+          errorMessage = `${error.message}`;
         }
       }
       
       toast({
-        title: "Fel vid beställning",
+        title: errorTitle,
         description: errorMessage,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsCheckingOut(false);
