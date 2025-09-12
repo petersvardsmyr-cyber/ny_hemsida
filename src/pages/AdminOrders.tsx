@@ -32,7 +32,6 @@ export default function AdminOrders() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [isShipping, setIsShipping] = useState(false);
   const { toast } = useToast();
-  const [cleaning, setCleaning] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -125,25 +124,6 @@ export default function AdminOrders() {
     return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
   };
 
-  const handleCleanup = async () => {
-    if (!window.confirm('Är du säker? Alla exempelbeställningar tas bort och senaste behålls.')) return;
-    setCleaning(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('cleanup-orders');
-      if (error) throw error as any;
-      const deleted = (data as any)?.deleted ?? 0;
-      toast({
-        title: 'Exempelbeställningar rensade',
-        description: `Tog bort ${deleted} beställningar och behöll den senaste.`,
-      });
-      await fetchOrders();
-    } catch (e) {
-      toast({ title: 'Fel vid rensning', description: 'Kunde inte rensa beställningar.', variant: 'destructive' });
-    } finally {
-      setCleaning(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="space-y-6">
@@ -157,12 +137,9 @@ export default function AdminOrders() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">Beställningar</h1>
-        <div className="flex gap-2">
-          <Button onClick={fetchOrders} variant="outline">Uppdatera</Button>
-          <Button variant="destructive" onClick={handleCleanup} disabled={cleaning}>
-            {cleaning ? 'Rensar...' : 'Rensa exempelbeställningar'}
-          </Button>
-        </div>
+        <Button onClick={fetchOrders} variant="outline">
+          Uppdatera
+        </Button>
       </div>
 
       {orders.length === 0 ? (
