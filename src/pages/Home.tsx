@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, PenTool, Quote } from "lucide-react";
+import { BookOpen, PenTool, Quote, Music } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
@@ -145,6 +145,52 @@ const Home = () => {
           </p>
           
           <NewsletterSignup />
+        </div>
+      </section>
+
+      {/* Music Section */}
+      <section id="music" className="py-12 md:py-20 px-4 md:px-12 bg-deep-charcoal">
+        <div className="max-w-4xl w-full">
+          <div className="flex items-center gap-3 mb-6 md:mb-8">
+            <Music className="w-6 h-6 md:w-8 md:h-8 text-warm-cream" />
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-warm-cream">Musik</h2>
+          </div>
+          <p className="text-lg md:text-xl text-warm-cream/80 leading-relaxed mb-8 md:mb-12 max-w-2xl">
+            Musik är en annan del av min kreativitet. Genom melodier och text utforskar jag samma teman som i mina böcker – relationer, hopp och mänskliga berättelser. Välkommen in i studion.
+          </p>
+          
+          {/* Spotify Embeds - Placeholders */}
+          <div className="grid gap-6 md:gap-8">
+            {/* Placeholder for first song */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
+              <div className="flex items-center justify-center h-24 md:h-32">
+                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
+              </div>
+              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
+                Spotify embed kommer här
+              </p>
+            </div>
+            
+            {/* Placeholder for second song */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
+              <div className="flex items-center justify-center h-24 md:h-32">
+                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
+              </div>
+              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
+                Spotify embed kommer här
+              </p>
+            </div>
+            
+            {/* Placeholder for third song */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
+              <div className="flex items-center justify-center h-24 md:h-32">
+                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
+              </div>
+              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
+                Spotify embed kommer här
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>;
