@@ -159,36 +159,48 @@ const Home = () => {
             Musik är en annan del av min kreativitet. Genom melodier och text utforskar jag samma teman som i mina böcker – relationer, hopp och mänskliga berättelser. Välkommen in i studion.
           </p>
           
-          {/* Spotify Embeds - Placeholders */}
+          {/* Spotify Embeds */}
           <div className="grid gap-6 md:gap-8">
-            {/* Placeholder for first song */}
-            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
-              <div className="flex items-center justify-center h-24 md:h-32">
-                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
-              </div>
-              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
-                Spotify embed kommer här
-              </p>
+            {/* First Album */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
+              <iframe 
+                src="https://open.spotify.com/embed/album/5wFcioalJCkED3IcVUrxZF?utm_source=generator&theme=0" 
+                width="100%" 
+                height="352" 
+                frameBorder="0" 
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy"
+                className="rounded-lg"
+              ></iframe>
             </div>
             
-            {/* Placeholder for second song */}
-            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
-              <div className="flex items-center justify-center h-24 md:h-32">
-                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
-              </div>
-              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
-                Spotify embed kommer här
-              </p>
+            {/* Second Album */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
+              <iframe 
+                src="https://open.spotify.com/embed/album/3qRtxATRxr9t3XRK5cL92z?utm_source=generator&theme=0" 
+                width="100%" 
+                height="352" 
+                frameBorder="0" 
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy"
+                className="rounded-lg"
+              ></iframe>
             </div>
             
-            {/* Placeholder for third song */}
-            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-6 md:p-8">
-              <div className="flex items-center justify-center h-24 md:h-32">
-                <Music className="w-8 h-8 md:w-12 md:h-12 text-warm-cream/40" />
-              </div>
-              <p className="text-center text-warm-cream/60 text-sm md:text-base mt-4">
-                Spotify embed kommer här
-              </p>
+            {/* Single Track */}
+            <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
+              <iframe 
+                src="https://open.spotify.com/embed/track/2uaTaPnkjZg6CUDdacdfra?utm_source=generator&theme=0" 
+                width="100%" 
+                height="152" 
+                frameBorder="0" 
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy"
+                className="rounded-lg"
+              ></iframe>
             </div>
           </div>
         </div>
