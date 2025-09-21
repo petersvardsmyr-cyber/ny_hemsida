@@ -148,11 +148,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Modern Diagonal Transition to Music Studio */}
-      <div className="relative h-24 md:h-32 overflow-hidden">
-        <div className="absolute inset-0 bg-deep-charcoal transform -skew-y-1 origin-top-left scale-110"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/40 to-transparent"></div>
-      </div>
+      {/* Clean Modern Transition to Music Studio */}
+      <div className="h-16 md:h-20 bg-gradient-to-b from-background to-deep-charcoal"></div>
 
       {/* Music Section */}
       <section id="music" className="py-12 md:py-20 px-4 md:px-12 bg-deep-charcoal">
