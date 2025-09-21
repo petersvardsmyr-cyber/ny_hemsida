@@ -10,6 +10,8 @@ import { toast } from 'sonner';
 import { Users, Send, Mail, FileText } from 'lucide-react';
 
 export function AdminNewsletter() {
+  console.log('AdminNewsletter component rendering');
+  
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
