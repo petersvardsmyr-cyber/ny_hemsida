@@ -149,7 +149,7 @@ const Home = () => {
       </section>
 
       {/* Gradient Transition to Music Studio */}
-      <div className="h-32 md:h-48 bg-gradient-to-b from-background via-background/80 to-deep-charcoal"></div>
+      <div className="h-64 md:h-80 -mt-8 md:-mt-12 bg-gradient-to-b from-transparent via-background/60 via-background/30 to-deep-charcoal"></div>
 
       {/* Music Section */}
       <section id="music" className="py-12 md:py-20 px-4 md:px-12 bg-deep-charcoal">
