@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { toast } from 'sonner';
 import { Users, Send, Mail, FileText } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function AdminNewsletter() {
   console.log('AdminNewsletter component rendering');
@@ -19,6 +21,8 @@ export function AdminNewsletter() {
   const [showSubscribers, setShowSubscribers] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState('');
+
+  const isMobile = useIsMobile();
 
   const loadSubscribers = async () => {
     try {
@@ -216,11 +220,21 @@ export function AdminNewsletter() {
 
             <div className="space-y-2">
               <Label htmlFor="content">Innehåll</Label>
-              <RichTextEditor
-                content={content}
-                onChange={setContent}
-                placeholder="Skriv innehållet för ditt nyhetsbrev här. Använd verktygsfältet för formatering."
-              />
+              {isMobile ? (
+                <Textarea
+                  id="content"
+                  placeholder="Skriv innehållet för ditt nyhetsbrev här."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="min-h-[240px]"
+                />
+              ) : (
+                <RichTextEditor
+                  content={content}
+                  onChange={setContent}
+                  placeholder="Skriv innehållet för ditt nyhetsbrev här. Använd verktygsfältet för formatering."
+                />
+              )}
             </div>
 
             <Button 
