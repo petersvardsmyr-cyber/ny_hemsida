@@ -362,21 +362,18 @@ export default function AdminPostEditor() {
                           className="w-full h-48 object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
+                            target.classList.add('hidden');
                             const errorDiv = target.nextElementSibling as HTMLDivElement;
-                            if (errorDiv) errorDiv.style.display = 'flex';
+                            if (errorDiv) errorDiv.classList.remove('hidden');
                           }}
                           onLoad={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.style.display = 'block';
+                            target.classList.remove('hidden');
                             const errorDiv = target.nextElementSibling as HTMLDivElement;
-                            if (errorDiv) errorDiv.style.display = 'none';
+                            if (errorDiv) errorDiv.classList.add('hidden');
                           }}
                         />
-                        <div 
-                          className="w-full h-48 hidden items-center justify-center text-muted-foreground bg-muted/50"
-                          style={{ display: 'none' }}
-                        >
+                        <div className="w-full h-48 hidden flex items-center justify-center text-muted-foreground bg-muted/50">
                           <div className="text-center">
                             <p className="text-sm">Kunde inte ladda bilden</p>
                             <p className="text-xs">Kontrollera att URL:en är korrekt</p>
