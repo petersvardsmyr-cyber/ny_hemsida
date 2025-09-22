@@ -148,9 +148,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Clean Modern Transition to Music Studio */}
-      <div className="h-16 md:h-20 bg-gradient-to-b from-background to-deep-charcoal"></div>
-
       {/* Music Section */}
       <section id="music" className="py-12 md:py-20 px-4 md:px-12 bg-deep-charcoal">
         <div className="max-w-4xl w-full">
