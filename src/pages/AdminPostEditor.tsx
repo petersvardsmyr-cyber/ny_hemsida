@@ -352,6 +352,39 @@ export default function AdminPostEditor() {
                     onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
                     placeholder="https://exempel.se/bild.jpg"
                   />
+                  {formData.featured_image_url && (
+                    <div className="mt-3">
+                      <Label className="text-sm text-muted-foreground">Förhandsvisning</Label>
+                      <div className="mt-2 border rounded-lg overflow-hidden bg-muted/30">
+                        <img
+                          src={formData.featured_image_url}
+                          alt="Förhandsvisning av bild"
+                          className="w-full h-48 object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const errorDiv = target.nextElementSibling as HTMLDivElement;
+                            if (errorDiv) errorDiv.style.display = 'flex';
+                          }}
+                          onLoad={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'block';
+                            const errorDiv = target.nextElementSibling as HTMLDivElement;
+                            if (errorDiv) errorDiv.style.display = 'none';
+                          }}
+                        />
+                        <div 
+                          className="w-full h-48 hidden items-center justify-center text-muted-foreground bg-muted/50"
+                          style={{ display: 'none' }}
+                        >
+                          <div className="text-center">
+                            <p className="text-sm">Kunde inte ladda bilden</p>
+                            <p className="text-xs">Kontrollera att URL:en är korrekt</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
