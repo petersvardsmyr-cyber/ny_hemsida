@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, Eye, EyeOff, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
@@ -22,12 +23,20 @@ interface BlogPost {
 }
 
 type SortOption = 'newest' | 'oldest' | 'recent' | 'title-asc' | 'title-desc';
+type FilterOption = 'all' | 'published' | 'drafts';
 
 export default function AdminBlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('recent');
+  const [filter, setFilter] = useState<FilterOption>('all');
   const { toast } = useToast();
+
+  const filteredPosts = posts.filter(post => {
+    if (filter === 'published') return post.is_published;
+    if (filter === 'drafts') return !post.is_published;
+    return true; // 'all'
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -165,20 +174,34 @@ export default function AdminBlogPosts() {
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {posts.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-muted-foreground mb-4">Inga blogginlägg än.</p>
-                <Link to="/admin/posts/new">
-                  <Button>Skapa ditt första inlägg</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          posts.map((post) => (
+      <Tabs value={filter} onValueChange={(value: FilterOption) => setFilter(value)}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">Alla ({posts.length})</TabsTrigger>
+          <TabsTrigger value="published">Publicerade ({posts.filter(p => p.is_published).length})</TabsTrigger>
+          <TabsTrigger value="drafts">Utkast ({posts.filter(p => !p.is_published).length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={filter} className="mt-6">
+          <div className="grid gap-4">
+            {filteredPosts.length === 0 ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-muted-foreground mb-4">
+                      {filter === 'drafts' ? 'Inga utkast än.' : 
+                       filter === 'published' ? 'Inga publicerade inlägg än.' : 
+                       'Inga blogginlägg än.'}
+                    </p>
+                    <Link to="/admin/posts/new">
+                      <Button>
+                        {filter === 'drafts' ? 'Skapa ditt första utkast' : 'Skapa ditt första inlägg'}
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredPosts.map((post) => (
             <Card key={post.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -255,9 +278,11 @@ export default function AdminBlogPosts() {
                 </div>
               </CardContent>
             </Card>
-          ))
-        )}
-      </div>
+              ))
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

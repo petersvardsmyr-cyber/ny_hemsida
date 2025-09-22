@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import { Save, ArrowLeft, X } from 'lucide-react';
+import { Save, ArrowLeft, X, FileText } from 'lucide-react';
 
 interface BlogPostData {
   title: string;
@@ -160,6 +160,55 @@ export default function AdminPostEditor() {
       toast({
         title: "Fel vid sparande",
         description: error.message || "Kunde inte spara inlägget.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveAsDraft = async () => {
+    setLoading(true);
+
+    try {
+      const draftData = {
+        ...formData,
+        is_published: false,
+      };
+
+      if (isEditing && id) {
+        const { error } = await supabase
+          .from('blog_posts')
+          .update({
+            ...draftData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Utkast sparat",
+          description: "Inlägget har sparats som utkast.",
+        });
+      } else {
+        const { error } = await supabase
+          .from('blog_posts')
+          .insert([draftData]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Utkast sparat",
+          description: "Inlägget har sparats som utkast.",
+        });
+      }
+
+      navigate('/admin');
+    } catch (error: any) {
+      toast({
+        title: "Fel vid sparande",
+        description: error.message || "Kunde inte spara utkastet.",
         variant: "destructive",
       });
     } finally {
@@ -336,20 +385,33 @@ export default function AdminPostEditor() {
               </CardContent>
             </Card>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || !formData.title || !formData.content}
-            >
-              {loading ? (
-                'Sparar...'
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  {isEditing ? 'Uppdatera inlägg' : 'Skapa inlägg'}
-                </>
-              )}
-            </Button>
+            <div className="space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleSaveAsDraft}
+                disabled={loading || !formData.title || !formData.content}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Spara som utkast
+              </Button>
+              
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || !formData.title || !formData.content}
+              >
+                {loading ? (
+                  'Sparar...'
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    {isEditing ? 'Uppdatera inlägg' : 'Skapa inlägg'}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </form>
