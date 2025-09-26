@@ -89,8 +89,8 @@ export function AdminNewsletter() {
   const sendNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!subject.trim() || !content.trim()) {
-      toast.error('Både ämne och innehåll krävs');
+    if (!selectedTemplate && (!subject.trim() || !content.trim())) {
+      toast.error('Både ämne och innehåll krävs (eller välj en mall)');
       return;
     }
 
@@ -214,7 +214,7 @@ export function AdminNewsletter() {
                 placeholder="Ämnesrad för nyhetsbrevet"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                required
+                required={!selectedTemplate}
               />
             </div>
 
@@ -227,6 +227,7 @@ export function AdminNewsletter() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   className="min-h-[240px]"
+                  required={!selectedTemplate}
                 />
               ) : (
                 <RichTextEditor
