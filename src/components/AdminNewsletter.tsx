@@ -86,9 +86,9 @@ export function AdminNewsletter() {
     }
   };
 
-  const sendNewsletter = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const sendNewsletter = async () => {
+    console.log('[Newsletter] Send start', { selectedTemplate, hasSubject: !!subject.trim(), hasContent: !!content.trim() });
+
     if (!selectedTemplate && (!subject.trim() || !content.trim())) {
       toast.error('Både ämne och innehåll krävs (eller välj en mall)');
       return;
@@ -97,21 +97,18 @@ export function AdminNewsletter() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('newsletter', {
-        body: selectedTemplate ? {
-          template_id: selectedTemplate,
-          from: "Peter Svärdsmyr <hej@petersvardsmyr.se>"
-        } : {
-          subject: subject.trim(),
-          content: content.trim(),
-          from: "Peter Svärdsmyr <hej@petersvardsmyr.se>"
-        }
-      });
+      const payload = selectedTemplate
+        ? { template_id: selectedTemplate, from: "Peter Svärdsmyr <hej@petersvardsmyr.se>" }
+        : { subject: subject.trim(), content: content.trim(), from: "Peter Svärdsmyr <hej@petersvardsmyr.se>" };
+
+      const { data, error } = await supabase.functions.invoke('newsletter', { body: payload });
 
       if (error) throw error;
 
+      console.log('[Newsletter] Send response', data);
+
       toast.success('Nyhetsbrev skickat!', {
-        description: data?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
+        description: (data as any)?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
       });
 
       setSubject('');
@@ -120,7 +117,7 @@ export function AdminNewsletter() {
     } catch (error: any) {
       console.error('Newsletter send error:', error);
       toast.error('Kunde inte skicka nyhetsbrev', {
-        description: error.message
+        description: error?.message || 'Ett oväntat fel uppstod'
       });
     } finally {
       setIsLoading(false);
@@ -185,7 +182,7 @@ export function AdminNewsletter() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={sendNewsletter} className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); sendNewsletter(); }} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="template-select">Välj mall (valfritt)</Label>
               <Select value={selectedTemplate} onValueChange={handleTemplateSelect}>
@@ -239,7 +236,8 @@ export function AdminNewsletter() {
             </div>
 
             <Button 
-              type="submit" 
+              type="button"
+              onClick={sendNewsletter}
               disabled={isLoading}
               className="w-full"
             >
