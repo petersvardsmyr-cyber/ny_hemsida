@@ -61,7 +61,15 @@ export function AdminNewsletter() {
   }, []);
 
   const handleTemplateSelect = async (templateId: string) => {
+    if (templateId === 'custom') {
+      setSelectedTemplate('');
+      setSubject('');
+      setContent('');
+      return;
+    }
+
     setSelectedTemplate(templateId);
+
     if (!templateId) {
       setSubject('');
       setContent('');
@@ -190,7 +198,7 @@ export function AdminNewsletter() {
                   <SelectValue placeholder="Välj en befintlig mall eller skriv egen" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Skriv egen (tom mall)</SelectItem>
+                  <SelectItem value="custom">Skriv egen (tom mall)</SelectItem>
                   {templates.map((template) => (
                     <SelectItem key={template.id} value={template.id}>
                       <div className="flex items-center gap-2">
