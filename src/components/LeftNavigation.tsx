@@ -105,7 +105,7 @@ const LeftNavigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex fixed left-0 top-0 h-full w-48 bg-background p-8 z-50 flex-col justify-center">
+      <nav className="hidden md:flex fixed left-0 top-0 h-full w-48 bg-background p-8 z-40 flex-col justify-center">
         <ul className="space-y-6">
           {navItems.map((item) => (
             <li key={item.id}>
@@ -131,9 +131,12 @@ const LeftNavigation = () => {
       <div className="md:hidden">
         {/* Hamburger Button */}
         <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="fixed top-4 right-4 z-50 p-3 bg-card border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-          aria-label="Öppna meny"
+          onClick={() => {
+            console.log('Hamburger clicked, current state:', isMobileMenuOpen);
+            setIsMobileMenuOpen(!isMobileMenuOpen);
+          }}
+          className="fixed top-4 right-4 z-[100] p-3 bg-card border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 pointer-events-auto"
+          aria-label={isMobileMenuOpen ? "Stäng meny" : "Öppna meny"}
         >
           {isMobileMenuOpen ? (
             <X className="w-5 h-5 text-foreground" />
@@ -145,13 +148,13 @@ const LeftNavigation = () => {
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
           <div 
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[60]"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
 
         {/* Mobile Menu */}
-        <nav className={`fixed top-0 right-0 h-full w-64 bg-card border-l border-border z-40 transform transition-transform duration-300 ease-in-out ${
+        <nav className={`fixed top-0 right-0 h-full w-64 bg-card border-l border-border z-[70] transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <div className="p-6 pt-20">
