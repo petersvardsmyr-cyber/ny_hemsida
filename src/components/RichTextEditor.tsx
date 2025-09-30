@@ -59,9 +59,18 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
 
   const addImageFromUrl = () => {
     if (imageUrl) {
-      editor.chain().focus().setImage({ src: imageUrl }).run();
-      setImageUrl('');
-      setShowImageDialog(false);
+      // Show preview by creating a temporary image element
+      const img = document.createElement('img');
+      img.onload = () => {
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+        setImageUrl('');
+        setShowImageDialog(false);
+        toast.success(`Bild tillagd! (${img.width}x${img.height}px)`);
+      };
+      img.onerror = () => {
+        toast.error('Kunde inte ladda bilden. Kontrollera URL:en.');
+      };
+      img.src = imageUrl;
     }
   };
 
@@ -224,41 +233,58 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       {/* Image URL Dialog */}
       {showImageDialog && (
         <div className="border-b border-input p-4 bg-muted/50">
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Bild-URL</label>
-              <Input
-                type="url"
-                placeholder="https://exempel.se/bild.jpg"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addImageFromUrl();
-                  }
+          <div className="space-y-4">
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2 block">Bild-URL</label>
+                <Input
+                  type="url"
+                  placeholder="https://exempel.se/bild.jpg"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addImageFromUrl();
+                    }
+                  }}
+                />
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                onClick={addImageFromUrl}
+                disabled={!imageUrl}
+              >
+                Lägg till
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setShowImageDialog(false);
+                  setImageUrl('');
                 }}
-              />
+              >
+                Avbryt
+              </Button>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              onClick={addImageFromUrl}
-              disabled={!imageUrl}
-            >
-              Lägg till
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setShowImageDialog(false);
-                setImageUrl('');
-              }}
-            >
-              Avbryt
-            </Button>
+            
+            {/* Image Preview */}
+            {imageUrl && (
+              <div className="border border-input rounded-md p-2 bg-background">
+                <p className="text-xs text-muted-foreground mb-2">Förhandsgranskning:</p>
+                <img 
+                  src={imageUrl} 
+                  alt="Förhandsgranskning" 
+                  className="max-w-full h-auto max-h-48 rounded"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

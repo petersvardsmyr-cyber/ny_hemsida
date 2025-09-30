@@ -232,12 +232,23 @@ export default function AdminLayout() {
                   <div className="ml-6 mt-1 space-y-1">
                     <Link to="/admin/newsletter" onClick={() => setSidebarOpen(false)}>
                       <Button
-                        variant={isActive('/admin/newsletter') ? 'secondary' : 'ghost'}
+                        variant={location.pathname === '/admin/newsletter' ? 'secondary' : 'ghost'}
                         className="w-full justify-start"
                         size="sm"
                       >
                         <Mail className="mr-2 h-4 w-4" />
                         Skicka nyhetsbrev
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/newsletter/sent" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/newsletter/sent') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <List className="mr-2 h-4 w-4" />
+                        Skickade nyhetsbrev
                       </Button>
                     </Link>
                   </div>

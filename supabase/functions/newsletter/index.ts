@@ -157,6 +157,24 @@ const handler = async (req: Request): Promise<Response> => {
       console.error("Failed sends:", failedResults);
     }
 
+    // Save to sent_newsletters table
+    const authHeader = req.headers.get('authorization');
+    const { data: { user } } = await supabase.auth.getUser(authHeader?.split(' ')[1] || '');
+    
+    const { error: saveError } = await supabase
+      .from('sent_newsletters')
+      .insert({
+        subject: emailSubject,
+        content: emailContent,
+        template_id: template_id || null,
+        recipient_count: successful,
+        sent_by: user?.email || 'system'
+      });
+
+    if (saveError) {
+      console.error("Error saving newsletter history:", saveError);
+    }
+
     return new Response(
       JSON.stringify({ 
         message: `Newsletter sent to ${successful} subscribers`,
