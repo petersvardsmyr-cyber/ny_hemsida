@@ -11,10 +11,10 @@ export default function AdminLayout() {
   const location = useLocation();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [blogMenuOpen, setBlogMenuOpen] = useState(true);
-  const [shopMenuOpen, setShopMenuOpen] = useState(true);
-  const [newsletterMenuOpen, setNewsletterMenuOpen] = useState(true);
-  const [emailMenuOpen, setEmailMenuOpen] = useState(true);
+  const [blogMenuOpen, setBlogMenuOpen] = useState(false);
+  const [shopMenuOpen, setShopMenuOpen] = useState(false);
+  const [newsletterMenuOpen, setNewsletterMenuOpen] = useState(false);
+  const [emailMenuOpen, setEmailMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
