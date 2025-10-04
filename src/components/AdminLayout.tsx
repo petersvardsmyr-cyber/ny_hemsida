@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight, Bell, Settings } from 'lucide-react';
+import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight, Bell, Settings, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout() {
@@ -249,6 +249,17 @@ export default function AdminLayout() {
                       >
                         <List className="mr-2 h-4 w-4" />
                         Skickade nyhetsbrev
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/newsletter/subscribers" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/newsletter/subscribers') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Users className="mr-2 h-4 w-4" />
+                        Prenumeranter
                       </Button>
                     </Link>
                   </div>

@@ -19,6 +19,7 @@ import AdminBlogPosts from "./pages/AdminBlogPosts";
 import AdminProductsPage from "./pages/AdminProductsPage";
 import AdminNewsletterPage from "./pages/AdminNewsletterPage";
 import AdminSentNewslettersPage from "./pages/AdminSentNewslettersPage";
+import AdminNewsletterSubscribersPage from "./pages/AdminNewsletterSubscribersPage";
 import AdminOrders from "./pages/AdminOrders";
 import AdminEmailTemplatesPage from "./pages/AdminEmailTemplatesPage";
 import AdminOrderNotifications from "./pages/AdminOrderNotifications";
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="orders" element={<AdminOrders />} />
               <Route path="newsletter" element={<AdminNewsletterPage />} />
               <Route path="newsletter/sent" element={<AdminSentNewslettersPage />} />
+              <Route path="newsletter/subscribers" element={<AdminNewsletterSubscribersPage />} />
               <Route path="order-notifications" element={<AdminOrderNotifications />} />
               <Route path="newsletter-notifications" element={<AdminNewsletterNotifications />} />
               <Route path="email-settings" element={<AdminEmailSettings />} />
