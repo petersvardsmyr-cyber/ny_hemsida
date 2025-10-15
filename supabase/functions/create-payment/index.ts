@@ -47,7 +47,7 @@ serve(async (req) => {
     let orderData: OrderRequest;
     try {
       orderData = await req.json();
-      console.log("Order data:", JSON.stringify(orderData, null, 2));
+      console.log("Processing order with", orderData.items?.length || 0, "items");
       
       // Validate required fields
       if (!orderData.items || orderData.items.length === 0) {
@@ -166,7 +166,7 @@ serve(async (req) => {
     // Handle newsletter subscription if opted in
     if (orderData.newsletter_optin) {
       try {
-        console.log('Adding customer to newsletter:', orderData.email || 'guest@example.com');
+        console.log('Adding customer to newsletter');
         const { error: newsletterError } = await supabaseClient
           .from('newsletter_subscribers')
           .insert({

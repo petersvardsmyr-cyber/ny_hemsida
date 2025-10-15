@@ -59,7 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Order not found');
     }
 
-    console.log('Order found:', order.id, 'Email:', order.email);
+    console.log('Order found, processing shipment');
 
     // Update order status to shipped
     const { error: updateError } = await supabase
@@ -154,7 +154,7 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `);
 
-    console.log('Sending shipping confirmation email to:', order.email);
+    console.log('Sending shipping confirmation email');
 
     // Send shipping confirmation email to customer
     const emailResult = await resend.emails.send({

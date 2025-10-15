@@ -60,7 +60,7 @@ serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log("Checkout session completed:", session.id);
+        console.log("Checkout session completed");
 
         // Update order status to completed
         const { error: updateError } = await supabaseClient
@@ -114,7 +114,7 @@ serve(async (req) => {
 
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log("Payment failed:", paymentIntent.id);
+        console.log("Payment failed");
         
         // Update order status to failed if needed
         const { error: updateError } = await supabaseClient

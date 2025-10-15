@@ -83,7 +83,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Newsletter requested by admin user: ${user.email}`);
+    console.log('Newsletter requested by admin user');
 
     // Initialize Supabase client with service role for database operations
     const supabase = createClient(

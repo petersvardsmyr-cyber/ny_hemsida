@@ -280,17 +280,17 @@ const handler = async (req: Request): Promise<Response> => {
       html: customerEmailHtml,
     });
 
-    console.log("Customer email sent:", customerEmailResult);
+    console.log("Customer email sent successfully");
 
     // Send admin notification email
     const adminEmailResult = await resend.emails.send({
       from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: ["hej@petersvardsmyr.se"],
-      subject: `Ny beställning ${orderNumber} från ${customer_email}`,
+      subject: `Ny beställning ${orderNumber}`,
       html: adminEmailHtml,
     });
 
-    console.log("Admin email sent:", adminEmailResult);
+    console.log("Admin notification sent successfully");
 
     return new Response(
       JSON.stringify({ 
