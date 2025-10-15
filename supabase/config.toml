@@ -73,7 +73,7 @@ score_threshold = 3
 hibp_enabled = true
 
 [functions.newsletter]
-verify_jwt = false
+verify_jwt = true
 
 [functions.ship-order]
 verify_jwt = false
