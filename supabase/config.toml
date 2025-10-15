@@ -76,7 +76,7 @@ hibp_enabled = true
 verify_jwt = true
 
 [functions.ship-order]
-verify_jwt = false
+verify_jwt = true
 
 [functions.stripe-webhook]
 verify_jwt = false
@@ -88,4 +88,4 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.stripe-health-check]
-verify_jwt = false
+verify_jwt = true

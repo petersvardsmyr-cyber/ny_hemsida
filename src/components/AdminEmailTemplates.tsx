@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Save } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface EmailTemplate {
   id: string;
@@ -258,7 +259,7 @@ export function AdminEmailTemplates() {
             <CardContent>
               <div 
                 className="prose prose-sm max-w-none text-foreground [&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_p]:text-foreground [&_strong]:text-foreground [&_em]:text-foreground" 
-                dangerouslySetInnerHTML={{ __html: template.content }} 
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(template.content) }} 
               />
             </CardContent>
           </Card>

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { Mail, Eye, Calendar, Users } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface SentNewsletter {
   id: string;
@@ -119,7 +120,7 @@ export function AdminSentNewsletters() {
                       <ScrollArea className="h-[60vh] w-full rounded-md border p-4">
                         <div 
                           className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: newsletter.content }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(newsletter.content) }}
                         />
                       </ScrollArea>
                     </DialogContent>

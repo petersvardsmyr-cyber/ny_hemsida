@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface BlogPost {
   id: string;
@@ -123,7 +124,7 @@ const BlogPost = () => {
     const processedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
     return (
-      <p key={index} className="text-lg leading-relaxed mb-6 text-foreground" dangerouslySetInnerHTML={{ __html: processedLine }} />
+      <p key={index} className="text-lg leading-relaxed mb-6 text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(processedLine) }} />
     );
   });
 
