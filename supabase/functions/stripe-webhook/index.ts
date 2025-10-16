@@ -80,11 +80,10 @@ serve(async (req) => {
 
         // Trigger order confirmation emails now that payment is completed
         try {
-          const functionsClient = createClient(supabaseUrl, supabaseAnon);
           const newsletterOptin = (session.metadata?.newsletter_optin === 'true');
           const email = session.customer_details?.email || session.customer_email || '';
 
-          const { error: fnError } = await functionsClient.functions.invoke('send-order-confirmation', {
+          const { error: fnError } = await supabaseClient.functions.invoke('send-order-confirmation', {
             body: {
               session_id: session.id,
               customer_email: email,
