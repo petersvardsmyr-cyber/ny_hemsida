@@ -8,6 +8,7 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Send, Eye, Users } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface EmailTemplate {
   id: string;
@@ -310,7 +311,7 @@ export default function AdminNewsletterNotifications() {
                       <strong>Innehåll:</strong>
                       <div 
                         className="mt-1 p-3 bg-muted rounded-md prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: template.content }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(template.content) }}
                       />
                     </div>
                   </CardContent>
