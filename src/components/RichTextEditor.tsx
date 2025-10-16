@@ -2,9 +2,12 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import TextAlign from '@tiptap/extension-text-align';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon, Heading1, Heading2, Heading3, Upload } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon, Heading1, Heading2, Heading3, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify, Settings } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -15,12 +18,25 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ content, onChange, placeholder = "Börja skriva..." }: RichTextEditorProps) {
+  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [showImageSettings, setShowImageSettings] = useState(false);
+  const [imageWidth, setImageWidth] = useState('100');
+  const [imageAlign, setImageAlign] = useState<'left' | 'center' | 'right'>('center');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        alignments: ['left', 'center', 'right', 'justify'],
+      }),
       Image.configure({
+        inline: true,
+        allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg',
+          class: 'rounded-lg',
         },
       }),
       Link.configure({
@@ -53,25 +69,32 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
     return null;
   }
 
-  const [showImageDialog, setShowImageDialog] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const addImageFromUrl = () => {
     if (imageUrl) {
-      // Show preview by creating a temporary image element
       const img = document.createElement('img');
       img.onload = () => {
-        editor.chain().focus().setImage({ src: imageUrl }).run();
-        setImageUrl('');
-        setShowImageDialog(false);
-        toast.success(`Bild tillagd! (${img.width}x${img.height}px)`);
+        insertImageWithSettings(imageUrl);
       };
       img.onerror = () => {
         toast.error('Kunde inte ladda bilden. Kontrollera URL:en.');
       };
       img.src = imageUrl;
     }
+  };
+
+  const insertImageWithSettings = (src: string) => {
+    const widthPercent = parseInt(imageWidth);
+    const alignStyle = imageAlign === 'center' ? 'display: block; margin-left: auto; margin-right: auto;' : 
+                       imageAlign === 'right' ? 'display: block; margin-left: auto;' : 
+                       'display: block;';
+    
+    // Insert as HTML to allow custom styling
+    const imageHtml = `<img src="${src}" style="width: ${widthPercent}%; height: auto; ${alignStyle} border-radius: 0.5rem;" alt="Bild" />`;
+    editor.chain().focus().insertContent(imageHtml).run();
+    
+    setImageUrl('');
+    setShowImageDialog(false);
+    toast.success('Bild tillagd!');
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,8 +108,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       const reader = new FileReader();
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string;
-        editor.chain().focus().setImage({ src: dataUrl }).run();
-        toast.success('Bild tillagd!');
+        insertImageWithSettings(dataUrl);
       };
       reader.readAsDataURL(file);
     }
@@ -180,6 +202,43 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
           type="button"
           variant="ghost"
           size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={editor.isActive({ textAlign: 'left' }) ? 'bg-muted' : ''}
+        >
+          <AlignLeft className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={editor.isActive({ textAlign: 'center' }) ? 'bg-muted' : ''}
+        >
+          <AlignCenter className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={editor.isActive({ textAlign: 'right' }) ? 'bg-muted' : ''}
+        >
+          <AlignRight className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          className={editor.isActive({ textAlign: 'justify' }) ? 'bg-muted' : ''}
+        >
+          <AlignJustify className="h-4 w-4" />
+        </Button>
+        <div className="w-px h-6 bg-border mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setShowImageDialog(!showImageDialog)}
           className={showImageDialog ? 'bg-muted' : ''}
         >
@@ -236,8 +295,9 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
           <div className="space-y-4">
             <div className="flex gap-2 items-end">
               <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block">Bild-URL</label>
+                <Label htmlFor="image-url" className="text-sm font-medium mb-2 block">Bild-URL</Label>
                 <Input
+                  id="image-url"
                   type="url"
                   placeholder="https://exempel.se/bild.jpg"
                   value={imageUrl}
@@ -270,19 +330,55 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
                 Avbryt
               </Button>
             </div>
+
+            {/* Image Settings */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="image-width" className="text-sm font-medium mb-2 block">Bredd (%)</Label>
+                <Select value={imageWidth} onValueChange={setImageWidth}>
+                  <SelectTrigger id="image-width">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="25">25%</SelectItem>
+                    <SelectItem value="33">33%</SelectItem>
+                    <SelectItem value="50">50%</SelectItem>
+                    <SelectItem value="66">66%</SelectItem>
+                    <SelectItem value="75">75%</SelectItem>
+                    <SelectItem value="100">100%</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="image-align" className="text-sm font-medium mb-2 block">Justering</Label>
+                <Select value={imageAlign} onValueChange={(value: 'left' | 'center' | 'right') => setImageAlign(value)}>
+                  <SelectTrigger id="image-align">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="left">Vänster</SelectItem>
+                    <SelectItem value="center">Centrerad</SelectItem>
+                    <SelectItem value="right">Höger</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             
             {/* Image Preview */}
             {imageUrl && (
               <div className="border border-input rounded-md p-2 bg-background">
                 <p className="text-xs text-muted-foreground mb-2">Förhandsgranskning:</p>
-                <img 
-                  src={imageUrl} 
-                  alt="Förhandsgranskning" 
-                  className="max-w-full h-auto max-h-48 rounded"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+                <div className={imageAlign === 'center' ? 'flex justify-center' : imageAlign === 'right' ? 'flex justify-end' : ''}>
+                  <img 
+                    src={imageUrl} 
+                    alt="Förhandsgranskning" 
+                    style={{ width: `${imageWidth}%` }}
+                    className="h-auto max-h-48 rounded"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
               </div>
             )}
           </div>
