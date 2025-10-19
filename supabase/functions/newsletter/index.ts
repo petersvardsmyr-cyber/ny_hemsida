@@ -178,17 +178,33 @@ const handler = async (req: Request): Promise<Response> => {
       resend.emails.send({
         from,
         to: [subscriber.email],
-         subject: emailSubject,
+        subject: emailSubject,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             ${subscriber.name ? `<p>Hej ${subscriber.name}!</p>` : '<p>Hej!</p>'}
             ${emailContent}
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <p style="font-size: 12px; color: #666;">
-              Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
-              <br>
-              Om du inte längre vill få våra e-postmeddelanden, kontakta oss för att avsluta prenumerationen.
-            </p>
+            <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
+              <div style="text-align: center; margin-bottom: 15px;">
+                <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                  petersvardsmyr.se
+                </a>
+              </div>
+              <div style="text-align: center; margin-bottom: 15px;">
+                <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
+                  hej@petersvardsmyr.se
+                </a>
+              </div>
+              <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+              <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
+                Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
+              </p>
+              <p style="font-size: 12px; text-align: center; margin: 10px 0;">
+                <a href="mailto:hej@petersvardsmyr.se?subject=Avregistrera%20nyhetsbrev&body=Jag%20vill%20avregistrera%20min%20e-postadress%20${encodeURIComponent(subscriber.email)}%20från%20nyhetsbrevet." style="color: #666; text-decoration: underline;">
+                  Avregistrera dig här
+                </a>
+              </p>
+            </footer>
           </div>
         `,
       })
