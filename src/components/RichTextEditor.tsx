@@ -6,8 +6,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon, Heading1, Heading2, Heading3, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify, Settings } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon, Heading1, Heading2, Heading3, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -17,12 +16,136 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
+const ResizableImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: null,
+        renderHTML: attributes => {
+          if (!attributes.width) {
+            return {};
+          }
+          return { width: attributes.width };
+        },
+      },
+      height: {
+        default: null,
+        renderHTML: attributes => {
+          if (!attributes.height) {
+            return {};
+          }
+          return { height: attributes.height };
+        },
+      },
+    };
+  },
+
+  addNodeView() {
+    return ({ node, editor, getPos }) => {
+      const container = document.createElement('div');
+      container.className = 'image-resizer-container';
+      container.style.cssText = 'position: relative; display: inline-block; max-width: 100%; margin: 1rem 0;';
+
+      const img = document.createElement('img');
+      img.src = node.attrs.src;
+      img.alt = node.attrs.alt || '';
+      img.className = 'rounded-lg';
+      img.style.cssText = 'display: block; max-width: 100%; height: auto; cursor: pointer;';
+      
+      if (node.attrs.width) {
+        img.style.width = `${node.attrs.width}px`;
+      }
+
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = 'resize-handle';
+      resizeHandle.style.cssText = `
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background: hsl(var(--primary));
+        border: 2px solid white;
+        border-radius: 50%;
+        cursor: nwse-resize;
+        display: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      `;
+
+      container.appendChild(img);
+      container.appendChild(resizeHandle);
+
+      let isResizing = false;
+      let startX = 0;
+      let startWidth = 0;
+
+      container.addEventListener('mouseenter', () => {
+        if (editor.isEditable) {
+          resizeHandle.style.display = 'block';
+        }
+      });
+
+      container.addEventListener('mouseleave', () => {
+        if (!isResizing) {
+          resizeHandle.style.display = 'none';
+        }
+      });
+
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = img.offsetWidth;
+
+        const handleMouseMove = (e: MouseEvent) => {
+          if (!isResizing) return;
+          const deltaX = e.clientX - startX;
+          const newWidth = Math.max(100, Math.min(startWidth + deltaX, container.parentElement?.offsetWidth || 800));
+          img.style.width = `${newWidth}px`;
+        };
+
+        const handleMouseUp = () => {
+          if (isResizing) {
+            isResizing = false;
+            resizeHandle.style.display = 'none';
+            
+            const pos = getPos();
+            if (typeof pos === 'number') {
+              editor.commands.updateAttributes('image', {
+                width: img.offsetWidth,
+              });
+            }
+          }
+          document.removeEventListener('mousemove', handleMouseMove);
+          document.removeEventListener('mouseup', handleMouseUp);
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      });
+
+      return {
+        dom: container,
+        update: (updatedNode) => {
+          if (updatedNode.type.name !== 'image') {
+            return false;
+          }
+          img.src = updatedNode.attrs.src;
+          if (updatedNode.attrs.width) {
+            img.style.width = `${updatedNode.attrs.width}px`;
+          }
+          return true;
+        },
+      };
+    };
+  },
+});
+
 export function RichTextEditor({ content, onChange, placeholder = "Börja skriva..." }: RichTextEditorProps) {
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
-  const [showImageSettings, setShowImageSettings] = useState(false);
-  const [imageWidth, setImageWidth] = useState('100');
-  const [imageAlign, setImageAlign] = useState<'left' | 'center' | 'right'>('center');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -32,8 +155,8 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
         types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right', 'justify'],
       }),
-      Image.configure({
-        inline: true,
+      ResizableImage.configure({
+        inline: false,
         allowBase64: true,
         HTMLAttributes: {
           class: 'rounded-lg',
@@ -73,28 +196,16 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
     if (imageUrl) {
       const img = document.createElement('img');
       img.onload = () => {
-        insertImageWithSettings(imageUrl);
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+        setImageUrl('');
+        setShowImageDialog(false);
+        toast.success('Bild tillagd! Dra i den blå cirkeln i nedre högra hörnet för att ändra storlek.');
       };
       img.onerror = () => {
         toast.error('Kunde inte ladda bilden. Kontrollera URL:en.');
       };
       img.src = imageUrl;
     }
-  };
-
-  const insertImageWithSettings = (src: string) => {
-    const widthPercent = parseInt(imageWidth);
-    const alignStyle = imageAlign === 'center' ? 'display: block; margin-left: auto; margin-right: auto;' : 
-                       imageAlign === 'right' ? 'display: block; margin-left: auto;' : 
-                       'display: block;';
-    
-    // Insert as HTML to allow custom styling
-    const imageHtml = `<img src="${src}" style="width: ${widthPercent}%; height: auto; ${alignStyle} border-radius: 0.5rem;" alt="Bild" />`;
-    editor.chain().focus().insertContent(imageHtml).run();
-    
-    setImageUrl('');
-    setShowImageDialog(false);
-    toast.success('Bild tillagd!');
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +219,8 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       const reader = new FileReader();
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string;
-        insertImageWithSettings(dataUrl);
+        editor.chain().focus().setImage({ src: dataUrl }).run();
+        toast.success('Bild tillagd! Dra i den blå cirkeln i nedre högra hörnet för att ändra storlek.');
       };
       reader.readAsDataURL(file);
     }
@@ -292,95 +404,42 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       {/* Image URL Dialog */}
       {showImageDialog && (
         <div className="border-b border-input p-4 bg-muted/50">
-          <div className="space-y-4">
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <Label htmlFor="image-url" className="text-sm font-medium mb-2 block">Bild-URL</Label>
-                <Input
-                  id="image-url"
-                  type="url"
-                  placeholder="https://exempel.se/bild.jpg"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addImageFromUrl();
-                    }
-                  }}
-                />
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                onClick={addImageFromUrl}
-                disabled={!imageUrl}
-              >
-                Lägg till
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => {
-                  setShowImageDialog(false);
-                  setImageUrl('');
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <Label htmlFor="image-url" className="text-sm font-medium mb-2 block">Bild-URL</Label>
+              <Input
+                id="image-url"
+                type="url"
+                placeholder="https://exempel.se/bild.jpg"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addImageFromUrl();
+                  }
                 }}
-              >
-                Avbryt
-              </Button>
+              />
             </div>
-
-            {/* Image Settings */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="image-width" className="text-sm font-medium mb-2 block">Bredd (%)</Label>
-                <Select value={imageWidth} onValueChange={setImageWidth}>
-                  <SelectTrigger id="image-width">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="25">25%</SelectItem>
-                    <SelectItem value="33">33%</SelectItem>
-                    <SelectItem value="50">50%</SelectItem>
-                    <SelectItem value="66">66%</SelectItem>
-                    <SelectItem value="75">75%</SelectItem>
-                    <SelectItem value="100">100%</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="image-align" className="text-sm font-medium mb-2 block">Justering</Label>
-                <Select value={imageAlign} onValueChange={(value: 'left' | 'center' | 'right') => setImageAlign(value)}>
-                  <SelectTrigger id="image-align">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="left">Vänster</SelectItem>
-                    <SelectItem value="center">Centrerad</SelectItem>
-                    <SelectItem value="right">Höger</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            {/* Image Preview */}
-            {imageUrl && (
-              <div className="border border-input rounded-md p-2 bg-background">
-                <p className="text-xs text-muted-foreground mb-2">Förhandsgranskning:</p>
-                <div className={imageAlign === 'center' ? 'flex justify-center' : imageAlign === 'right' ? 'flex justify-end' : ''}>
-                  <img 
-                    src={imageUrl} 
-                    alt="Förhandsgranskning" 
-                    style={{ width: `${imageWidth}%` }}
-                    className="h-auto max-h-48 rounded"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+            <Button
+              type="button"
+              size="sm"
+              onClick={addImageFromUrl}
+              disabled={!imageUrl}
+            >
+              Lägg till
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setShowImageDialog(false);
+                setImageUrl('');
+              }}
+            >
+              Avbryt
+            </Button>
           </div>
         </div>
       )}
