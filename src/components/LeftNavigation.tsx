@@ -45,6 +45,12 @@ const LeftNavigation = () => {
     { id: 'media', label: 'Media', type: 'scroll' }
   ];
 
+  const pageLinks = [
+    { path: '/blogg', label: 'Blogg' },
+    { path: '/butik', label: 'Butik' },
+    { path: '/nyhetsbrev', label: 'Nyhetsbrev' }
+  ];
+
   useEffect(() => {
     if (location.pathname !== '/') return;
 
@@ -124,6 +130,28 @@ const LeftNavigation = () => {
               </button>
             </li>
           ))}
+          
+          <li className="pt-4 mt-4 border-t border-border">
+            {pageLinks.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => {
+                  navigate(link.path);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left font-semibold transition-all duration-300 relative leading-6 mb-4 last:mb-0 ${
+                  location.pathname === link.path
+                    ? 'text-primary' 
+                    : 'text-muted-foreground hover:text-foreground hover:scale-105 hover:translate-x-1'
+                }`}
+              >
+                {location.pathname === link.path && (
+                  <Feather className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                )}
+                {link.label}
+              </button>
+            ))}
+          </li>
         </ul>
       </nav>
 
@@ -180,6 +208,28 @@ const LeftNavigation = () => {
                   </button>
                 </li>
               ))}
+              
+              <li className="pt-4 mt-4 border-t border-border">
+                {pageLinks.map((link) => (
+                  <button
+                    key={link.path}
+                    onClick={() => {
+                      navigate(link.path);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 pl-8 rounded-lg font-medium transition-all duration-300 relative mb-2 last:mb-0 ${
+                      location.pathname === link.path
+                        ? 'bg-accent text-accent-foreground shadow-lg scale-105' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50 hover:scale-105 hover:translate-x-1'
+                    }`}
+                  >
+                    {location.pathname === link.path && (
+                      <Feather className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                    )}
+                    {link.label}
+                  </button>
+                ))}
+              </li>
             </ul>
           </div>
         </nav>
