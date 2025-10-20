@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import { Save, ArrowLeft, X, FileText } from 'lucide-react';
+import { Save, ArrowLeft, X, FileText, Upload } from 'lucide-react';
 
 interface BlogPostData {
   title: string;
@@ -46,6 +46,7 @@ export default function AdminPostEditor() {
 
   const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isEditing && id) {
@@ -120,6 +121,31 @@ export default function AdminPostEditor() {
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove),
     }));
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Bilden är för stor",
+          description: "Max storlek är 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        setFormData(prev => ({ ...prev, featured_image_url: dataUrl }));
+        toast({
+          title: "Bild uppladdad",
+          description: "Bilden har lagts till.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -345,13 +371,31 @@ export default function AdminPostEditor() {
                 </div>
 
                 <div>
-                  <Label htmlFor="featured_image">Bild-URL</Label>
-                  <Input
-                    id="featured_image"
-                    value={formData.featured_image_url}
-                    onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                    placeholder="https://exempel.se/bild.jpg"
-                  />
+                  <Label htmlFor="featured_image">Utvald bild</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="featured_image"
+                      value={formData.featured_image_url}
+                      onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
+                      placeholder="https://exempel.se/bild.jpg"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => fileInputRef.current?.click()}
+                      title="Ladda upp bild"
+                    >
+                      <Upload className="h-4 w-4" />
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </div>
                   {formData.featured_image_url && (
                     <div className="mt-3">
                       <Label className="text-sm text-muted-foreground">Förhandsvisning</Label>
