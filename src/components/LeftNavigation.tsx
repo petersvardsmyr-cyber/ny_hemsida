@@ -46,9 +46,7 @@ const LeftNavigation = () => {
   ];
 
   const pageLinks = [
-    { path: '/blogg', label: 'Blogg' },
-    { path: '/butik', label: 'Butik' },
-    { path: '/nyhetsbrev', label: 'Nyhetsbrev' }
+    { path: '/butik', label: 'Butik' }
   ];
 
   useEffect(() => {

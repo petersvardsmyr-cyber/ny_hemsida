@@ -274,14 +274,16 @@ const Shop = () => {
   return (
     <div className="min-h-screen py-8 px-4 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl md:text-4xl font-heading font-medium text-foreground">
-            Butik
-          </h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <ShoppingCart className="w-5 h-5" />
-            <span>{cart.reduce((sum, item) => sum + item.quantity, 0)} varor</span>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl md:text-4xl font-heading font-medium text-foreground">
+              Butik
+            </h1>
+            <ShoppingCart className="w-5 h-5 text-muted-foreground" />
           </div>
+          <p className="text-muted-foreground">
+            {cart.reduce((sum, item) => sum + item.quantity, 0)} varor i varukorgen
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
