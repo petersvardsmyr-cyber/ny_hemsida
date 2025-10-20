@@ -28,6 +28,7 @@ import AdminNewsletterNotifications from "./pages/AdminNewsletterNotifications";
 import AdminEmailSettings from "./pages/AdminEmailSettings";
 import AdminPostEditor from "./pages/AdminPostEditor";
 import NotFound from "./pages/NotFound";
+import NewsletterUnsubscribe from "./pages/NewsletterUnsubscribe";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="blogg/:slug" element={<BlogPost />} />
               <Route path="butik" element={<Shop />} />
               <Route path="nyhetsbrev" element={<Newsletter />} />
+              <Route path="nyhetsbrev/avregistrera" element={<NewsletterUnsubscribe />} />
               <Route path="success" element={<Success />} />
             </Route>
             

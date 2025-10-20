@@ -200,7 +200,7 @@ const handler = async (req: Request): Promise<Response> => {
                 Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
               </p>
               <p style="font-size: 12px; text-align: center; margin: 10px 0;">
-                <a href="mailto:hej@petersvardsmyr.se?subject=Avregistrera%20nyhetsbrev&body=Jag%20vill%20avregistrera%20min%20e-postadress%20${encodeURIComponent(subscriber.email)}%20från%20nyhetsbrevet." style="color: #666; text-decoration: underline;">
+                <a href="https://petersvardsmyr.se/nyhetsbrev/avregistrera?email=${encodeURIComponent(subscriber.email)}" style="color: #666; text-decoration: underline;">
                   Avregistrera dig här
                 </a>
               </p>

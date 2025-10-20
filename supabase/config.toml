@@ -89,3 +89,6 @@ verify_jwt = true
 
 [functions.stripe-health-check]
 verify_jwt = true
+
+[functions.unsubscribe-newsletter]
+verify_jwt = false
