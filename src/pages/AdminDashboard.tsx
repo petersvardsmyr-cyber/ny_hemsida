@@ -49,14 +49,21 @@ export default function AdminDashboard() {
       const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
       const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).toISOString();
 
-      // Fetch blog posts stats and recent posts
-      const { data: postsData, error: postsError } = await supabase
+      // Fetch all blog posts for stats
+      const { data: allPostsData, error: allPostsError } = await supabase
+        .from('blog_posts')
+        .select('id, is_published');
+      
+      if (allPostsError) throw allPostsError;
+
+      // Fetch recent blog posts for display
+      const { data: recentPostsData, error: recentPostsError } = await supabase
         .from('blog_posts')
         .select('id, title, is_published, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
       
-      if (postsError) throw postsError;
+      if (recentPostsError) throw recentPostsError;
 
       // Fetch products stats
       const { data: productsData, error: productsError } = await supabase
@@ -65,15 +72,23 @@ export default function AdminDashboard() {
       
       if (productsError) throw productsError;
 
-      // Fetch newsletter subscribers stats and recent subscribers
-      const { data: subscribersData, error: subscribersError } = await supabase
+      // Fetch all active subscribers for stats
+      const { data: allSubscribersData, error: allSubscribersError } = await supabase
+        .from('newsletter_subscribers')
+        .select('id')
+        .eq('is_active', true);
+      
+      if (allSubscribersError) throw allSubscribersError;
+
+      // Fetch recent subscribers for display
+      const { data: recentSubscribersData, error: recentSubscribersError } = await supabase
         .from('newsletter_subscribers')
         .select('id, email, name, subscribed_at, is_active')
         .eq('is_active', true)
         .order('subscribed_at', { ascending: false })
         .limit(5);
       
-      if (subscribersError) throw subscribersError;
+      if (recentSubscribersError) throw recentSubscribersError;
 
       // Fetch all orders stats
       const { data: ordersData, error: ordersError } = await supabase
@@ -97,10 +112,10 @@ export default function AdminDashboard() {
       const monthlyRevenue = currentMonthOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
       const previousMonthRevenue = previousMonthOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
 
-      const totalPosts = postsData?.length || 0;
-      const publishedPosts = postsData?.filter(post => post.is_published).length || 0;
+      const totalPosts = allPostsData?.length || 0;
+      const publishedPosts = allPostsData?.filter(post => post.is_published).length || 0;
       const totalProducts = productsData?.length || 0;
-      const totalSubscribers = subscribersData?.length || 0;
+      const totalSubscribers = allSubscribersData?.length || 0;
       const totalOrders = ordersData?.length || 0;
 
       setStats({
@@ -112,8 +127,8 @@ export default function AdminDashboard() {
         monthlyRevenue,
         previousMonthRevenue,
         recentOrders: ordersData?.slice(0, 5) || [],
-        recentSubscribers: subscribersData || [],
-        recentPosts: postsData || []
+        recentSubscribers: recentSubscribersData || [],
+        recentPosts: recentPostsData || []
       });
     } catch (error) {
       toast({
