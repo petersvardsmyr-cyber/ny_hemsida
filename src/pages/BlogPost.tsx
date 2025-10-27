@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -128,9 +129,29 @@ const BlogPost = () => {
     );
   });
 
+  const ogImage = post.featured_image_url || '/peter-profile.jpg';
+  const pageUrl = `${window.location.origin}/blogg/${post.slug}`;
+
   return (
-    <article className="max-w-4xl mx-auto px-12 py-20">
-      <Button variant="ghost" asChild className="mb-6">
+    <>
+      <Helmet>
+        <title>{post.title} | Peter Svärdsmyr</title>
+        <meta name="description" content={post.excerpt} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="article:published_time" content={post.published_date} />
+        <meta property="article:author" content={post.author} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={ogImage} />
+      </Helmet>
+      
+      <article className="max-w-4xl mx-auto px-12 py-20">
+        <Button variant="ghost" asChild className="mb-6">
         <Link to="/blogg">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Tillbaka till bloggen
@@ -191,6 +212,7 @@ const BlogPost = () => {
         </div>
       </footer>
     </article>
+    </>
   );
 };
 
