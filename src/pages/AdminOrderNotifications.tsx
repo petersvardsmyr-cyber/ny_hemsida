@@ -207,6 +207,52 @@ export default function AdminOrderNotifications() {
           <p className="text-muted-foreground">Hantera e-postmallar för orderbekräftelser och administrativa meddelanden</p>
         </div>
       </div>
+
+      {/* Information Card */}
+      <Card className="border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+            <Mail className="w-5 h-5" />
+            Hur fungerar orderbekräftelser?
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm">
+          <div>
+            <h3 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">Två e-postmeddelanden skickas automatiskt:</h3>
+            <div className="space-y-3">
+              <div className="bg-white dark:bg-gray-900 p-3 rounded-md border">
+                <p className="font-medium text-green-700 dark:text-green-400">📧 Till kunden ({'{kundens e-post}'})</p>
+                <ul className="mt-2 space-y-1 text-muted-foreground ml-4 list-disc">
+                  <li>Ämne: "Tack för din beställning! - [ordernummer]"</li>
+                  <li>Från: Peter Svärdsmyr {'<hej@petersvardsmyr.se>'}</li>
+                  <li><strong>Innehåller:</strong> Välkomsttext (från mall nedan) + produktlista + priser + momsspecifikation + leveransadress + leveransinformation</li>
+                </ul>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-900 p-3 rounded-md border">
+                <p className="font-medium text-orange-700 dark:text-orange-400">📧 Till dig som administratör (hej@petersvardsmyr.se)</p>
+                <ul className="mt-2 space-y-1 text-muted-foreground ml-4 list-disc">
+                  <li>Ämne: "Ny beställning [ordernummer]"</li>
+                  <li>Från: Peter Svärdsmyr {'<hej@petersvardsmyr.se>'}</li>
+                  <li><strong>Innehåller:</strong> Orderdetaljer + kundens e-post + produktlista + leveransadress + Stripe Session ID</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 dark:bg-yellow-950/30 p-3 rounded-md border border-yellow-200 dark:border-yellow-900">
+            <p className="font-semibold text-yellow-900 dark:text-yellow-200 mb-1">⚠️ Viktigt att veta:</p>
+            <p className="text-yellow-800 dark:text-yellow-300">Mallen nedan används endast för <strong>välkomsttexten</strong> i kundens e-post. Produktlistan, momsberäkning, leveransadress och övrig formatering är automatiskt genererad och kan inte ändras här.</p>
+          </div>
+
+          <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md border">
+            <p className="font-semibold mb-2">💡 Så här används din mall:</p>
+            <p className="text-muted-foreground">
+              Din mall (ämne + innehåll) visas högst upp i kundens e-post, precis under orderbekräftelsen. Allt annat (produkter, priser, moms, leveransinfo) läggs till automatiskt under din text.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
