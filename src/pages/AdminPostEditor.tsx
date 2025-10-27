@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import { Save, ArrowLeft, X, FileText, Upload } from 'lucide-react';
+import { Save, ArrowLeft, X, FileText, Upload, Eye, EyeOff } from 'lucide-react';
 
 interface BlogPostData {
   title: string;
@@ -148,16 +148,20 @@ export default function AdminPostEditor() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePublish = async () => {
     setLoading(true);
 
     try {
+      const publishData = {
+        ...formData,
+        is_published: true,
+      };
+
       if (isEditing && id) {
         const { error } = await supabase
           .from('blog_posts')
           .update({
-            ...formData,
+            ...publishData,
             updated_at: new Date().toISOString(),
           })
           .eq('id', id);
@@ -165,27 +169,27 @@ export default function AdminPostEditor() {
         if (error) throw error;
 
         toast({
-          title: "Inlägg uppdaterat",
-          description: "Blogginlägget har uppdaterats.",
+          title: "Inlägg publicerat",
+          description: "Blogginlägget har publicerats och är nu synligt.",
         });
       } else {
         const { error } = await supabase
           .from('blog_posts')
-          .insert([formData]);
+          .insert([publishData]);
 
         if (error) throw error;
 
         toast({
-          title: "Inlägg skapat",
-          description: "Nytt blogginlägg har skapats.",
+          title: "Inlägg publicerat",
+          description: "Blogginlägget har skapats och publicerats.",
         });
       }
 
-      navigate('/admin');
+      navigate('/admin/posts');
     } catch (error: any) {
       toast({
-        title: "Fel vid sparande",
-        description: error.message || "Kunde inte spara inlägget.",
+        title: "Fel vid publicering",
+        description: error.message || "Kunde inte publicera inlägget.",
         variant: "destructive",
       });
     } finally {
@@ -230,11 +234,42 @@ export default function AdminPostEditor() {
         });
       }
 
-      navigate('/admin');
+      navigate('/admin/posts');
     } catch (error: any) {
       toast({
         title: "Fel vid sparande",
         description: error.message || "Kunde inte spara utkastet.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUnpublish = async () => {
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .update({
+          is_published: false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Inlägg avpublicerat",
+        description: "Inlägget är nu dolt från publiken.",
+      });
+
+      navigate('/admin/posts');
+    } catch (error: any) {
+      toast({
+        title: "Fel vid avpublicering",
+        description: error.message || "Kunde inte avpublicera inlägget.",
         variant: "destructive",
       });
     } finally {
@@ -258,7 +293,7 @@ export default function AdminPostEditor() {
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
@@ -315,20 +350,9 @@ export default function AdminPostEditor() {
           <div className="space-y-6 order-1 lg:order-2">
             <Card>
               <CardHeader>
-                <CardTitle>Publicering</CardTitle>
+                <CardTitle>Metadata</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="published"
-                    checked={formData.is_published}
-                    onCheckedChange={(checked) => 
-                      setFormData(prev => ({ ...prev, is_published: checked }))
-                    }
-                  />
-                  <Label htmlFor="published">Publicera inlägg</Label>
-                </div>
-
                 <div>
                   <Label htmlFor="published_date">Publiceringsdatum</Label>
                   <Input
@@ -460,35 +484,67 @@ export default function AdminPostEditor() {
             </Card>
 
             <div className="space-y-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handleSaveAsDraft}
-                disabled={loading || !formData.title || !formData.content}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Spara som utkast
-              </Button>
-              
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading || !formData.title || !formData.content}
-              >
-                {loading ? (
-                  'Sparar...'
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    {isEditing ? 'Uppdatera inlägg' : 'Skapa inlägg'}
-                  </>
-                )}
-              </Button>
+              {isEditing && formData.is_published ? (
+                <>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    onClick={handlePublish}
+                    disabled={loading || !formData.title || !formData.content}
+                  >
+                    {loading ? (
+                      'Sparar...'
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        Uppdatera publicerat inlägg
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleUnpublish}
+                    disabled={loading}
+                  >
+                    <EyeOff className="mr-2 h-4 w-4" />
+                    Avpublicera inlägg
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    onClick={handlePublish}
+                    disabled={loading || !formData.title || !formData.content}
+                  >
+                    {loading ? (
+                      'Publicerar...'
+                    ) : (
+                      <>
+                        <Eye className="mr-2 h-4 w-4" />
+                        {isEditing ? 'Uppdatera och publicera' : 'Publicera inlägg'}
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleSaveAsDraft}
+                    disabled={loading || !formData.title || !formData.content}
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    {isEditing ? 'Spara som utkast' : 'Spara som utkast'}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
