@@ -42,7 +42,7 @@ const NewsletterUnsubscribe = () => {
         }
 
         setStatus('success');
-        setMessage('Du har nu avregistrerats från nyhetsbrevet. Du kommer inte längre att få några utskick från oss.');
+        setMessage('Du har nu avregistrerats från nyhetsbrevet. Du kommer inte längre att få några utskick från mig.');
       } catch (error) {
         console.error('Error:', error);
         setStatus('error');
