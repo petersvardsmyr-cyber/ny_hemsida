@@ -38,11 +38,18 @@ export function NewsletterSignup() {
           // Reactivate subscription
           await supabase.from('newsletter_subscribers').update({
             is_active: true,
-            name
+            name,
+            unsubscribed_at: null
           }).eq('email', email);
+          
+          // Send confirmation email
+          await supabase.functions.invoke('send-confirmation-email', {
+            body: { email }
+          });
+          
           toast({
             title: "Välkommen tillbaka!",
-            description: "Din prenumeration har aktiverats igen."
+            description: "Din prenumeration har aktiverats igen. Du får en bekräftelse på epost."
           });
         }
       } else {
@@ -54,9 +61,15 @@ export function NewsletterSignup() {
           name
         }]);
         if (error) throw error;
+        
+        // Send confirmation email
+        await supabase.functions.invoke('send-confirmation-email', {
+          body: { email }
+        });
+        
         toast({
           title: "Tack!",
-          description: "Du kommer nu att få mina nyhetsbrev. Vi ses i inkorgen! :) /Peter"
+          description: "Du kommer nu att få mina nyhetsbrev. En bekräftelse har skickats till din e-post."
         });
       }
       setEmail('');

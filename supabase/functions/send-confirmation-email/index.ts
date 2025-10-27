@@ -44,18 +44,30 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [email],
-      subject: "Bekräfta din prenumeration på vårt nyhetsbrev",
+      subject: "Välkommen till mitt nyhetsbrev!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">Bekräfta din prenumeration</h1>
-          <p>Tack för att du prenumererar på vårt nyhetsbrev!</p>
-          <p>För att slutföra din prenumeration behöver vi att du bekräftar din e-postadress.</p>
-          <p>Om du inte prenumererat på detta nyhetsbrev kan du ignorera detta meddelande.</p>
+          <h1 style="color: #333;">Välkommen!</h1>
+          <p>Tack för att du prenumererar på mitt nyhetsbrev!</p>
+          <p>Du kommer nu att få mina uppdateringar, texter och uppmuntran direkt i din inkorg.</p>
+          <p>Vill du inte längre prenumerera kan du när som helst avregistrera dig via länken längst ner i varje nyhetsbrev.</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-          <p style="font-size: 12px; color: #666;">
-            Med vänliga hälsningar,<br>
-            Peter Svärdsmyr
-          </p>
+          <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                petersvardsmyr.se
+              </a>
+            </div>
+            <div style="text-align: center; margin-bottom: 15px;">
+              <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
+                hej@petersvardsmyr.se
+              </a>
+            </div>
+            <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
+              Med vänliga hälsningar,<br>
+              Peter Svärdsmyr
+            </p>
+          </footer>
         </div>
       `,
     });
