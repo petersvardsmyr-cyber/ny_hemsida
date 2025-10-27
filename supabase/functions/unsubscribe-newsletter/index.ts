@@ -102,6 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from('newsletter_subscribers')
       .update({ 
         is_active: false,
+        unsubscribed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq('email', email);

@@ -16,6 +16,7 @@ interface Subscriber {
   name: string | null;
   is_active: boolean;
   subscribed_at: string;
+  unsubscribed_at: string | null;
 }
 
 export function AdminNewsletterSubscribers() {
@@ -174,6 +175,7 @@ export function AdminNewsletterSubscribers() {
                   <TableHead>E-post</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Prenumererad</TableHead>
+                  <TableHead>Avregistrerad</TableHead>
                   <TableHead className="text-right">Åtgärder</TableHead>
                 </TableRow>
               </TableHeader>
@@ -193,6 +195,12 @@ export function AdminNewsletterSubscribers() {
                     </TableCell>
                     <TableCell>
                       {new Date(subscriber.subscribed_at).toLocaleDateString('sv-SE')}
+                    </TableCell>
+                    <TableCell>
+                      {subscriber.unsubscribed_at 
+                        ? new Date(subscriber.unsubscribed_at).toLocaleDateString('sv-SE')
+                        : '-'
+                      }
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
