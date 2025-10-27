@@ -110,6 +110,21 @@ serve(async (req) => {
             } else {
               console.log('Successfully added to newsletter');
             }
+
+            // Send newsletter subscription confirmation email
+            try {
+              const { error: confirmError } = await supabaseClient.functions.invoke('send-confirmation-email', {
+                body: { email }
+              });
+              
+              if (confirmError) {
+                console.error('Failed to send newsletter confirmation:', confirmError);
+              } else {
+                console.log('Newsletter confirmation sent to:', email);
+              }
+            } catch (confirmErr) {
+              console.error('Error sending newsletter confirmation:', confirmErr);
+            }
           }
 
           const { error: fnError } = await supabaseClient.functions.invoke('send-order-confirmation', {
