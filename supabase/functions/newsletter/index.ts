@@ -181,7 +181,6 @@ const handler = async (req: Request): Promise<Response> => {
         subject: emailSubject,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            ${subscriber.name ? `<p>Hej ${subscriber.name}!</p>` : '<p>Hej!</p>'}
             ${emailContent}
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
