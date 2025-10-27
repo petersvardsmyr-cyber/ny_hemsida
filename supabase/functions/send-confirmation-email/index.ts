@@ -11,6 +11,7 @@ const corsHeaders = {
 
 interface ConfirmationRequest {
   email: string;
+  confirmationToken?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -29,7 +30,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email }: ConfirmationRequest = await req.json();
+    const { email, confirmationToken }: ConfirmationRequest = await req.json();
 
     if (!email) {
       return new Response(
@@ -41,11 +42,50 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    const confirmUrl = confirmationToken 
+      ? `https://petersvardsmyr.se/nyhetsbrev/bekrafta?token=${confirmationToken}`
+      : null;
+
     const emailResponse = await resend.emails.send({
       from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [email],
-      subject: "Välkommen till mitt nyhetsbrev!",
-      html: `
+      subject: confirmationToken ? "Bekräfta din prenumeration" : "Välkommen till mitt nyhetsbrev!",
+      html: confirmationToken ? `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333;">Bekräfta din prenumeration</h1>
+          <p>Tack för att du vill prenumerera på mitt nyhetsbrev!</p>
+          <p>För att slutföra din prenumeration behöver du bekräfta din e-postadress genom att klicka på knappen nedan:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${confirmUrl}" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
+              Bekräfta prenumeration
+            </a>
+          </div>
+          <p style="font-size: 14px; color: #666;">
+            Om knappen inte fungerar kan du kopiera och klistra in denna länk i din webbläsare:<br>
+            <a href="${confirmUrl}" style="color: #2563eb; word-break: break-all;">${confirmUrl}</a>
+          </p>
+          <p style="font-size: 14px; color: #666;">
+            Om du inte prenumererat på detta nyhetsbrev kan du ignorera detta meddelande.
+          </p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+          <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                petersvardsmyr.se
+              </a>
+            </div>
+            <div style="text-align: center;">
+              <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
+                hej@petersvardsmyr.se
+              </a>
+            </div>
+            <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
+              Med vänliga hälsningar,<br>
+              Peter Svärdsmyr
+            </p>
+          </footer>
+        </div>
+      ` : `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #333;">Välkommen!</h1>
           <p>Tack för att du prenumererar på mitt nyhetsbrev!</p>

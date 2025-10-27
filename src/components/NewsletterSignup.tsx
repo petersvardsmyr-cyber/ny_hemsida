@@ -53,23 +53,27 @@ export function NewsletterSignup() {
           });
         }
       } else {
-        // Create new subscription
+        // Create new subscription with pending status
+        const confirmationToken = crypto.randomUUID();
+        
         const {
           error
         } = await supabase.from('newsletter_subscribers').insert([{
           email,
-          name
+          name,
+          is_active: false, // Pending confirmation
+          confirmation_token: confirmationToken
         }]);
         if (error) throw error;
         
         // Send confirmation email
         await supabase.functions.invoke('send-confirmation-email', {
-          body: { email }
+          body: { email, confirmationToken }
         });
         
         toast({
-          title: "Tack!",
-          description: "Du kommer nu att få mina nyhetsbrev. En bekräftelse har skickats till din e-post."
+          title: "Nästan klar!",
+          description: "Kolla din e-post och klicka på bekräftelselänken för att slutföra din prenumeration."
         });
       }
       setEmail('');

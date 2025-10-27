@@ -17,6 +17,7 @@ interface Subscriber {
   is_active: boolean;
   subscribed_at: string;
   unsubscribed_at: string | null;
+  confirmed_at: string | null;
 }
 
 export function AdminNewsletterSubscribers() {
@@ -211,15 +212,6 @@ export function AdminNewsletterSubscribers() {
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        {!subscriber.is_active && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleResendConfirmation(subscriber.email)}
-                          >
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                        )}
                         <Button
                           variant="ghost"
                           size="sm"

@@ -29,6 +29,7 @@ import AdminEmailSettings from "./pages/AdminEmailSettings";
 import AdminPostEditor from "./pages/AdminPostEditor";
 import NotFound from "./pages/NotFound";
 import NewsletterUnsubscribe from "./pages/NewsletterUnsubscribe";
+import NewsletterConfirm from "./pages/NewsletterConfirm";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="butik" element={<Shop />} />
               <Route path="nyhetsbrev" element={<Newsletter />} />
               <Route path="nyhetsbrev/avregistrera" element={<NewsletterUnsubscribe />} />
+              <Route path="nyhetsbrev/bekrafta" element={<NewsletterConfirm />} />
               <Route path="success" element={<Success />} />
             </Route>
             

@@ -97,6 +97,8 @@ export type Database = {
       }
       newsletter_subscribers: {
         Row: {
+          confirmation_token: string | null
+          confirmed_at: string | null
           created_at: string
           email: string
           id: string
@@ -107,6 +109,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           email: string
           id?: string
@@ -117,6 +121,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           email?: string
           id?: string

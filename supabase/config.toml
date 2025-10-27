@@ -92,3 +92,9 @@ verify_jwt = true
 
 [functions.unsubscribe-newsletter]
 verify_jwt = false
+
+[functions.confirm-newsletter]
+verify_jwt = false
+
+[functions.send-confirmation-email]
+verify_jwt = false
