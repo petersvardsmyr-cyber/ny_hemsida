@@ -65,8 +65,12 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (!existingSubscriber) {
+      console.log(`Subscriber not found: ${email}`);
       return new Response(
-        JSON.stringify({ error: "Subscriber not found" }),
+        JSON.stringify({ 
+          error: "Subscriber not found",
+          message: "E-postadressen finns inte i vår prenumerantlista" 
+        }),
         { 
           status: 404, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
@@ -74,10 +78,32 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Check if already inactive
+    if (!existingSubscriber.is_active) {
+      console.log(`Subscriber already unsubscribed: ${email}`);
+      return new Response(
+        JSON.stringify({ 
+          message: "Already unsubscribed",
+          already_inactive: true,
+          email 
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
     // Deactivate subscriber
     const { error: updateError } = await supabase
       .from('newsletter_subscribers')
-      .update({ is_active: false })
+      .update({ 
+        is_active: false,
+        updated_at: new Date().toISOString()
+      })
       .eq('email', email);
 
     if (updateError) {

@@ -20,9 +20,12 @@ const NewsletterUnsubscribe = () => {
       }
 
       try {
+        console.log('Unsubscribing email:', email);
         const { data, error } = await supabase.functions.invoke('unsubscribe-newsletter', {
           body: { email }
         });
+
+        console.log('Unsubscribe response:', { data, error });
 
         if (error) {
           console.error('Error unsubscribing:', error);
@@ -31,8 +34,15 @@ const NewsletterUnsubscribe = () => {
           return;
         }
 
+        // Check if already unsubscribed
+        if (data?.already_inactive) {
+          setStatus('success');
+          setMessage('Du är redan avregistrerad från nyhetsbrevet.');
+          return;
+        }
+
         setStatus('success');
-        setMessage(`Du har avregistrerats från nyhetsbrevet.`);
+        setMessage('Du har nu avregistrerats från nyhetsbrevet. Du kommer inte längre att få några utskick från oss.');
       } catch (error) {
         console.error('Error:', error);
         setStatus('error');
