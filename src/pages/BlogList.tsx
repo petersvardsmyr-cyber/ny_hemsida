@@ -73,7 +73,7 @@ export const BlogList = () => {
           Inga inlägg hittades. Kontrollera konsollen för felbuggar.
         </p>
       ) : (
-        <div className="space-y-12">
+        <div className="space-y-16">
           {posts.map((post) => {
             const isNew = new Date(post.published_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             

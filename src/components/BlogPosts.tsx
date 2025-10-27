@@ -103,7 +103,7 @@ export const BlogPosts = () => {
 
   return (
     <div>
-      <div className="space-y-12 md:space-y-16 transition-all duration-500">
+      <div className="space-y-16 md:space-y-20 transition-all duration-500">
         {posts.map((post, index) => {
           const isNewPost = index >= posts.length - POSTS_PER_PAGE && posts.length > POSTS_PER_PAGE && !loadingMore;
           return (
@@ -164,7 +164,7 @@ export const BlogPosts = () => {
       
       {/* Loading skeleton for new posts */}
       {loadingMore && (
-        <div className="space-y-12 md:space-y-16 mt-12 md:mt-16">
+        <div className="space-y-16 md:space-y-20 mt-16 md:mt-20">
           {Array.from({ length: POSTS_PER_PAGE }).map((_, i) => (
             <article key={`skeleton-${i}`} className="animate-pulse">
               <div className="flex flex-col sm:flex-row gap-4 md:gap-6 min-h-[120px]">
