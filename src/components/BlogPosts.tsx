@@ -107,7 +107,7 @@ export const BlogPosts = () => {
         {posts.map((post, index) => {
           const isNewPost = index >= posts.length - POSTS_PER_PAGE && posts.length > POSTS_PER_PAGE && !loadingMore;
           return (
-            <Link key={post.id} to={`/blogg/${post.slug}`}>
+            <Link key={post.id} to={`/blogg/${post.slug}`} className="block">
               <article className={`group cursor-pointer transition-all duration-500 ${
                 isNewPost 
                   ? 'animate-fade-in opacity-0' 

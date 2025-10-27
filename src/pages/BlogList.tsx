@@ -78,7 +78,7 @@ export const BlogList = () => {
             const isNew = new Date(post.published_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             
             return (
-              <Link key={post.id} to={`/blogg/${post.slug}`}>
+              <Link key={post.id} to={`/blogg/${post.slug}`} className="block">
                 <Card className="group cursor-pointer hover:shadow-lg transition-shadow duration-300">
                   {post.featured_image_url && (
                     <div className="aspect-video overflow-hidden rounded-t-lg">
