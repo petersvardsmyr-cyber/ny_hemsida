@@ -28,7 +28,7 @@ type FilterOption = 'all' | 'published' | 'drafts';
 export default function AdminBlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<SortOption>('recent');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filter, setFilter] = useState<FilterOption>('all');
   const { toast } = useToast();
 
