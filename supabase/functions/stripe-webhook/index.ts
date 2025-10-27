@@ -83,6 +83,35 @@ serve(async (req) => {
           const newsletterOptin = (session.metadata?.newsletter_optin === 'true');
           const email = session.customer_details?.email || session.customer_email || '';
 
+          // Add to newsletter if opted in
+          if (newsletterOptin && email) {
+            console.log('Adding customer to newsletter:', email);
+            const { error: newsletterError } = await supabaseClient
+              .from('newsletter_subscribers')
+              .insert({
+                email: email,
+                name: session.customer_details?.name || null,
+                is_active: true
+              });
+            
+            if (newsletterError) {
+              // Don't fail the webhook if email already exists
+              if (newsletterError.code !== '23505') { // Not a unique constraint violation
+                console.error('Error adding to newsletter:', newsletterError);
+              } else {
+                console.log('Email already subscribed to newsletter');
+                // Reactivate if inactive
+                await supabaseClient
+                  .from('newsletter_subscribers')
+                  .update({ is_active: true })
+                  .eq('email', email)
+                  .eq('is_active', false);
+              }
+            } else {
+              console.log('Successfully added to newsletter');
+            }
+          }
+
           const { error: fnError } = await supabaseClient.functions.invoke('send-order-confirmation', {
             body: {
               session_id: session.id,

@@ -163,32 +163,8 @@ serve(async (req) => {
       console.log("Order saved to database");
     }
 
-    // Handle newsletter subscription if opted in
-    if (orderData.newsletter_optin) {
-      try {
-        console.log('Adding customer to newsletter');
-        const { error: newsletterError } = await supabaseClient
-          .from('newsletter_subscribers')
-          .insert({
-            email: orderData.email || 'guest@example.com',
-            name: null, // No name collected during checkout
-            is_active: true
-          });
-        
-        if (newsletterError) {
-          // Don't throw error if email already exists
-          if (newsletterError.code !== '23505') { // Not a unique constraint violation
-            console.error('Error adding to newsletter:', newsletterError);
-          } else {
-            console.log('Email already subscribed to newsletter');
-          }
-        } else {
-          console.log('Successfully added to newsletter');
-        }
-      } catch (newsletterError) {
-        console.error('Newsletter subscription error:', newsletterError);
-      }
-    }
+    // Newsletter subscription will be handled in Stripe webhook after payment completion
+    // This ensures we have the correct customer email from Stripe checkout
 
     // Order confirmation emails are now sent via Stripe webhook after successful payment
     // This avoids sending emails before the customer completes checkout and ensures we use the final email from Stripe.
