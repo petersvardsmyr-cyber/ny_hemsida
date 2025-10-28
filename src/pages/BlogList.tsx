@@ -26,7 +26,7 @@ export const BlogList = () => {
         console.log('Fetching blog posts...');
         const { data, error } = await supabase
           .from('blog_posts')
-          .select('*')
+          .select('id, title, excerpt, slug, published_date, featured_image_url, author, tags')
           .eq('is_published', true)
           .order('published_date', { ascending: false });
 
@@ -85,6 +85,8 @@ export const BlogList = () => {
                       <img 
                         src={post.featured_image_url} 
                         alt={post.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
