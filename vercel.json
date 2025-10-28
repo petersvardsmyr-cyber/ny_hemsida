@@ -1,4 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/blogg/:slug",
+      "destination": "https://tpehwkimphnkjaxqnpjq.supabase.co/functions/v1/og-meta?slug=:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Pinterest|Discordbot).*"
+        }
+      ],
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

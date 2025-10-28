@@ -129,8 +129,21 @@ const BlogPost = () => {
     );
   });
 
-  const ogImage = post.featured_image_url || '/peter-profile.jpg';
-  const pageUrl = `${window.location.origin}/blogg/${post.slug}`;
+  // Build absolute URLs for social media
+  const baseUrl = window.location.origin;
+  const pageUrl = `${baseUrl}/blogg/${post.slug}`;
+  
+  // Make OG image absolute
+  let ogImage = `${baseUrl}/peter-profile.jpg`;
+  if (post.featured_image_url) {
+    // If it's a data URL or already absolute, use as is
+    if (post.featured_image_url.startsWith('data:') || post.featured_image_url.startsWith('http')) {
+      ogImage = post.featured_image_url;
+    } else {
+      // Make relative URLs absolute
+      ogImage = `${baseUrl}${post.featured_image_url}`;
+    }
+  }
 
   return (
     <>
