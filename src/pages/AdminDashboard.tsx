@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, BookOpen, Mail, Plus, Users, Eye, Package, Bell, TrendingUp, Calendar } from 'lucide-react';
+import { FileText, BookOpen, Mail, Plus, Users, Eye, Package, Bell, TrendingUp, Calendar, Database } from 'lucide-react';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
@@ -35,6 +35,7 @@ export default function AdminDashboard() {
     recentPosts: []
   });
   const [loading, setLoading] = useState(true);
+  const [migrating, setMigrating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -138,6 +139,36 @@ export default function AdminDashboard() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMigrateImages = async () => {
+    setMigrating(true);
+    try {
+      toast({
+        title: "Migrering påbörjad",
+        description: "Flyttar bloggbilder till Storage...",
+      });
+
+      const { data, error } = await supabase.functions.invoke('migrate-blog-images');
+
+      if (error) throw error;
+
+      toast({
+        title: "Migrering klar!",
+        description: `Migrerade ${data.migrated} bilder, hoppade över ${data.skipped}`,
+      });
+
+      // Refresh stats after migration
+      fetchStats();
+    } catch (error: any) {
+      toast({
+        title: "Fel vid migrering",
+        description: error.message || "Kunde inte migrera bilder.",
+        variant: "destructive",
+      });
+    } finally {
+      setMigrating(false);
     }
   };
 
@@ -465,6 +496,32 @@ export default function AdminDashboard() {
                 </Button>
               </Link>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Maintenance Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Underhåll
+            </CardTitle>
+            <CardDescription>
+              Verktyg för databasunderhåll och optimering
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={handleMigrateImages}
+              disabled={migrating}
+            >
+              {migrating ? 'Migrerar...' : 'Migrera bilder till Storage'}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Flyttar bloggbilder från databasen till Supabase Storage för snabbare laddning
+            </p>
           </CardContent>
         </Card>
       </div>

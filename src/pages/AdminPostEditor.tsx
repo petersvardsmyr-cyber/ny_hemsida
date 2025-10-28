@@ -123,7 +123,7 @@ export default function AdminPostEditor() {
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -135,16 +135,40 @@ export default function AdminPostEditor() {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        setFormData(prev => ({ ...prev, featured_image_url: dataUrl }));
+      try {
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('blog-images')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (error) throw error;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('blog-images')
+          .getPublicUrl(filePath);
+
+        setFormData(prev => ({ ...prev, featured_image_url: publicUrl }));
+        
         toast({
           title: "Bild uppladdad",
-          description: "Bilden har lagts till.",
+          description: "Bilden har sparats till Storage.",
         });
-      };
-      reader.readAsDataURL(file);
+      } catch (error: any) {
+        toast({
+          title: "Fel vid uppladdning",
+          description: error.message || "Kunde inte ladda upp bilden.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
