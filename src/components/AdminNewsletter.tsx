@@ -219,13 +219,67 @@ export function AdminNewsletter() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="content">Innehåll</Label>
-              <RichTextEditor
-                content={content}
-                onChange={setContent}
-                placeholder="Skriv innehållet för ditt nyhetsbrev här. Använd verktygsfältet för formatering och lägg till bilder."
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="content">Innehåll</Label>
+                <RichTextEditor
+                  content={content}
+                  onChange={setContent}
+                  placeholder="Skriv innehållet för ditt nyhetsbrev här. Använd verktygsfältet för formatering och lägg till bilder."
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Förhandsgranskning</Label>
+                <div className="border border-input rounded-md bg-muted/30 p-4 min-h-[300px] max-h-[500px] overflow-y-auto">
+                  <div 
+                    style={{ 
+                      fontFamily: 'Arial, sans-serif', 
+                      maxWidth: '600px', 
+                      margin: '0 auto',
+                      color: '#000000'
+                    }}
+                  >
+                    {subject && (
+                      <div style={{ marginBottom: '20px', paddingBottom: '10px', borderBottom: '2px solid #eee' }}>
+                        <p style={{ fontSize: '14px', color: '#666', margin: '0 0 5px 0' }}>Ämne:</p>
+                        <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0, color: '#000' }}>{subject}</h2>
+                      </div>
+                    )}
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: content || '<p style="color: #999;">Inget innehåll än...</p>' }}
+                      style={{
+                        fontSize: '16px',
+                        lineHeight: '1.6',
+                        color: '#000000'
+                      }}
+                      className="[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h1]:text-black [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-5 [&_h2]:text-black [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-black [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-black [&_strong]:font-bold [&_strong]:text-black [&_em]:italic [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-400 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_a]:text-blue-600 [&_a]:underline [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4"
+                    />
+                    <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #eee' }} />
+                    <footer style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', marginTop: '30px' }}>
+                      <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                        <a href="https://petersvardsmyr.se" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}>
+                          petersvardsmyr.se
+                        </a>
+                      </div>
+                      <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                        <a href="mailto:hej@petersvardsmyr.se" style={{ color: '#666', textDecoration: 'none' }}>
+                          hej@petersvardsmyr.se
+                        </a>
+                      </div>
+                      <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+                      <p style={{ fontSize: '12px', color: '#666', textAlign: 'center', margin: '10px 0' }}>
+                        Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
+                      </p>
+                      <p style={{ fontSize: '12px', textAlign: 'center', margin: '10px 0' }}>
+                        <a href="#" style={{ color: '#666', textDecoration: 'underline' }}>
+                          Avregistrera dig här
+                        </a>
+                      </p>
+                    </footer>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Button 
