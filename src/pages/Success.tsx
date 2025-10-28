@@ -87,7 +87,7 @@ const Success = () => {
           </div>
           
           <p className="text-xs text-muted-foreground mt-6">
-            Har du frågor? Kontakta oss på{' '}
+            Har du frågor? Kontakta mig på{' '}
             <a href="mailto:hej@petersvardsmyr.se" className="text-primary hover:underline">
               hej@petersvardsmyr.se
             </a>
