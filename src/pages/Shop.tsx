@@ -89,13 +89,14 @@ const Shop = () => {
         if (product.title === "Att bli till") {
           return {
             ...product,
-            additional_images: [attBliTillImage1, attBliTillImage2, attBliTillImage3]
+            additional_images: [product.image_url, attBliTillImage1, attBliTillImage2, attBliTillImage3]
           } as Product;
         }
         if (product.title === "Allt det vi delar") {
           return {
             ...product,
             additional_images: [
+              product.image_url,
               alltDetViDelarExtra1,
               alltDetViDelarExtra2,
               alltDetViDelarExtra3,
