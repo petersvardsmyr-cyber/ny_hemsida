@@ -38,6 +38,7 @@ interface Product {
   additional_images?: string[];
   in_stock: boolean;
   featured: boolean;
+  category?: string | null;
   discount_active: boolean;
 }
 
@@ -60,6 +61,11 @@ const SHIPPING_OPTIONS: ShippingOption[] = [
 ];
 
 const BOOK_VAT_RATE = 0.06;
+
+// Determine VAT rate per product (books 6%, merch 25%)
+const getVatRate = (product: Product | CartItem) => {
+  return product.category === 'book' ? 0.06 : 0.25;
+};
 
 const Shop = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -205,13 +211,13 @@ const Shop = () => {
   const calculateVATBreakdown = () => {
     // Calculate products (ex VAT prices)
     const productsExVAT = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const productsVAT = Math.round(productsExVAT * BOOK_VAT_RATE);
+    const productsVAT = Math.round(cart.reduce((vat, item) => vat + (item.price * getVatRate(item) * item.quantity), 0));
     const productsIncVAT = productsExVAT + productsVAT;
     
     // Apply discount to products
     const discountAmountSEK = Math.round(productsIncVAT * (discountAmount / 100));
     const finalProductsIncVAT = productsIncVAT - discountAmountSEK;
-    const finalProductsExVAT = Math.round(finalProductsIncVAT / (1 + BOOK_VAT_RATE));
+    const finalProductsExVAT = Math.round(productsExVAT - Math.round((productsExVAT / productsIncVAT) * discountAmountSEK));
     const finalProductsVAT = finalProductsIncVAT - finalProductsExVAT;
     
     // Calculate shipping (prices are inclusive of VAT)
@@ -400,20 +406,20 @@ const Shop = () => {
                           {product.discount_active && product.original_price ? (
                             <>
                               <span className="text-muted-foreground line-through text-sm">
-                                {Math.round(product.original_price * (1 + BOOK_VAT_RATE))} kr
+                                {Math.round(product.original_price * (1 + getVatRate(product)))} kr
                               </span>
                               <span className="text-primary font-medium text-lg">
-                                {Math.round(product.price * (1 + BOOK_VAT_RATE))} kr
+                                {Math.round(product.price * (1 + getVatRate(product)))} kr
                               </span>
                             </>
                           ) : (
                             <span className="text-primary font-medium text-lg">
-                              {Math.round((product.original_price || product.price) * (1 + BOOK_VAT_RATE))} kr
+                              {Math.round((product.original_price || product.price) * (1 + getVatRate(product)))} kr
                             </span>
                           )}
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          ({product.discount_active ? product.price : (product.original_price || product.price)} kr ex moms + {Math.round((product.discount_active ? product.price : (product.original_price || product.price)) * BOOK_VAT_RATE)} kr moms 6%)
+                          ({product.discount_active ? product.price : (product.original_price || product.price)} kr ex moms + {Math.round((product.discount_active ? product.price : (product.original_price || product.price)) * getVatRate(product))} kr moms {Math.round(getVatRate(product) * 100)}%)
                         </span>
                       </div>
                       
@@ -458,7 +464,7 @@ const Shop = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-sm truncate">{item.title}</h4>
-                            <p className="text-primary font-medium">{Math.round(item.price * (1 + BOOK_VAT_RATE))} kr</p>
+                            <p className="text-primary font-medium">{Math.round(item.price * (1 + getVatRate(item)))} kr</p>
                             <p className="text-xs text-muted-foreground">({item.price} kr ex moms)</p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -572,11 +578,11 @@ const Shop = () => {
                       <div className="text-sm font-medium mb-2">Prisuppdelning</div>
                       
                       <div className="flex justify-between text-sm">
-                        <span>Böcker (ex moms):</span>
+                        <span>Varor (ex moms):</span>
                         <span>{vatBreakdown.products.exVAT} kr</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Moms böcker (6%):</span>
+                        <span>Moms varor:</span>
                         <span>{vatBreakdown.products.vat} kr</span>
                       </div>
                       {vatBreakdown.products.discount > 0 && (
@@ -586,7 +592,7 @@ const Shop = () => {
                         </div>
                       )}
                       <div className="flex justify-between text-sm border-b pb-1">
-                        <span>Böcker totalt:</span>
+                        <span>Varor totalt:</span>
                         <span>{vatBreakdown.products.incVAT} kr</span>
                       </div>
                       
@@ -610,7 +616,7 @@ const Shop = () => {
                       
                       <div className="text-xs text-muted-foreground pt-2">
                         <div>Total moms: {vatBreakdown.total.vat} kr</div>
-                        <div>Varav moms böcker (6%): {vatBreakdown.products.vat} kr</div>
+                        <div>Varav moms varor: {vatBreakdown.products.vat} kr</div>
                         <div>Varav moms frakt ({Math.round(vatBreakdown.shipping.vatRate * 100)}%): {vatBreakdown.shipping.vat} kr</div>
                       </div>
                     </div>
