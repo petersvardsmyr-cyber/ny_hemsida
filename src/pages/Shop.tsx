@@ -17,6 +17,13 @@ import {
 import attBliTillImage1 from '@/assets/book-att-bli-till.jpg';
 import attBliTillImage2 from '@/assets/book-att-bli-till-2.jpg';
 import attBliTillImage3 from '@/assets/book-att-bli-till-3.jpg';
+import alltDetViDelarExtra1 from '@/assets/book-allt-det-vi-delar-extra-1.jpg';
+import alltDetViDelarExtra2 from '@/assets/book-allt-det-vi-delar-extra-2.jpg';
+import alltDetViDelarExtra3 from '@/assets/book-allt-det-vi-delar-extra-3.jpg';
+import alltDetViDelarExtra4 from '@/assets/book-allt-det-vi-delar-extra-4.jpg';
+import alltDetViDelarExtra5 from '@/assets/book-allt-det-vi-delar-extra-5.jpg';
+import alltDetViDelarExtra6 from '@/assets/book-allt-det-vi-delar-extra-6.jpg';
+import alltDetViDelarExtra7 from '@/assets/book-allt-det-vi-delar-extra-7.jpg';
 
 interface Product {
   id: string;
@@ -77,12 +84,26 @@ const Shop = () => {
 
       if (error) throw error;
       
-      // Map products and add hardcoded additional images for "Att bli till"
+      // Map products and add hardcoded additional images
       const productsWithImages = (data || []).map(product => {
         if (product.title === "Att bli till") {
           return {
             ...product,
             additional_images: [attBliTillImage1, attBliTillImage2, attBliTillImage3]
+          } as Product;
+        }
+        if (product.title === "Allt det vi delar") {
+          return {
+            ...product,
+            additional_images: [
+              alltDetViDelarExtra1,
+              alltDetViDelarExtra2,
+              alltDetViDelarExtra3,
+              alltDetViDelarExtra4,
+              alltDetViDelarExtra5,
+              alltDetViDelarExtra6,
+              alltDetViDelarExtra7
+            ]
           } as Product;
         }
         return product as Product;
