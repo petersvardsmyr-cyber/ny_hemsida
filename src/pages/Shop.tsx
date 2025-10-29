@@ -24,6 +24,9 @@ import alltDetViDelarExtra4 from '@/assets/book-allt-det-vi-delar-extra-4.jpg';
 import alltDetViDelarExtra5 from '@/assets/book-allt-det-vi-delar-extra-5.jpg';
 import alltDetViDelarExtra6 from '@/assets/book-allt-det-vi-delar-extra-6.jpg';
 import alltDetViDelarExtra7 from '@/assets/book-allt-det-vi-delar-extra-7.jpg';
+import tygkasseSvart1 from '@/assets/tygkasse-svart-1.jpg';
+import tygkasseSvart2 from '@/assets/tygkasse-svart-2.jpg';
+import tygkasseSvart3 from '@/assets/tygkasse-svart-3.jpg';
 
 interface Product {
   id: string;
@@ -105,6 +108,12 @@ const Shop = () => {
               alltDetViDelarExtra7,
               alltDetViDelarExtra1
             ]
+          } as Product;
+        }
+        if (product.title === "Tygkasse, svart") {
+          return {
+            ...product,
+            additional_images: [tygkasseSvart1, tygkasseSvart2, tygkasseSvart3]
           } as Product;
         }
         return product as Product;
