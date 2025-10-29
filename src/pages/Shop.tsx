@@ -97,13 +97,13 @@ const Shop = () => {
             ...product,
             additional_images: [
               product.image_url,
-              alltDetViDelarExtra1,
               alltDetViDelarExtra2,
               alltDetViDelarExtra3,
               alltDetViDelarExtra4,
               alltDetViDelarExtra5,
               alltDetViDelarExtra6,
-              alltDetViDelarExtra7
+              alltDetViDelarExtra7,
+              alltDetViDelarExtra1
             ]
           } as Product;
         }
