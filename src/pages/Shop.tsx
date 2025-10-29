@@ -27,6 +27,9 @@ import alltDetViDelarExtra7 from '@/assets/book-allt-det-vi-delar-extra-7.jpg';
 import tygkasseSvart1 from '@/assets/tygkasse-svart-1.jpg';
 import tygkasseSvart2 from '@/assets/tygkasse-svart-2.jpg';
 import tygkasseSvart3 from '@/assets/tygkasse-svart-3.jpg';
+import detOrdnarSigExtra1 from '@/assets/book-det-ordnar-sig-extra-1.jpg';
+import detOrdnarSigExtra2 from '@/assets/book-det-ordnar-sig-extra-2.jpg';
+import detOrdnarSigExtra3 from '@/assets/book-det-ordnar-sig-extra-3.jpg';
 
 interface Product {
   id: string;
@@ -120,6 +123,12 @@ const Shop = () => {
           return {
             ...product,
             additional_images: [tygkasseSvart1, tygkasseSvart2, tygkasseSvart3]
+          } as Product;
+        }
+        if (product.title === "Det ordnar sig") {
+          return {
+            ...product,
+            additional_images: [product.image_url, detOrdnarSigExtra1, detOrdnarSigExtra2, detOrdnarSigExtra3]
           } as Product;
         }
         return product as Product;
