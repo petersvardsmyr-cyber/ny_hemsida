@@ -137,7 +137,7 @@ const Shop = () => {
             additional_images: [product.image_url, detOrdnarSigExtra1, detOrdnarSigExtra2, detOrdnarSigExtra3]
           } as Product;
         }
-        if (product.title === "Allt det vi delar - andra året") {
+        if (product.title === "Allt det vi delar – andra året") {
           return {
             ...product,
             additional_images: [
