@@ -375,7 +375,7 @@ const Shop = () => {
                                   <img 
                                     src={image} 
                                     alt={`${product.title} - Bild ${index + 1}`}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover object-top"
                                     loading="lazy"
                                   />
                                 </CarouselItem>
