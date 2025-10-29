@@ -30,6 +30,12 @@ import tygkasseSvart3 from '@/assets/tygkasse-svart-3.jpg';
 import detOrdnarSigExtra1 from '@/assets/book-det-ordnar-sig-extra-1.jpg';
 import detOrdnarSigExtra2 from '@/assets/book-det-ordnar-sig-extra-2.jpg';
 import detOrdnarSigExtra3 from '@/assets/book-det-ordnar-sig-extra-3.jpg';
+import alltDetViDelarAndraAretExtra1 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-1.jpg';
+import alltDetViDelarAndraAretExtra2 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-2.jpg';
+import alltDetViDelarAndraAretExtra3 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-3.jpg';
+import alltDetViDelarAndraAretExtra4 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-4.jpg';
+import alltDetViDelarAndraAretExtra5 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-5.jpg';
+import alltDetViDelarAndraAretExtra6 from '@/assets/book-allt-det-vi-delar-andra-aret-extra-6.jpg';
 
 interface Product {
   id: string;
@@ -129,6 +135,20 @@ const Shop = () => {
           return {
             ...product,
             additional_images: [product.image_url, detOrdnarSigExtra1, detOrdnarSigExtra2, detOrdnarSigExtra3]
+          } as Product;
+        }
+        if (product.title === "Allt det vi delar - andra året") {
+          return {
+            ...product,
+            additional_images: [
+              product.image_url,
+              alltDetViDelarAndraAretExtra1,
+              alltDetViDelarAndraAretExtra2,
+              alltDetViDelarAndraAretExtra3,
+              alltDetViDelarAndraAretExtra4,
+              alltDetViDelarAndraAretExtra5,
+              alltDetViDelarAndraAretExtra6
+            ]
           } as Product;
         }
         return product as Product;
