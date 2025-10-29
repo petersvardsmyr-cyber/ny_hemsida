@@ -7,6 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ShoppingCart, Plus, Minus, Trash2, Percent } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import attBliTillImage1 from '@/assets/book-att-bli-till.jpg';
+import attBliTillImage2 from '@/assets/book-att-bli-till-2.jpg';
+import attBliTillImage3 from '@/assets/book-att-bli-till-3.jpg';
 
 interface Product {
   id: string;
@@ -15,6 +25,7 @@ interface Product {
   price: number;
   original_price: number | null;
   image_url: string;
+  additional_images?: string[];
   in_stock: boolean;
   featured: boolean;
   discount_active: boolean;
@@ -65,7 +76,19 @@ const Shop = () => {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
-      setProducts(data || []);
+      
+      // Map products and add hardcoded additional images for "Att bli till"
+      const productsWithImages = (data || []).map(product => {
+        if (product.title === "Att bli till") {
+          return {
+            ...product,
+            additional_images: [attBliTillImage1, attBliTillImage2, attBliTillImage3]
+          } as Product;
+        }
+        return product as Product;
+      });
+      
+      setProducts(productsWithImages);
     } catch (error) {
       toast({
         title: "Fel",
@@ -290,17 +313,40 @@ const Shop = () => {
           {/* Products */}
           <div className="lg:col-span-2">
             <div className="grid md:grid-cols-2 gap-6">
-              {products.map((product) => (
-                <Card key={product.id} className="group hover:shadow-lg transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="aspect-square mb-4 overflow-hidden rounded-lg">
-                      <img 
-                        src={product.image_url} 
-                        alt={product.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                    </div>
+              {products.map((product) => {
+                const images = product.additional_images || [product.image_url];
+                const hasMultipleImages = images.length > 1;
+                
+                return (
+                  <Card key={product.id} className="group hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="aspect-square mb-4 overflow-hidden rounded-lg relative">
+                        {hasMultipleImages ? (
+                          <Carousel className="w-full h-full">
+                            <CarouselContent>
+                              {images.map((image, index) => (
+                                <CarouselItem key={index}>
+                                  <img 
+                                    src={image} 
+                                    alt={`${product.title} - Bild ${index + 1}`}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
+                                </CarouselItem>
+                              ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="left-2" />
+                            <CarouselNext className="right-2" />
+                          </Carousel>
+                        ) : (
+                          <img 
+                            src={product.image_url} 
+                            alt={product.title} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        )}
+                      </div>
                     
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-heading font-medium text-lg text-foreground flex-1">
@@ -351,7 +397,8 @@ const Shop = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           </div>
 
