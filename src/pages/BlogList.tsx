@@ -16,14 +16,18 @@ interface BlogPost {
   tags?: string[];
 }
 
-export const BlogList = () => {
+interface BlogListProps {
+  filterTag?: string;
+}
+
+export const BlogList = ({ filterTag }: BlogListProps) => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('Fetching blog posts...');
+        console.log('Fetching blog posts...', filterTag ? `filtered by tag: ${filterTag}` : '');
         const { data, error } = await supabase
           .from('blog_posts')
           .select('id, title, excerpt, slug, published_date, featured_image_url, author, tags')
@@ -36,7 +40,17 @@ export const BlogList = () => {
         }
 
         console.log('Fetched posts:', data);
-        setPosts(data || []);
+        
+        // Filter by tag if provided
+        let filteredData = data || [];
+        if (filterTag && data) {
+          filteredData = data.filter(post => 
+            post.tags && Array.isArray(post.tags) && 
+            post.tags.some(tag => tag.toLowerCase() === filterTag.toLowerCase())
+          );
+        }
+        
+        setPosts(filteredData);
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
@@ -45,7 +59,7 @@ export const BlogList = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [filterTag]);
 
   if (loading) {
     return (
@@ -65,12 +79,17 @@ export const BlogList = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-12 py-20">
-      <h1 className="text-4xl font-heading font-medium mb-12 text-foreground">Alla inlägg</h1>
+    <div className={filterTag ? "" : "max-w-4xl mx-auto px-12 py-20"}>
+      {!filterTag && (
+        <h1 className="text-4xl font-heading font-medium mb-12 text-foreground">Alla inlägg</h1>
+      )}
       
       {posts.length === 0 ? (
         <p className="text-muted-foreground">
-          Inga inlägg hittades. Kontrollera konsollen för felbuggar.
+          {filterTag 
+            ? `Inga inlägg hittades med taggen "${filterTag}".`
+            : "Inga inlägg hittades. Kontrollera konsollen för felbuggar."
+          }
         </p>
       ) : (
         <div className="space-y-12">
@@ -120,9 +139,18 @@ export const BlogList = () => {
                     {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
+                          <Link 
+                            key={tag} 
+                            to={`/blogg/tag/${encodeURIComponent(tag)}`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Badge 
+                              variant="secondary" 
+                              className="text-xs hover:bg-accent/20 cursor-pointer transition-colors"
+                            >
+                              {tag}
+                            </Badge>
+                          </Link>
                         ))}
                       </div>
                     )}

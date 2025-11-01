@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import BlogTagFilter from "./pages/BlogTagFilter";
 import Shop from "./pages/Shop";
 import Newsletter from "./pages/Newsletter";
 import Success from "./pages/Success";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="blogg" element={<Blog />} />
+              <Route path="blogg/tag/:tag" element={<BlogTagFilter />} />
               <Route path="blogg/:slug" element={<BlogPost />} />
               <Route path="butik" element={<Shop />} />
               <Route path="nyhetsbrev" element={<Newsletter />} />
