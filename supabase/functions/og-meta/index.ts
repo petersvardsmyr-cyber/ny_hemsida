@@ -43,7 +43,7 @@ serve(async (req) => {
     }
 
     // Build absolute URLs
-    const baseUrl = 'https://petersvardsmyr.com';
+    const baseUrl = 'https://www.petersvardsmyr.se';
     const pageUrl = `${baseUrl}/blogg/${post.slug}`;
     
     // Use featured image if available, otherwise fallback to profile image
