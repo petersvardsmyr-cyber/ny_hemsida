@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { ShareButton } from "@/components/ShareButton";
 
 interface BlogPost {
   id: string;
@@ -147,16 +148,23 @@ const BlogPost = () => {
           {post.title}
         </h1>
         
-        <div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-6">
-          <time className="text-sm">
-            {new Date(post.published_date).toLocaleDateString('sv-SE', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </time>
-          <span>•</span>
-          <span className="text-sm">{post.author}</span>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+            <time className="text-sm">
+              {new Date(post.published_date).toLocaleDateString('sv-SE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+            <span>•</span>
+            <span className="text-sm">{post.author}</span>
+          </div>
+          <ShareButton 
+            title={post.title}
+            text={post.excerpt}
+            url={pageUrl}
+          />
         </div>
 
         {post.tags && post.tags.length > 0 && (
@@ -191,14 +199,20 @@ const BlogPost = () => {
       />
 
       <footer className="mt-12 pt-8 border-t">
-        <div className="flex justify-between items-center">
-          <Button variant="outline" asChild>
-            <Link to="/blogg">Läs fler inlägg</Link>
-          </Button>
-          
+        <div className="flex flex-col items-center gap-6">
           <div className="text-sm text-muted-foreground">
             Publicerad {new Date(post.published_date).toLocaleDateString('sv-SE')}
           </div>
+          
+          <ShareButton 
+            title={post.title}
+            text={post.excerpt}
+            url={pageUrl}
+          />
+          
+          <Button variant="outline" asChild>
+            <Link to="/blogg">Läs fler inlägg</Link>
+          </Button>
         </div>
       </footer>
     </article>
