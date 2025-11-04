@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { toast } from 'sonner';
-import { Users, Send, Mail, Save, Trash2, FileText } from 'lucide-react';
+import { Users, Send, Mail, Save, Trash2, FileText, Plus } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export function AdminNewsletter() {
@@ -19,8 +18,8 @@ export function AdminNewsletter() {
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [showSubscribers, setShowSubscribers] = useState(false);
   const [drafts, setDrafts] = useState<any[]>([]);
-  const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [showDrafts, setShowDrafts] = useState(false);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
 
   const loadSubscribers = async () => {
@@ -85,7 +84,7 @@ export function AdminNewsletter() {
         toast.success('Utkast sparat!');
       }
       
-      loadDrafts();
+      await loadDrafts();
     } catch (error: any) {
       console.error('Error saving draft:', error);
       toast.error('Kunde inte spara utkast');
@@ -116,8 +115,8 @@ export function AdminNewsletter() {
         setCurrentDraftId(null);
       }
 
+      await loadDrafts();
       toast.success('Utkast raderat!');
-      loadDrafts();
     } catch (error: any) {
       console.error('Error deleting draft:', error);
       toast.error('Kunde inte radera utkast');
@@ -165,12 +164,12 @@ export function AdminNewsletter() {
           .from('newsletter_drafts')
           .delete()
           .eq('id', currentDraftId);
+        await loadDrafts();
       }
 
       setSubject('');
       setContent('');
       setCurrentDraftId(null);
-      loadDrafts();
     } catch (error: any) {
       console.error('Newsletter send error:', error);
       toast.error('Kunde inte skicka nyhetsbrev', {
@@ -215,6 +214,7 @@ export function AdminNewsletter() {
                 </CardDescription>
               </div>
               <Button onClick={newDraft} size="sm" variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
                 Nytt utkast
               </Button>
             </div>
@@ -227,9 +227,9 @@ export function AdminNewsletter() {
                 {drafts.map((draft) => (
                   <div 
                     key={draft.id} 
-                    className={`flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors ${currentDraftId === draft.id ? 'bg-muted border-primary' : ''}`}
+                    className={`flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors cursor-pointer ${currentDraftId === draft.id ? 'bg-muted border-primary' : ''}`}
                   >
-                    <div className="flex-1 cursor-pointer" onClick={() => loadDraft(draft)}>
+                    <div className="flex-1" onClick={() => loadDraft(draft)}>
                       <p className="font-medium">{draft.subject || 'Utan ämne'}</p>
                       <p className="text-sm text-muted-foreground">
                         Senast uppdaterad: {new Date(draft.updated_at).toLocaleString('sv-SE')}
@@ -238,7 +238,10 @@ export function AdminNewsletter() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setDraftToDelete(draft.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDraftToDelete(draft.id);
+                      }}
                     >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
@@ -286,13 +289,22 @@ export function AdminNewsletter() {
       {/* Send Newsletter */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Send className="w-5 h-5" />
-            Skicka nyhetsbrev
-          </CardTitle>
-          <CardDescription>
-            Komponera och skicka ett nyhetsbrev till alla aktiva prenumeranter
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Send className="w-5 h-5" />
+                {currentDraftId ? 'Redigera utkast' : 'Skapa nyhetsbrev'}
+              </CardTitle>
+              <CardDescription>
+                Komponera och skicka ett nyhetsbrev till alla aktiva prenumeranter
+              </CardDescription>
+            </div>
+            {currentDraftId && (
+              <Button onClick={newDraft} variant="outline" size="sm">
+                Rensa formulär
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={(e) => { e.preventDefault(); sendNewsletter(); }} className="space-y-4">
