@@ -95,6 +95,33 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_drafts: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           confirmation_token: string | null

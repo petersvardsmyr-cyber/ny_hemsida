@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { toast } from 'sonner';
-import { Users, Send, Mail } from 'lucide-react';
+import { Users, Send, Mail, Save, Trash2, FileText } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export function AdminNewsletter() {
   console.log('AdminNewsletter component rendering');
@@ -17,6 +18,10 @@ export function AdminNewsletter() {
   const [isLoading, setIsLoading] = useState(false);
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [showSubscribers, setShowSubscribers] = useState(false);
+  const [drafts, setDrafts] = useState<any[]>([]);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
+  const [showDrafts, setShowDrafts] = useState(false);
+  const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
 
   const loadSubscribers = async () => {
     try {
@@ -32,6 +37,99 @@ export function AdminNewsletter() {
       console.error('Error loading subscribers:', error);
       toast.error('Kunde inte ladda prenumeranter');
     }
+  };
+
+  const loadDrafts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('newsletter_drafts')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (error) throw error;
+      setDrafts(data || []);
+      setShowDrafts(true);
+    } catch (error: any) {
+      console.error('Error loading drafts:', error);
+      toast.error('Kunde inte ladda utkast');
+    }
+  };
+
+  const saveDraft = async () => {
+    if (!subject.trim() && !content.trim()) {
+      toast.error('Ämne eller innehåll krävs för att spara utkast');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (currentDraftId) {
+        // Update existing draft
+        const { error } = await supabase
+          .from('newsletter_drafts')
+          .update({ subject: subject.trim(), content: content.trim() })
+          .eq('id', currentDraftId);
+
+        if (error) throw error;
+        toast.success('Utkast uppdaterat!');
+      } else {
+        // Create new draft
+        const { data, error } = await supabase
+          .from('newsletter_drafts')
+          .insert({ subject: subject.trim(), content: content.trim() })
+          .select()
+          .single();
+
+        if (error) throw error;
+        setCurrentDraftId(data.id);
+        toast.success('Utkast sparat!');
+      }
+      
+      loadDrafts();
+    } catch (error: any) {
+      console.error('Error saving draft:', error);
+      toast.error('Kunde inte spara utkast');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadDraft = (draft: any) => {
+    setSubject(draft.subject);
+    setContent(draft.content);
+    setCurrentDraftId(draft.id);
+    toast.success('Utkast laddat!');
+  };
+
+  const deleteDraft = async (draftId: string) => {
+    try {
+      const { error } = await supabase
+        .from('newsletter_drafts')
+        .delete()
+        .eq('id', draftId);
+
+      if (error) throw error;
+
+      if (currentDraftId === draftId) {
+        setSubject('');
+        setContent('');
+        setCurrentDraftId(null);
+      }
+
+      toast.success('Utkast raderat!');
+      loadDrafts();
+    } catch (error: any) {
+      console.error('Error deleting draft:', error);
+      toast.error('Kunde inte radera utkast');
+    } finally {
+      setDraftToDelete(null);
+    }
+  };
+
+  const newDraft = () => {
+    setSubject('');
+    setContent('');
+    setCurrentDraftId(null);
   };
 
   const sendNewsletter = async () => {
@@ -61,8 +159,18 @@ export function AdminNewsletter() {
         description: (data as any)?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
       });
 
+      // Delete draft if it exists
+      if (currentDraftId) {
+        await supabase
+          .from('newsletter_drafts')
+          .delete()
+          .eq('id', currentDraftId);
+      }
+
       setSubject('');
       setContent('');
+      setCurrentDraftId(null);
+      loadDrafts();
     } catch (error: any) {
       console.error('Newsletter send error:', error);
       toast.error('Kunde inte skicka nyhetsbrev', {
@@ -80,11 +188,67 @@ export function AdminNewsletter() {
           <h2 className="text-2xl font-heading font-medium">Nyhetsbrev</h2>
           <p className="text-muted-foreground">Hantera och skicka nyhetsbrev</p>
         </div>
-        <Button onClick={loadSubscribers} variant="outline">
-          <Users className="w-4 h-4 mr-2" />
-          Visa prenumeranter ({subscribers.length})
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={loadDrafts} variant="outline">
+            <FileText className="w-4 h-4 mr-2" />
+            Visa utkast
+          </Button>
+          <Button onClick={loadSubscribers} variant="outline">
+            <Users className="w-4 h-4 mr-2" />
+            Visa prenumeranter ({subscribers.length})
+          </Button>
+        </div>
       </div>
+
+      {/* Drafts List */}
+      {showDrafts && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Sparade utkast ({drafts.length})
+                </CardTitle>
+                <CardDescription>
+                  Dina sparade nyhetsbrevsutkast
+                </CardDescription>
+              </div>
+              <Button onClick={newDraft} size="sm" variant="outline">
+                Nytt utkast
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {drafts.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">Inga utkast sparade ännu</p>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {drafts.map((draft) => (
+                  <div 
+                    key={draft.id} 
+                    className={`flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors ${currentDraftId === draft.id ? 'bg-muted border-primary' : ''}`}
+                  >
+                    <div className="flex-1 cursor-pointer" onClick={() => loadDraft(draft)}>
+                      <p className="font-medium">{draft.subject || 'Utan ämne'}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Senast uppdaterad: {new Date(draft.updated_at).toLocaleString('sv-SE')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDraftToDelete(draft.id)}
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Subscribers List */}
       {showSubscribers && (
@@ -210,18 +374,48 @@ export function AdminNewsletter() {
               </div>
             </div>
 
-            <Button 
-              type="button"
-              onClick={sendNewsletter}
-              disabled={isLoading}
-              className="w-full"
-            >
-              <Mail className="w-4 h-4 mr-2" />
-              {isLoading ? 'Skickar...' : 'Skicka nyhetsbrev'}
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                type="button"
+                onClick={saveDraft}
+                disabled={isLoading}
+                variant="outline"
+                className="flex-1"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {currentDraftId ? 'Uppdatera utkast' : 'Spara som utkast'}
+              </Button>
+              <Button 
+                type="button"
+                onClick={sendNewsletter}
+                disabled={isLoading}
+                className="flex-1"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {isLoading ? 'Skickar...' : 'Skicka nyhetsbrev'}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!draftToDelete} onOpenChange={(open) => !open && setDraftToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Radera utkast?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Är du säker på att du vill radera detta utkast? Denna åtgärd kan inte ångras.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={() => draftToDelete && deleteDraft(draftToDelete)}>
+              Radera
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
