@@ -232,9 +232,12 @@ export function AdminNewsletter() {
               <div className="space-y-2">
                 <Label>Förhandsgranskning</Label>
                 <div className="border border-input rounded-md bg-muted/30 p-4 min-h-[300px] max-h-[500px] overflow-y-auto">
+                  <style>
+                    {`@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');`}
+                  </style>
                   <div 
                     style={{ 
-                      fontFamily: 'Arial, sans-serif', 
+                      fontFamily: "'Crimson Text', Georgia, serif", 
                       maxWidth: '600px', 
                       margin: '0 auto',
                       color: '#000000'
@@ -253,7 +256,7 @@ export function AdminNewsletter() {
                         lineHeight: '1.6',
                         color: '#000000'
                       }}
-                      className="[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h1]:text-black [&_h1]:font-sans [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-5 [&_h2]:text-black [&_h2]:font-sans [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-black [&_h3]:font-sans [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-black [&_p]:font-sans [&_strong]:font-bold [&_strong]:text-black [&_em]:italic [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:my-2 [&_ul]:font-sans [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_ol]:font-sans [&_blockquote]:border-l-4 [&_blockquote]:border-gray-400 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_blockquote]:font-sans [&_a]:text-blue-600 [&_a]:underline [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4"
+                      className="[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h1]:text-black [&_h1]:font-['Playfair_Display',Georgia,serif] [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-5 [&_h2]:text-black [&_h2]:font-['Playfair_Display',Georgia,serif] [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-black [&_h3]:font-['Playfair_Display',Georgia,serif] [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-black [&_p]:font-['Crimson_Text',Georgia,serif] [&_strong]:font-bold [&_strong]:text-black [&_em]:italic [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:my-2 [&_ul]:font-['Crimson_Text',Georgia,serif] [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_ol]:font-['Crimson_Text',Georgia,serif] [&_blockquote]:border-l-4 [&_blockquote]:border-gray-400 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_blockquote]:font-['Crimson_Text',Georgia,serif] [&_a]:text-blue-600 [&_a]:underline [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4"
                     />
                     <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #eee' }} />
                     <footer style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', marginTop: '30px' }}>

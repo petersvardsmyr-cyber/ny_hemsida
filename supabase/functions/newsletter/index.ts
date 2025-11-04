@@ -180,7 +180,13 @@ const handler = async (req: Request): Promise<Response> => {
         to: [subscriber.email],
         subject: emailSubject,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+            body { font-family: 'Crimson Text', Georgia, serif; }
+            h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', Georgia, serif; }
+            p, li, blockquote, span, div { font-family: 'Crimson Text', Georgia, serif; }
+          </style>
+          <div style="font-family: 'Crimson Text', Georgia, serif; max-width: 600px; margin: 0 auto;">
             ${emailContent}
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
