@@ -109,7 +109,7 @@ const Home = () => {
       <section id="books" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Böcker</h2>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro, kyrkan och en hel del vardagsfilosofi.</p>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro och en hel del vardagsfilosofi och poesi.</p>
           
           <BooksPreview />
         </div>
@@ -163,44 +163,17 @@ const Home = () => {
           <div className="grid gap-6 md:gap-8">
             {/* First Album */}
             <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
-              <iframe 
-                src="https://open.spotify.com/embed/album/5wFcioalJCkED3IcVUrxZF?utm_source=generator&theme=0" 
-                width="100%" 
-                height="352" 
-                frameBorder="0" 
-                allowFullScreen={true}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy"
-                className="rounded-lg"
-              ></iframe>
+              <iframe src="https://open.spotify.com/embed/album/5wFcioalJCkED3IcVUrxZF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowFullScreen={true} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" className="rounded-lg"></iframe>
             </div>
             
             {/* Second Album */}
             <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
-              <iframe 
-                src="https://open.spotify.com/embed/album/3qRtxATRxr9t3XRK5cL92z?utm_source=generator&theme=0" 
-                width="100%" 
-                height="352" 
-                frameBorder="0" 
-                allowFullScreen={true}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy"
-                className="rounded-lg"
-              ></iframe>
+              <iframe src="https://open.spotify.com/embed/album/3qRtxATRxr9t3XRK5cL92z?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowFullScreen={true} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" className="rounded-lg"></iframe>
             </div>
             
             {/* Single Track */}
             <div className="bg-warm-cream/5 rounded-lg border border-warm-cream/10 p-4 md:p-6">
-              <iframe 
-                src="https://open.spotify.com/embed/track/2uaTaPnkjZg6CUDdacdfra?utm_source=generator&theme=0" 
-                width="100%" 
-                height="152" 
-                frameBorder="0" 
-                allowFullScreen={true}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy"
-                className="rounded-lg"
-              ></iframe>
+              <iframe src="https://open.spotify.com/embed/track/2uaTaPnkjZg6CUDdacdfra?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowFullScreen={true} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" className="rounded-lg"></iframe>
             </div>
           </div>
         </div>
