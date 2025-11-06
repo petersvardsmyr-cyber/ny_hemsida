@@ -24,9 +24,10 @@ export function AdminNewsletter() {
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
   const [sendProgress, setSendProgress] = useState<{ sent: number; total: number; status: string } | null>(null);
 
-  // Load drafts on mount
+  // Load drafts and subscribers on mount
   useEffect(() => {
     loadDrafts();
+    loadSubscribers();
   }, []);
 
   const loadSubscribers = async () => {
@@ -200,15 +201,11 @@ export function AdminNewsletter() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-heading font-medium">Nyhetsbrev</h2>
-          <p className="text-muted-foreground">Hantera och skicka nyhetsbrev</p>
-        </div>
-        <Button onClick={loadSubscribers} variant="outline">
-          <Users className="w-4 h-4 mr-2" />
-          Visa prenumeranter ({subscribers.length})
-        </Button>
+      <div>
+        <h2 className="text-2xl font-heading font-medium">Nyhetsbrev</h2>
+        <p className="text-muted-foreground">
+          {subscribers.length} aktiva prenumeranter
+        </p>
       </div>
 
       {/* Drafts List */}
