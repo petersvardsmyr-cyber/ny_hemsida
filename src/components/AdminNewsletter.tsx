@@ -44,25 +44,32 @@ export function AdminNewsletter() {
         .limit(1)
         .maybeSingle();
 
+      const { count: totalSubscribers } = await supabase
+        .from('newsletter_subscribers')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
+
       if (lastNewsletter) {
         const { data: recipients } = await supabase
           .from('newsletter_recipients')
           .select('subscriber_email')
           .eq('sent_newsletter_id', lastNewsletter.id);
 
-        const { count: totalSubscribers } = await supabase
-          .from('newsletter_subscribers')
-          .select('*', { count: 'exact', head: true })
-          .eq('is_active', true);
-
         const alreadySent = recipients?.length || 0;
         const remaining = (totalSubscribers || 0) - alreadySent;
 
-        setNewsletterStatus({
-          remaining,
-          already_sent: alreadySent,
-          total: totalSubscribers || 0
-        });
+        // Only show status if we have tracking data (recipients exist)
+        if (alreadySent > 0) {
+          setNewsletterStatus({
+            remaining,
+            already_sent: alreadySent,
+            total: totalSubscribers || 0
+          });
+        } else {
+          setNewsletterStatus(null);
+        }
+      } else {
+        setNewsletterStatus(null);
       }
     } catch (error) {
       console.error('Error checking newsletter status:', error);
