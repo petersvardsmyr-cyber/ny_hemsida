@@ -173,61 +173,72 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Send newsletter to all subscribers
-    const emailPromises = subscribers.map(subscriber => 
-      resend.emails.send({
-        from,
-        to: [subscriber.email],
-        subject: emailSubject,
-        html: `
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-            body { font-family: 'Crimson Text', Georgia, serif; }
-            h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', Georgia, serif; }
-            p, li, blockquote, span, div { font-family: 'Crimson Text', Georgia, serif; }
-          </style>
-          <div style="font-family: 'Crimson Text', Georgia, serif; max-width: 600px; margin: 0 auto;">
-            ${emailContent}
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
-              <div style="text-align: center; margin-bottom: 15px;">
-                <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
-                  petersvardsmyr.se
-                </a>
-              </div>
-              <div style="text-align: center; margin-bottom: 15px;">
-                <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
-                  hej@petersvardsmyr.se
-                </a>
-              </div>
-              <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-              <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
-                Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
-              </p>
-              <p style="font-size: 12px; text-align: center; margin: 10px 0;">
-                <a href="https://petersvardsmyr.se/nyhetsbrev/avregistrera?email=${encodeURIComponent(subscriber.email)}" style="color: #666; text-decoration: underline;">
-                  Avregistrera dig här
-                </a>
-              </p>
-            </footer>
-          </div>
-        `,
-      })
-    );
-
-    const results = await Promise.allSettled(emailPromises);
+    // Send newsletter in batches to avoid memory limit
+    const BATCH_SIZE = 50;
+    let successful = 0;
+    let failed = 0;
     
-    const successful = results.filter(result => result.status === 'fulfilled').length;
-    const failed = results.filter(result => result.status === 'rejected').length;
+    console.log(`Sending newsletter to ${subscribers.length} subscribers in batches of ${BATCH_SIZE}`);
+    
+    for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+      const batch = subscribers.slice(i, i + BATCH_SIZE);
+      console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} emails)`);
+      
+      const emailPromises = batch.map(subscriber => 
+        resend.emails.send({
+          from,
+          to: [subscriber.email],
+          subject: emailSubject,
+          html: `
+            <style>
+              @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+              body { font-family: 'Crimson Text', Georgia, serif; }
+              h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', Georgia, serif; }
+              p, li, blockquote, span, div { font-family: 'Crimson Text', Georgia, serif; }
+            </style>
+            <div style="font-family: 'Crimson Text', Georgia, serif; max-width: 600px; margin: 0 auto;">
+              ${emailContent}
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+              <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                  <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                    petersvardsmyr.se
+                  </a>
+                </div>
+                <div style="text-align: center; margin-bottom: 15px;">
+                  <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
+                    hej@petersvardsmyr.se
+                  </a>
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+                <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
+                  Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
+                </p>
+                <p style="font-size: 12px; text-align: center; margin: 10px 0;">
+                  <a href="https://petersvardsmyr.se/nyhetsbrev/avregistrera?email=${encodeURIComponent(subscriber.email)}" style="color: #666; text-decoration: underline;">
+                    Avregistrera dig här
+                  </a>
+                </p>
+              </footer>
+            </div>
+          `,
+        })
+      );
+
+      const results = await Promise.allSettled(emailPromises);
+      
+      successful += results.filter(result => result.status === 'fulfilled').length;
+      failed += results.filter(result => result.status === 'rejected').length;
+      
+      if (results.some(result => result.status === 'rejected')) {
+        const failedResults = results
+          .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+          .map(result => result.reason);
+        console.error(`Failed sends in batch ${Math.floor(i / BATCH_SIZE) + 1}:`, failedResults);
+      }
+    }
 
     console.log(`Newsletter sent: ${successful} successful, ${failed} failed`);
-
-    if (failed > 0) {
-      const failedResults = results
-        .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-        .map(result => result.reason);
-      console.error("Failed sends:", failedResults);
-    }
 
     // Save to sent_newsletters table
     const { error: saveError } = await supabase
