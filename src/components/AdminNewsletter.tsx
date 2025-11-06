@@ -19,10 +19,15 @@ export function AdminNewsletter() {
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [showSubscribers, setShowSubscribers] = useState(false);
   const [drafts, setDrafts] = useState<any[]>([]);
-  const [showDrafts, setShowDrafts] = useState(false);
+  const [showDrafts, setShowDrafts] = useState(true);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
   const [sendProgress, setSendProgress] = useState<{ sent: number; total: number; status: string } | null>(null);
+
+  // Load drafts on mount
+  useEffect(() => {
+    loadDrafts();
+  }, []);
 
   const loadSubscribers = async () => {
     try {
@@ -174,15 +179,7 @@ export function AdminNewsletter() {
         description: (data as any)?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
       });
 
-      // Delete draft if it exists
-      if (currentDraftId) {
-        await supabase
-          .from('newsletter_drafts')
-          .delete()
-          .eq('id', currentDraftId);
-        await loadDrafts();
-      }
-
+      // Clear form but keep the draft
       setSubject('');
       setContent('');
       setCurrentDraftId(null);
