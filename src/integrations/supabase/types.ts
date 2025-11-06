@@ -122,6 +122,38 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_recipients: {
+        Row: {
+          created_at: string
+          id: string
+          sent_at: string
+          sent_newsletter_id: string
+          subscriber_email: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sent_at?: string
+          sent_newsletter_id: string
+          subscriber_email: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sent_at?: string
+          sent_newsletter_id?: string
+          subscriber_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_recipients_sent_newsletter_id_fkey"
+            columns: ["sent_newsletter_id"]
+            isOneToOne: false
+            referencedRelation: "sent_newsletters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_send_status: {
         Row: {
           created_at: string

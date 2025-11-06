@@ -23,12 +23,51 @@ export function AdminNewsletter() {
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
   const [sendProgress, setSendProgress] = useState<{ sent: number; total: number; status: string } | null>(null);
+  const [newsletterStatus, setNewsletterStatus] = useState<{ remaining: number; already_sent: number; total: number } | null>(null);
 
   // Load drafts and subscribers on mount
   useEffect(() => {
     loadDrafts();
     loadSubscribers();
+    checkNewsletterStatus();
   }, []);
+
+  const checkNewsletterStatus = async () => {
+    if (!subject.trim()) return;
+
+    try {
+      const { data: lastNewsletter } = await supabase
+        .from('sent_newsletters')
+        .select('id')
+        .eq('subject', subject)
+        .order('sent_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lastNewsletter) {
+        const { data: recipients } = await supabase
+          .from('newsletter_recipients')
+          .select('subscriber_email')
+          .eq('sent_newsletter_id', lastNewsletter.id);
+
+        const { count: totalSubscribers } = await supabase
+          .from('newsletter_subscribers')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_active', true);
+
+        const alreadySent = recipients?.length || 0;
+        const remaining = (totalSubscribers || 0) - alreadySent;
+
+        setNewsletterStatus({
+          remaining,
+          already_sent: alreadySent,
+          total: totalSubscribers || 0
+        });
+      }
+    } catch (error) {
+      console.error('Error checking newsletter status:', error);
+    }
+  };
 
   const loadSubscribers = async () => {
     try {
@@ -164,6 +203,17 @@ export function AdminNewsletter() {
       console.log('[Newsletter] Send response', data);
       
       const runId = (data as any)?.run_id;
+      const remaining = (data as any)?.remaining || 0;
+      const alreadySent = (data as any)?.already_sent || 0;
+      const totalSubs = (data as any)?.total_subscribers || 0;
+      const successful = (data as any)?.successful || 0;
+
+      // Update newsletter status
+      setNewsletterStatus({
+        remaining,
+        already_sent: alreadySent + successful,
+        total: totalSubs
+      });
       
       if (runId) {
         // Subscribe to database changes for progress updates
@@ -197,14 +247,24 @@ export function AdminNewsletter() {
           .subscribe();
       }
 
+      const message = remaining > 0 
+        ? `Nyhetsbrev skickat till ${successful} prenumeranter. ${remaining} återstår att skicka till.`
+        : `Nyhetsbrev skickat till ${successful} prenumeranter. Alla har nu fått mejlet!`;
+
       toast.success('Nyhetsbrev skickat!', {
-        description: (data as any)?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
+        description: message
       });
 
-      // Clear form but keep the draft
-      setSubject('');
-      setContent('');
-      setCurrentDraftId(null);
+      // Don't clear form if there are more to send
+      if (remaining === 0) {
+        setSubject('');
+        setContent('');
+        setCurrentDraftId(null);
+        setNewsletterStatus(null);
+      }
+
+      // Refresh status
+      await checkNewsletterStatus();
     } catch (error: any) {
       console.error('Newsletter send error:', error);
       toast.error('Kunde inte skicka nyhetsbrev', {
@@ -412,6 +472,27 @@ export function AdminNewsletter() {
               </div>
             </div>
 
+            {newsletterStatus && newsletterStatus.already_sent > 0 && (
+              <div className="p-4 border rounded-md bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Status för detta nyhetsbrev:</span>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <p>✓ {newsletterStatus.already_sent} av {newsletterStatus.total} har fått mejlet</p>
+                  {newsletterStatus.remaining > 0 && (
+                    <p className="text-blue-600 dark:text-blue-400 font-medium">
+                      {newsletterStatus.remaining} återstår att skicka till
+                    </p>
+                  )}
+                </div>
+                {newsletterStatus.remaining === 0 && (
+                  <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                    ✓ Alla prenumeranter har fått detta nyhetsbrev!
+                  </p>
+                )}
+              </div>
+            )}
+
             {sendProgress && (
               <div className="space-y-2 mb-4 p-4 border rounded-md bg-muted/30">
                 <div className="flex justify-between text-sm font-medium">
@@ -445,7 +526,11 @@ export function AdminNewsletter() {
                 className="flex-1"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                {isLoading ? 'Skickar...' : 'Skicka nyhetsbrev'}
+                {isLoading 
+                  ? 'Skickar...' 
+                  : newsletterStatus && newsletterStatus.remaining > 0 
+                    ? `Skicka till nästa ${Math.min(75, newsletterStatus.remaining)} prenumeranter`
+                    : 'Skicka nyhetsbrev'}
               </Button>
             </div>
           </form>

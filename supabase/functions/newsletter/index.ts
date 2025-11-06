@@ -149,8 +149,34 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // First, check if we have a pending newsletter (one that was partially sent)
+    const { data: lastNewsletter } = await supabase
+      .from('sent_newsletters')
+      .select('id')
+      .eq('subject', emailSubject)
+      .eq('sent_by', user?.email || 'system')
+      .order('sent_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    let newsletterId = lastNewsletter?.id;
+
+    // If we have a pending newsletter, get recipients who already received it
+    let excludedEmails: string[] = [];
+    if (newsletterId) {
+      const { data: alreadySent } = await supabase
+        .from('newsletter_recipients')
+        .select('subscriber_email')
+        .eq('sent_newsletter_id', newsletterId);
+      
+      if (alreadySent && alreadySent.length > 0) {
+        excludedEmails = alreadySent.map(r => r.subscriber_email);
+        console.log(`Found ${excludedEmails.length} subscribers who already received this newsletter`);
+      }
+    }
+
     // Get all active subscribers
-    const { data: subscribers, error: dbError } = await supabase
+    const { data: allSubscribers, error: dbError } = await supabase
       .from('newsletter_subscribers')
       .select('email, name')
       .eq('is_active', true);
@@ -166,7 +192,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    if (!subscribers || subscribers.length === 0) {
+    if (!allSubscribers || allSubscribers.length === 0) {
       return new Response(
         JSON.stringify({ message: "No active subscribers found" }),
         { 
@@ -175,6 +201,30 @@ const handler = async (req: Request): Promise<Response> => {
         }
       );
     }
+
+    // Filter out subscribers who already received this newsletter
+    const subscribers = allSubscribers.filter(s => !excludedEmails.includes(s.email));
+
+    if (subscribers.length === 0) {
+      return new Response(
+        JSON.stringify({ 
+          message: "All subscribers have already received this newsletter",
+          total_subscribers: allSubscribers.length,
+          already_sent: excludedEmails.length
+        }),
+        { 
+          status: 200, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        }
+      );
+    }
+
+    // Limit to 75 emails per batch to respect daily Resend limit
+    const MAX_EMAILS_PER_RUN = 75;
+    const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
+    const remainingAfterThis = subscribers.length - subscribersToSend.length;
+
+    console.log(`Sending to ${subscribersToSend.length} subscribers (${remainingAfterThis} remaining)`);
 
     // Send newsletter in batches to avoid memory limit
     const BATCH_SIZE = 5;
@@ -224,14 +274,14 @@ const handler = async (req: Request): Promise<Response> => {
       .insert({
         run_id: runId,
         started_by: user?.email || 'system',
-        total: subscribers.length,
+        total: subscribersToSend.length,
         sent: 0,
         failed: 0,
         status: 'started'
       });
     
-    for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
-      const batch = subscribers.slice(i, i + BATCH_SIZE);
+    for (let i = 0; i < subscribersToSend.length; i += BATCH_SIZE) {
+      const batch = subscribersToSend.slice(i, i + BATCH_SIZE);
       console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} emails)`);
       
       const emailPromises = batch.map(subscriber =>
@@ -278,19 +328,53 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Newsletter sent: ${successful} successful, ${failed} failed`);
 
-    // Save to sent_newsletters table
-    const { error: saveError } = await supabase
-      .from('sent_newsletters')
-      .insert({
-        subject: emailSubject,
-        content: emailContent,
-        template_id: template_id || null,
-        recipient_count: successful,
-        sent_by: user?.email || 'system'
-      });
+    // Create or update newsletter record
+    if (!newsletterId) {
+      const { data: newNewsletter, error: saveError } = await supabase
+        .from('sent_newsletters')
+        .insert({
+          subject: emailSubject,
+          content: emailContent,
+          template_id: template_id || null,
+          recipient_count: successful,
+          sent_by: user?.email || 'system'
+        })
+        .select()
+        .single();
 
-    if (saveError) {
-      console.error("Error saving newsletter history:", saveError);
+      if (saveError) {
+        console.error("Error saving newsletter history:", saveError);
+      } else {
+        newsletterId = newNewsletter.id;
+      }
+    } else {
+      // Update existing newsletter with new recipient count
+      const { error: updateError } = await supabase
+        .from('sent_newsletters')
+        .update({
+          recipient_count: (excludedEmails.length + successful)
+        })
+        .eq('id', newsletterId);
+
+      if (updateError) {
+        console.error("Error updating newsletter history:", updateError);
+      }
+    }
+
+    // Record which subscribers received this newsletter
+    if (newsletterId && successful > 0) {
+      const recipientRecords = subscribersToSend.slice(0, successful).map(subscriber => ({
+        sent_newsletter_id: newsletterId,
+        subscriber_email: subscriber.email
+      }));
+
+      const { error: recipientsError } = await supabase
+        .from('newsletter_recipients')
+        .insert(recipientRecords);
+
+      if (recipientsError) {
+        console.error("Error recording recipients:", recipientsError);
+      }
     }
 
     return new Response(
@@ -298,7 +382,10 @@ const handler = async (req: Request): Promise<Response> => {
         message: `Newsletter sent to ${successful} subscribers`,
         successful,
         failed,
-        run_id: runId
+        run_id: runId,
+        remaining: remainingAfterThis,
+        total_subscribers: allSubscribers.length,
+        already_sent: excludedEmails.length
       }),
       {
         status: 200,
