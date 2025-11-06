@@ -122,6 +122,42 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_send_status: {
+        Row: {
+          created_at: string
+          failed: number
+          id: string
+          run_id: string
+          sent: number
+          started_by: string | null
+          status: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          failed?: number
+          id?: string
+          run_id: string
+          sent?: number
+          started_by?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          failed?: number
+          id?: string
+          run_id?: string
+          sent?: number
+          started_by?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           confirmation_token: string | null

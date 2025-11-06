@@ -150,24 +150,11 @@ export function AdminNewsletter() {
     setIsLoading(true);
     setSendProgress({ sent: 0, total: 0, status: 'starting' });
 
-    // Create a unique channel for progress updates
-    const progressChannelId = `newsletter-progress-${Date.now()}`;
-    const channel = supabase.channel(progressChannelId);
-
     try {
-      // Subscribe to progress updates
-      await channel
-        .on('broadcast', { event: 'progress' }, (payload) => {
-          console.log('Progress update:', payload);
-          setSendProgress(payload.payload);
-        })
-        .subscribe();
-
       const payload = { 
         subject: subject.trim(), 
         content: content.trim(), 
-        from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
-        progress_channel: progressChannelId
+        from: "Peter Svärdsmyr <hej@petersvardsmyr.se>"
       };
 
       const { data, error } = await supabase.functions.invoke('newsletter', { body: payload });
@@ -175,6 +162,40 @@ export function AdminNewsletter() {
       if (error) throw error;
 
       console.log('[Newsletter] Send response', data);
+      
+      const runId = (data as any)?.run_id;
+      
+      if (runId) {
+        // Subscribe to database changes for progress updates
+        const channel = supabase
+          .channel(`newsletter-progress-${runId}`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'newsletter_send_status',
+              filter: `run_id=eq.${runId}`
+            },
+            (payload) => {
+              console.log('Progress update from DB:', payload);
+              const newData = payload.new as any;
+              setSendProgress({
+                sent: newData.sent,
+                total: newData.total,
+                status: newData.status
+              });
+              
+              if (newData.status === 'completed') {
+                setTimeout(() => {
+                  supabase.removeChannel(channel);
+                  setSendProgress(null);
+                }, 3000);
+              }
+            }
+          )
+          .subscribe();
+      }
 
       toast.success('Nyhetsbrev skickat!', {
         description: (data as any)?.message || 'Nyhetsbrevet har skickats till alla prenumeranter'
@@ -189,13 +210,9 @@ export function AdminNewsletter() {
       toast.error('Kunde inte skicka nyhetsbrev', {
         description: error?.message || 'Ett oväntat fel uppstod'
       });
+      setSendProgress(null);
     } finally {
       setIsLoading(false);
-      // Clean up channel after a short delay
-      setTimeout(() => {
-        supabase.removeChannel(channel);
-        setSendProgress(null);
-      }, 3000);
     }
   };
 
