@@ -40,13 +40,15 @@ export default function AdminOrders() {
   const { toast } = useToast();
 
   // Filter orders based on tab
-  const completedOrders = orders.filter(order => 
-    order.status === 'completed' || order.status === 'shipped'
+  const paidOrders = orders.filter(order => 
+    order.stripe_payment_intent_id !== null && order.stripe_payment_intent_id !== undefined
   );
   
   const abandonedOrders = orders.filter(order => 
     order.status === 'pending' && !order.stripe_payment_intent_id
   );
+
+  const shippedOrders = paidOrders.filter(order => order.status === 'shipped');
 
   useEffect(() => {
     fetchOrders();
@@ -185,11 +187,11 @@ export default function AdminOrders() {
             <div className="text-center space-y-2">
               <Package className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="text-lg font-medium">
-                {activeTab === 'completed' ? 'Inga beställningar än' : 'Inga övergivna varukorgar'}
+                {activeTab === 'completed' ? 'Inga betalda beställningar än' : 'Inga övergivna varukorgar'}
               </h3>
               <p className="text-muted-foreground">
                 {activeTab === 'completed' 
-                  ? 'Beställningar kommer att visas här när kunder genomför köp.'
+                  ? 'Betalda beställningar kommer att visas här när kunder slutför köp.'
                   : 'Övergivna varukorgar visas här när kunder påbörjar men inte slutför köp.'
                 }
               </p>
@@ -474,21 +476,21 @@ export default function AdminOrders() {
       )}
 
       {/* Statistics */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Totalt beställningar</CardTitle>
+            <CardTitle className="text-sm font-medium">Betalda beställningar</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{orders.length}</div>
+            <div className="text-2xl font-bold text-green-600">{paidOrders.length}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Slutförda/Skickade</CardTitle>
+            <CardTitle className="text-sm font-medium">Skickade paket</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{completedOrders.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{shippedOrders.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -513,6 +515,14 @@ export default function AdminOrders() {
             )}
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Totalt</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{orders.length}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {orders.length === 0 ? (
@@ -531,7 +541,7 @@ export default function AdminOrders() {
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'completed' | 'abandoned')}>
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="completed">
-              Riktiga beställningar ({completedOrders.length})
+              Betalda beställningar ({paidOrders.length})
             </TabsTrigger>
             <TabsTrigger value="abandoned">
               Övergivna varukorgar ({abandonedOrders.length})
@@ -539,7 +549,7 @@ export default function AdminOrders() {
           </TabsList>
           
           <TabsContent value="completed" className="mt-6">
-            {renderOrdersList(completedOrders)}
+            {renderOrdersList(paidOrders)}
           </TabsContent>
           
           <TabsContent value="abandoned" className="mt-6">
