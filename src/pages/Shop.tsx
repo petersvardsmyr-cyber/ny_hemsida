@@ -289,6 +289,9 @@ const Shop = () => {
     try {
       const breakdown = calculateVATBreakdown();
       
+      // Get current user session if available
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const orderData = {
         items: cart.map(item => ({
           id: item.id,
@@ -308,7 +311,7 @@ const Shop = () => {
         discount_code: discountCode || null,
         newsletter_optin: newsletterOptIn,
         vat_breakdown: breakdown,
-        email: 'guest@example.com' // Will be updated after Stripe checkout
+        email: session?.user?.email || undefined
       };
 
       const { data, error } = await supabase.functions.invoke('create-payment', {

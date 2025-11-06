@@ -143,11 +143,26 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
+    // Get authenticated user if available
+    const authHeader = req.headers.get('Authorization');
+    let userId = null;
+    let userEmail = orderData.email;
+
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user } } = await supabaseClient.auth.getUser(token);
+      if (user) {
+        userId = user.id;
+        userEmail = user.email || orderData.email;
+      }
+    }
+
     const { error: insertError } = await supabaseClient
       .from("orders")
       .insert({
         stripe_session_id: session.id,
-        email: orderData.email || 'guest@example.com',
+        user_id: userId,
+        email: userEmail || orderData.email,
         total_amount: orderData.total_amount * 100, // Store in öre
         discount_amount: (orderData.discount_amount || 0) * 100,
         discount_code: orderData.discount_code,
