@@ -219,21 +219,18 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Limit to 75 emails per batch to respect daily Resend limit
-    const MAX_EMAILS_PER_RUN = 75;
+    // Use Resend batch API which can send up to 100 emails in one API call
+    // This respects the rate limit of 2 requests per second
+    const MAX_EMAILS_PER_RUN = 100;
     const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
     const remainingAfterThis = subscribers.length - subscribersToSend.length;
 
     console.log(`Sending to ${subscribersToSend.length} subscribers (${remainingAfterThis} remaining)`);
 
-    // Send newsletter in batches to avoid memory limit
-    const BATCH_SIZE = 5;
     let successful = 0;
     let failed = 0;
     
-    console.log(`Sending newsletter to ${subscribers.length} subscribers in batches of ${BATCH_SIZE}`);
-    
-    // Build HTML template once outside the loop
+    // Build HTML template once
     const emailTemplate = `
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -280,23 +277,28 @@ const handler = async (req: Request): Promise<Response> => {
         status: 'started'
       });
     
-    for (let i = 0; i < subscribersToSend.length; i += BATCH_SIZE) {
-      const batch = subscribersToSend.slice(i, i + BATCH_SIZE);
-      console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} emails)`);
-      
-      const emailPromises = batch.map(subscriber =>
-        resend.emails.send({
-          from,
-          to: [subscriber.email],
-          subject: emailSubject,
-          html: emailTemplate.replace('SUBSCRIBER_EMAIL', encodeURIComponent(subscriber.email)),
-        })
-      );
+    console.log(`Sending newsletter to ${subscribersToSend.length} subscribers using batch API`);
+    
+    // Use Resend batch API to send all emails in one request
+    try {
+      const batchEmails = subscribersToSend.map(subscriber => ({
+        from,
+        to: [subscriber.email],
+        subject: emailSubject,
+        html: emailTemplate.replace('SUBSCRIBER_EMAIL', encodeURIComponent(subscriber.email)),
+      }));
 
-      const results = await Promise.allSettled(emailPromises);
+      const { data: batchData, error: batchError } = await resend.batch.send(batchEmails);
       
-      successful += results.filter(result => result.status === 'fulfilled').length;
-      failed += results.filter(result => result.status === 'rejected').length;
+      if (batchError) {
+        console.error('Batch send error:', batchError);
+        failed = subscribersToSend.length;
+      } else {
+        // Count successful and failed sends
+        successful = batchData?.data?.length || 0;
+        failed = subscribersToSend.length - successful;
+        console.log(`Batch send completed: ${successful} successful, ${failed} failed`);
+      }
       
       // Update progress in database
       await supabase
@@ -307,13 +309,9 @@ const handler = async (req: Request): Promise<Response> => {
           status: 'sending'
         })
         .eq('run_id', runId);
-      
-      if (results.some(result => result.status === 'rejected')) {
-        const failedResults = results
-          .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-          .map(result => result.reason);
-        console.error(`Failed sends in batch ${Math.floor(i / BATCH_SIZE) + 1}:`, failedResults);
-      }
+    } catch (error) {
+      console.error('Batch send exception:', error);
+      failed = subscribersToSend.length;
     }
     
     // Mark as completed
