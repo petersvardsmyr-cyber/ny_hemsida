@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,7 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { toast } from 'sonner';
 import { Users, Send, Mail, Save, Trash2, FileText, Plus } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Progress } from '@/components/ui/progress';
 
 export function AdminNewsletter() {
   console.log('AdminNewsletter component rendering');
@@ -21,6 +22,7 @@ export function AdminNewsletter() {
   const [showDrafts, setShowDrafts] = useState(false);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
+  const [sendProgress, setSendProgress] = useState<{ sent: number; total: number; status: string } | null>(null);
 
   const loadSubscribers = async () => {
     try {
@@ -140,12 +142,26 @@ export function AdminNewsletter() {
     }
 
     setIsLoading(true);
+    setSendProgress({ sent: 0, total: 0, status: 'starting' });
+
+    // Create a unique channel for progress updates
+    const progressChannelId = `newsletter-progress-${Date.now()}`;
+    const channel = supabase.channel(progressChannelId);
 
     try {
+      // Subscribe to progress updates
+      await channel
+        .on('broadcast', { event: 'progress' }, (payload) => {
+          console.log('Progress update:', payload);
+          setSendProgress(payload.payload);
+        })
+        .subscribe();
+
       const payload = { 
         subject: subject.trim(), 
         content: content.trim(), 
-        from: "Peter Svärdsmyr <hej@petersvardsmyr.se>" 
+        from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
+        progress_channel: progressChannelId
       };
 
       const { data, error } = await supabase.functions.invoke('newsletter', { body: payload });
@@ -177,6 +193,11 @@ export function AdminNewsletter() {
       });
     } finally {
       setIsLoading(false);
+      // Clean up channel after a short delay
+      setTimeout(() => {
+        supabase.removeChannel(channel);
+        setSendProgress(null);
+      }, 3000);
     }
   };
 
@@ -385,6 +406,21 @@ export function AdminNewsletter() {
                 </div>
               </div>
             </div>
+
+            {sendProgress && (
+              <div className="space-y-2 mb-4 p-4 border rounded-md bg-muted/30">
+                <div className="flex justify-between text-sm font-medium">
+                  <span>Skickar nyhetsbrev...</span>
+                  <span>{sendProgress.sent} / {sendProgress.total}</span>
+                </div>
+                <Progress value={(sendProgress.sent / sendProgress.total) * 100} />
+                {sendProgress.status === 'completed' && (
+                  <p className="text-sm text-green-600 text-center">
+                    ✓ Nyhetsbrevet har skickats!
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Button 

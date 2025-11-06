@@ -15,6 +15,7 @@ interface NewsletterRequest {
   content?: string;
   from?: string;
   template_id?: string;
+  progress_channel?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -91,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { subject, content, from = "Peter Svärdsmyr <hej@petersvardsmyr.se>", template_id }: NewsletterRequest = await req.json();
+    const { subject, content, from = "Peter Svärdsmyr <hej@petersvardsmyr.se>", template_id, progress_channel }: NewsletterRequest = await req.json();
 
     let emailSubject = subject;
     let emailContent = content;
@@ -180,11 +181,20 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log(`Sending newsletter to ${subscribers.length} subscribers in batches of ${BATCH_SIZE}`);
     
+    // Send initial progress update
+    if (progress_channel) {
+      await supabase.channel(progress_channel).send({
+        type: 'broadcast',
+        event: 'progress',
+        payload: { sent: 0, total: subscribers.length, status: 'started' }
+      });
+    }
+    
     for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
       const batch = subscribers.slice(i, i + BATCH_SIZE);
       console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} emails)`);
       
-      const emailPromises = batch.map(subscriber => 
+      const emailPromises = batch.map(subscriber =>
         resend.emails.send({
           from,
           to: [subscriber.email],
@@ -230,12 +240,30 @@ const handler = async (req: Request): Promise<Response> => {
       successful += results.filter(result => result.status === 'fulfilled').length;
       failed += results.filter(result => result.status === 'rejected').length;
       
+      // Send progress update after each batch
+      if (progress_channel) {
+        await supabase.channel(progress_channel).send({
+          type: 'broadcast',
+          event: 'progress',
+          payload: { sent: successful, total: subscribers.length, failed, status: 'sending' }
+        });
+      }
+      
       if (results.some(result => result.status === 'rejected')) {
         const failedResults = results
           .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
           .map(result => result.reason);
         console.error(`Failed sends in batch ${Math.floor(i / BATCH_SIZE) + 1}:`, failedResults);
       }
+    }
+    
+    // Send final progress update
+    if (progress_channel) {
+      await supabase.channel(progress_channel).send({
+        type: 'broadcast',
+        event: 'progress',
+        payload: { sent: successful, total: subscribers.length, failed, status: 'completed' }
+      });
     }
 
     console.log(`Newsletter sent: ${successful} successful, ${failed} failed`);
