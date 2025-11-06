@@ -530,7 +530,7 @@ export function AdminNewsletter() {
                   ? 'Skickar...' 
                   : newsletterStatus && newsletterStatus.remaining > 0 
                     ? `Skicka till nästa ${Math.min(75, newsletterStatus.remaining)} prenumeranter`
-                    : 'Skicka nyhetsbrev'}
+                    : `Skicka till max 75 av ${subscribers.filter(s => s.is_active).length} prenumeranter`}
               </Button>
             </div>
           </form>
