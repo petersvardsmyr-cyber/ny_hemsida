@@ -205,16 +205,10 @@ export function AdminNewsletter() {
           <h2 className="text-2xl font-heading font-medium">Nyhetsbrev</h2>
           <p className="text-muted-foreground">Hantera och skicka nyhetsbrev</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={loadDrafts} variant="outline">
-            <FileText className="w-4 h-4 mr-2" />
-            Visa utkast
-          </Button>
-          <Button onClick={loadSubscribers} variant="outline">
-            <Users className="w-4 h-4 mr-2" />
-            Visa prenumeranter ({subscribers.length})
-          </Button>
-        </div>
+        <Button onClick={loadSubscribers} variant="outline">
+          <Users className="w-4 h-4 mr-2" />
+          Visa prenumeranter ({subscribers.length})
+        </Button>
       </div>
 
       {/* Drafts List */}
