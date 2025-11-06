@@ -177,7 +177,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Send newsletter in batches to avoid memory limit
-    const BATCH_SIZE = 10;
+    const BATCH_SIZE = 5;
     let successful = 0;
     let failed = 0;
     
