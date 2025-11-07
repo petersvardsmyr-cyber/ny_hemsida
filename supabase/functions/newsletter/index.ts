@@ -222,8 +222,8 @@ const handler = async (req: Request): Promise<Response> => {
     // Use Resend batch API which can send up to 100 emails in one API call
     // Limit to 75 to save quota for order confirmations and other emails
     const MAX_EMAILS_PER_RUN = 75;
-    // Send in chunks to avoid memory limits
-    const CHUNK_SIZE = 25;
+    // Send in smaller chunks to avoid memory limits with large HTML content
+    const CHUNK_SIZE = 10;
     
     const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
     const remainingAfterThis = subscribers.length - subscribersToSend.length;
@@ -328,9 +328,9 @@ const handler = async (req: Request): Promise<Response> => {
           })
           .eq('run_id', runId);
         
-        // Wait between chunks to avoid rate limits and memory spikes (600ms = well under 2 req/s)
+        // Wait between chunks to avoid rate limits and memory spikes (1200ms for extra safety)
         if (chunkIndex < totalChunks - 1) {
-          await new Promise(resolve => setTimeout(resolve, 600));
+          await new Promise(resolve => setTimeout(resolve, 1200));
         }
       } catch (error) {
         console.error(`Chunk ${chunkIndex + 1} exception:`, error);
