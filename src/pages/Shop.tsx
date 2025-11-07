@@ -321,8 +321,8 @@ const Shop = () => {
       if (error) throw error;
 
       if (data?.url) {
-        // Open Stripe checkout in new tab for better mobile UX
-        window.open(data.url, '_blank');
+        // Redirect directly to Stripe checkout to avoid popup blockers
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error('Checkout error:', error);
