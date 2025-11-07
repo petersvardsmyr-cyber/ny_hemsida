@@ -222,8 +222,8 @@ const handler = async (req: Request): Promise<Response> => {
     // Use Resend batch API which can send up to 100 emails in one API call
     // Limit to 75 to save quota for order confirmations and other emails
     const MAX_EMAILS_PER_RUN = 75;
-    // Send in smaller chunks to avoid memory limits with large HTML content
-    const CHUNK_SIZE = 10;
+    // Send in very small chunks to ensure we never exceed memory limits
+    const CHUNK_SIZE = 5;
     
     const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
     const remainingAfterThis = subscribers.length - subscribersToSend.length;
