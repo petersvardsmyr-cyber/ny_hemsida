@@ -162,7 +162,7 @@ serve(async (req) => {
       .insert({
         stripe_session_id: session.id,
         user_id: userId,
-        email: userEmail || orderData.email,
+        email: userEmail || orderData.email || 'pending@checkout.temp',
         total_amount: orderData.total_amount * 100, // Store in öre
         discount_amount: (orderData.discount_amount || 0) * 100,
         discount_code: orderData.discount_code,
