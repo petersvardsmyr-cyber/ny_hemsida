@@ -222,6 +222,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Use Resend batch API which can send up to 100 emails in one API call
     // Limit to 75 to save quota for order confirmations and other emails
     const MAX_EMAILS_PER_RUN = 75;
+    // Send in chunks to avoid memory limits
+    const CHUNK_SIZE = 25;
+    
     const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
     const remainingAfterThis = subscribers.length - subscribersToSend.length;
 
@@ -229,6 +232,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     let successful = 0;
     let failed = 0;
+    const successfulEmails: string[] = [];
     
     // Build HTML template once
     const emailTemplate = `
@@ -277,41 +281,61 @@ const handler = async (req: Request): Promise<Response> => {
         status: 'started'
       });
     
-    console.log(`Sending newsletter to ${subscribersToSend.length} subscribers using batch API`);
+    console.log(`Sending newsletter to ${subscribersToSend.length} subscribers in chunks of ${CHUNK_SIZE}`);
     
-    // Use Resend batch API to send all emails in one request
-    try {
-      const batchEmails = subscribersToSend.map(subscriber => ({
-        from,
-        to: [subscriber.email],
-        subject: emailSubject,
-        html: emailTemplate.replace('SUBSCRIBER_EMAIL', encodeURIComponent(subscriber.email)),
-      }));
+    // Send in chunks to avoid memory limits
+    const totalChunks = Math.ceil(subscribersToSend.length / CHUNK_SIZE);
+    
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      const chunkStart = chunkIndex * CHUNK_SIZE;
+      const chunkEnd = Math.min(chunkStart + CHUNK_SIZE, subscribersToSend.length);
+      const chunk = subscribersToSend.slice(chunkStart, chunkEnd);
+      
+      console.log(`Sending chunk ${chunkIndex + 1}/${totalChunks}: ${chunk.length} emails (${chunkStart + 1}-${chunkEnd} of ${subscribersToSend.length})`);
+      
+      try {
+        const batchEmails = chunk.map(subscriber => ({
+          from,
+          to: [subscriber.email],
+          subject: emailSubject,
+          html: emailTemplate.replace('SUBSCRIBER_EMAIL', encodeURIComponent(subscriber.email)),
+        }));
 
-      const { data: batchData, error: batchError } = await resend.batch.send(batchEmails);
-      
-      if (batchError) {
-        console.error('Batch send error:', batchError);
-        failed = subscribersToSend.length;
-      } else {
-        // Count successful and failed sends
-        successful = batchData?.data?.length || 0;
-        failed = subscribersToSend.length - successful;
-        console.log(`Batch send completed: ${successful} successful, ${failed} failed`);
+        const { data: batchData, error: batchError } = await resend.batch.send(batchEmails);
+        
+        if (batchError) {
+          console.error(`Chunk ${chunkIndex + 1} send error:`, batchError);
+          failed += chunk.length;
+        } else {
+          const chunkSuccessful = batchData?.data?.length || 0;
+          const chunkFailed = chunk.length - chunkSuccessful;
+          successful += chunkSuccessful;
+          failed += chunkFailed;
+          
+          // Track which emails were sent successfully for this chunk
+          successfulEmails.push(...chunk.slice(0, chunkSuccessful).map(s => s.email));
+          
+          console.log(`Chunk ${chunkIndex + 1} completed: ${chunkSuccessful} successful, ${chunkFailed} failed. Total so far: ${successful}/${subscribersToSend.length}`);
+        }
+        
+        // Update progress in database after each chunk
+        await supabase
+          .from('newsletter_send_status')
+          .update({
+            sent: successful,
+            failed: failed,
+            status: 'sending'
+          })
+          .eq('run_id', runId);
+        
+        // Wait between chunks to avoid rate limits and memory spikes (600ms = well under 2 req/s)
+        if (chunkIndex < totalChunks - 1) {
+          await new Promise(resolve => setTimeout(resolve, 600));
+        }
+      } catch (error) {
+        console.error(`Chunk ${chunkIndex + 1} exception:`, error);
+        failed += chunk.length;
       }
-      
-      // Update progress in database
-      await supabase
-        .from('newsletter_send_status')
-        .update({
-          sent: successful,
-          failed: failed,
-          status: 'sending'
-        })
-        .eq('run_id', runId);
-    } catch (error) {
-      console.error('Batch send exception:', error);
-      failed = subscribersToSend.length;
     }
     
     // Mark as completed
@@ -360,10 +384,10 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Record which subscribers received this newsletter
-    if (newsletterId && successful > 0) {
-      const recipientRecords = subscribersToSend.slice(0, successful).map(subscriber => ({
+    if (newsletterId && successfulEmails.length > 0) {
+      const recipientRecords = successfulEmails.map(email => ({
         sent_newsletter_id: newsletterId,
-        subscriber_email: subscriber.email
+        subscriber_email: email
       }));
 
       const { error: recipientsError } = await supabase
