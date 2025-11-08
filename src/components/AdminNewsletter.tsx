@@ -9,10 +9,12 @@ import { toast } from 'sonner';
 import { Users, Send, Mail, Save, Trash2, FileText, Plus } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
+import { useLocation } from 'react-router-dom';
 
 export function AdminNewsletter() {
   console.log('AdminNewsletter component rendering');
   
+  const location = useLocation();
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +27,25 @@ export function AdminNewsletter() {
   const [sendProgress, setSendProgress] = useState<{ sent: number; total: number; status: string } | null>(null);
   const [newsletterStatus, setNewsletterStatus] = useState<{ remaining: number; already_sent: number; total: number } | null>(null);
 
+  // Load newsletter from navigation state if present
+  useEffect(() => {
+    if (location.state?.subject && location.state?.content) {
+      setSubject(location.state.subject);
+      setContent(location.state.content);
+      toast.info('Nyhetsbrev laddat för att fortsätta skicka');
+    }
+  }, [location.state]);
+
   // Load drafts and subscribers on mount
   useEffect(() => {
     loadDrafts();
     loadSubscribers();
-    checkNewsletterStatus();
   }, []);
+
+  // Check newsletter status when subject changes
+  useEffect(() => {
+    checkNewsletterStatus();
+  }, [subject]);
 
   const checkNewsletterStatus = async () => {
     if (!subject.trim()) return;
