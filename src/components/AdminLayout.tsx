@@ -325,14 +325,25 @@ export default function AdminLayout() {
             <div className="text-sm text-muted-foreground mb-4 truncate">
               Inloggad som: {user?.email}
             </div>
-            <Button
-              variant="outline"
-              onClick={handleSignOut}
-              className="w-full"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logga ut
-            </Button>
+            <div className="space-y-2">
+              <Link to="/admin/change-password" onClick={() => setSidebarOpen(false)} className="block">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Ändra lösenord
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="w-full"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logga ut
+              </Button>
+            </div>
           </div>
         </div>
 

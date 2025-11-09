@@ -28,6 +28,7 @@ import AdminOrderNotifications from "./pages/AdminOrderNotifications";
 import AdminNewsletterNotifications from "./pages/AdminNewsletterNotifications";
 import AdminEmailSettings from "./pages/AdminEmailSettings";
 import AdminPostEditor from "./pages/AdminPostEditor";
+import AdminChangePassword from "./pages/AdminChangePassword";
 import NotFound from "./pages/NotFound";
 import NewsletterUnsubscribe from "./pages/NewsletterUnsubscribe";
 import NewsletterConfirm from "./pages/NewsletterConfirm";
@@ -75,6 +76,7 @@ const App = () => (
               <Route path="email-templates" element={<AdminEmailTemplatesPage />} />
               <Route path="posts/new" element={<AdminPostEditor />} />
               <Route path="posts/edit/:id" element={<AdminPostEditor />} />
+              <Route path="change-password" element={<AdminChangePassword />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
