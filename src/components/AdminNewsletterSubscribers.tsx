@@ -26,6 +26,7 @@ export function AdminNewsletterSubscribers() {
   const [editingSubscriber, setEditingSubscriber] = useState<Subscriber | null>(null);
   const [editForm, setEditForm] = useState({ name: '', email: '', is_active: true });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAddMode, setIsAddMode] = useState(false);
 
   const loadSubscribers = async () => {
     try {
@@ -49,7 +50,19 @@ export function AdminNewsletterSubscribers() {
     loadSubscribers();
   }, []);
 
+  const handleAdd = () => {
+    setIsAddMode(true);
+    setEditingSubscriber(null);
+    setEditForm({
+      name: '',
+      email: '',
+      is_active: true
+    });
+    setIsDialogOpen(true);
+  };
+
   const handleEdit = (subscriber: Subscriber) => {
+    setIsAddMode(false);
     setEditingSubscriber(subscriber);
     setEditForm({
       name: subscriber.name || '',
@@ -60,26 +73,48 @@ export function AdminNewsletterSubscribers() {
   };
 
   const handleSave = async () => {
-    if (!editingSubscriber) return;
+    if (!editForm.email) {
+      toast.error('E-postadress krävs');
+      return;
+    }
 
     try {
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .update({
-          name: editForm.name || null,
-          email: editForm.email,
-          is_active: editForm.is_active
-        })
-        .eq('id', editingSubscriber.id);
+      if (isAddMode) {
+        // Add new subscriber with confirmed status
+        const { error } = await supabase
+          .from('newsletter_subscribers')
+          .insert([{
+            email: editForm.email,
+            name: editForm.name || null,
+            is_active: editForm.is_active,
+            confirmed_at: new Date().toISOString(),
+            confirmation_token: null
+          }]);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success('Prenumerant tillagd');
+      } else {
+        // Update existing subscriber
+        if (!editingSubscriber) return;
+        
+        const { error } = await supabase
+          .from('newsletter_subscribers')
+          .update({
+            name: editForm.name || null,
+            email: editForm.email,
+            is_active: editForm.is_active
+          })
+          .eq('id', editingSubscriber.id);
 
-      toast.success('Prenumerant uppdaterad');
+        if (error) throw error;
+        toast.success('Prenumerant uppdaterad');
+      }
+
       setIsDialogOpen(false);
       loadSubscribers();
     } catch (error: any) {
-      console.error('Error updating subscriber:', error);
-      toast.error('Kunde inte uppdatera prenumerant');
+      console.error('Error saving subscriber:', error);
+      toast.error(isAddMode ? 'Kunde inte lägga till prenumerant' : 'Kunde inte uppdatera prenumerant');
     }
   };
 
@@ -158,10 +193,17 @@ export function AdminNewsletterSubscribers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Prenumeranter</CardTitle>
-          <CardDescription>
-            Hantera alla dina nyhetsbrevsprenumeranter
-          </CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>Prenumeranter</CardTitle>
+              <CardDescription>
+                Hantera alla dina nyhetsbrevsprenumeranter
+              </CardDescription>
+            </div>
+            <Button onClick={handleAdd}>
+              Lägg till prenumerant
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -232,9 +274,9 @@ export function AdminNewsletterSubscribers() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Redigera prenumerant</DialogTitle>
+            <DialogTitle>{isAddMode ? 'Lägg till prenumerant' : 'Redigera prenumerant'}</DialogTitle>
             <DialogDescription>
-              Uppdatera information för prenumeranten
+              {isAddMode ? 'Lägg till en ny prenumerant som bekräftad och aktiv' : 'Uppdatera information för prenumeranten'}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
