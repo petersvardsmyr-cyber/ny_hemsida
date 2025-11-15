@@ -361,10 +361,34 @@ export default function AdminOrders() {
                           {selectedOrder.shipping_address && (
                             <div>
                               <h4 className="font-medium mb-2">Leveransadress</h4>
-                              <div className="text-sm text-muted-foreground space-y-1">
-                                <p>{selectedOrder.shipping_address.name}</p>
-                                <p>{selectedOrder.shipping_address.region}</p>
-                                <p>{formatCurrency(selectedOrder.shipping_address.price_ex_vat * 100)} + moms</p>
+                              <div className="text-sm space-y-1">
+                                {selectedOrder.shipping_address.name && (
+                                  <p className="font-medium">{selectedOrder.shipping_address.name}</p>
+                                )}
+                                {selectedOrder.shipping_address.line1 && (
+                                  <p>{selectedOrder.shipping_address.line1}</p>
+                                )}
+                                {selectedOrder.shipping_address.line2 && (
+                                  <p>{selectedOrder.shipping_address.line2}</p>
+                                )}
+                                {(selectedOrder.shipping_address.postal_code || selectedOrder.shipping_address.city) && (
+                                  <p>
+                                    {selectedOrder.shipping_address.postal_code && selectedOrder.shipping_address.postal_code}{' '}
+                                    {selectedOrder.shipping_address.city && selectedOrder.shipping_address.city}
+                                  </p>
+                                )}
+                                {selectedOrder.shipping_address.state && (
+                                  <p>{selectedOrder.shipping_address.state}</p>
+                                )}
+                                {selectedOrder.shipping_address.country && (
+                                  <p>{selectedOrder.shipping_address.country}</p>
+                                )}
+                                {selectedOrder.shipping_address.phone && (
+                                  <p className="mt-2">
+                                    <span className="text-muted-foreground">Tel: </span>
+                                    {selectedOrder.shipping_address.phone}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           )}
