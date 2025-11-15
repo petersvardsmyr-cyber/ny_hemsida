@@ -62,13 +62,35 @@ serve(async (req) => {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log("Checkout session completed");
 
+        // Prepare shipping address data from Stripe
+        const deliveryAddress = session.shipping_details?.address ? {
+          name: session.shipping_details.name || null,
+          line1: session.shipping_details.address.line1 || null,
+          line2: session.shipping_details.address.line2 || null,
+          city: session.shipping_details.address.city || null,
+          state: session.shipping_details.address.state || null,
+          postal_code: session.shipping_details.address.postal_code || null,
+          country: session.shipping_details.address.country || null,
+          phone: session.customer_details?.phone || null
+        } : null;
+
+        // Get shipping option from metadata
+        const shippingOption = session.metadata?.shipping ? JSON.parse(session.metadata.shipping) : null;
+
+        // Combine delivery address with shipping option
+        const combinedShippingData = deliveryAddress && shippingOption ? {
+          ...deliveryAddress,
+          ...shippingOption
+        } : (deliveryAddress || shippingOption);
+
         // Update order status to completed
         const { error: updateError } = await supabaseClient
           .from("orders")
           .update({
             status: 'completed',
             stripe_payment_intent_id: session.payment_intent as string,
-            email: session.customer_details?.email || session.customer_email || null
+            email: session.customer_details?.email || session.customer_email || null,
+            ...(combinedShippingData && { shipping_address: combinedShippingData })
           })
           .eq('stripe_session_id', session.id);
 
