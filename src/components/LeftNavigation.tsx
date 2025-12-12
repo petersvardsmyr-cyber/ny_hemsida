@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, Feather, PenTool } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const LeftNavigation = () => {
   const location = useLocation();
@@ -122,7 +122,7 @@ const LeftNavigation = () => {
                 }`}
               >
                 {activeSection === item.id && (
-                  <Feather className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                  <img src="/favicon.png" alt="" className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 animate-scale-in" />
                 )}
                 {item.label}
               </button>
@@ -144,7 +144,7 @@ const LeftNavigation = () => {
                 }`}
               >
                 {location.pathname === link.path && (
-                  <Feather className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                  <img src="/favicon.png" alt="" className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3 animate-scale-in" />
                 )}
                 {link.label}
               </button>
@@ -185,7 +185,7 @@ const LeftNavigation = () => {
         }`}>
           <div className="p-6 pt-20">
             <div className="flex items-center gap-2 mb-8">
-              <PenTool className="w-5 h-5 text-primary" />
+              <img src="/favicon.png" alt="" className="w-5 h-5" />
               <h2 className="text-lg font-semibold text-foreground">Meny</h2>
             </div>
             <ul className="space-y-4">
@@ -200,7 +200,7 @@ const LeftNavigation = () => {
                     }`}
                   >
                     {activeSection === item.id && (
-                      <Feather className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                      <img src="/favicon.png" alt="" className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 animate-scale-in" />
                     )}
                     {item.label}
                   </button>
@@ -222,7 +222,7 @@ const LeftNavigation = () => {
                     }`}
                   >
                     {location.pathname === link.path && (
-                      <Feather className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-primary animate-scale-in" />
+                      <img src="/favicon.png" alt="" className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 animate-scale-in" />
                     )}
                     {link.label}
                   </button>
