@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { BookOpen, Home, ShoppingBag, Mail } from "lucide-react";
+import { PenTool, BookOpen, Home, ShoppingBag, Mail } from "lucide-react";
 
 const Navigation = () => {
   return (
@@ -7,7 +7,7 @@ const Navigation = () => {
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <NavLink to="/" className="flex items-center gap-2 text-xl font-sans font-semibold hover:text-accent transition-smooth">
-            <img src="/favicon.png" alt="Fjäderpenna" className="w-6 h-6" />
+            <PenTool className="w-6 h-6" />
             <span>Meny</span>
           </NavLink>
           
@@ -22,7 +22,7 @@ const Navigation = () => {
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <img src="/favicon.png" alt="" className="w-4 h-4" /> : <Home className="w-4 h-4" />}
+                  {isActive ? <PenTool className="w-4 h-4" /> : <Home className="w-4 h-4" />}
                   Hem
                 </>
               )}
@@ -38,7 +38,7 @@ const Navigation = () => {
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <img src="/favicon.png" alt="" className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                  {isActive ? <PenTool className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
                   Blogg
                 </>
               )}
@@ -54,7 +54,7 @@ const Navigation = () => {
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <img src="/favicon.png" alt="" className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+                  {isActive ? <PenTool className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
                   Butik
                 </>
               )}
@@ -70,7 +70,7 @@ const Navigation = () => {
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <img src="/favicon.png" alt="" className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
+                  {isActive ? <PenTool className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
                   Nyhetsbrev
                 </>
               )}
