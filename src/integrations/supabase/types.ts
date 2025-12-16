@@ -22,6 +22,7 @@ export type Database = {
           excerpt: string | null
           featured_image_url: string | null
           id: string
+          image_caption: string | null
           is_published: boolean | null
           meta_description: string | null
           published_date: string
@@ -37,6 +38,7 @@ export type Database = {
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
+          image_caption?: string | null
           is_published?: boolean | null
           meta_description?: string | null
           published_date?: string
@@ -52,6 +54,7 @@ export type Database = {
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
+          image_caption?: string | null
           is_published?: boolean | null
           meta_description?: string | null
           published_date?: string
