@@ -77,7 +77,8 @@ export default {
 				'golden-accent': 'hsl(var(--golden-accent))'
 			},
 			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)'
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -69,8 +69,62 @@ const Home = () => {
       </section>
 
       {/* Writing Section */}
-      <section id="writing" className="py-12 md:py-20 px-4 md:px-12">
-        <div className="max-w-4xl w-full">
+      <section id="writing" className="py-12 md:py-20 px-4 md:px-12 relative overflow-hidden">
+        {/* Subtle artistic background */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Soft gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-accent/[0.02]" />
+          
+          {/* Decorative ink flourish - top right */}
+          <svg 
+            className="absolute -top-10 -right-10 w-64 h-64 text-primary/[0.04] transform rotate-12"
+            viewBox="0 0 200 200" 
+            fill="none"
+          >
+            <path 
+              d="M40 160 Q60 100 100 80 Q140 60 160 40" 
+              stroke="currentColor" 
+              strokeWidth="2"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path 
+              d="M50 150 Q80 110 110 95 Q150 75 170 50" 
+              stroke="currentColor" 
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <circle cx="165" cy="35" r="3" fill="currentColor" opacity="0.5" />
+          </svg>
+          
+          {/* Decorative quill stroke - bottom left */}
+          <svg 
+            className="absolute -bottom-20 -left-10 w-72 h-72 text-muted-foreground/[0.03] transform -rotate-6"
+            viewBox="0 0 200 200" 
+            fill="none"
+          >
+            <path 
+              d="M30 180 C50 150 80 120 120 100 C150 85 170 60 180 30" 
+              stroke="currentColor" 
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path 
+              d="M25 170 Q70 130 100 110" 
+              stroke="currentColor" 
+              strokeWidth="1"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
+          
+          {/* Subtle radial glow behind quotes */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-radial from-primary/[0.02] to-transparent rounded-full blur-3xl" />
+        </div>
+        
+        <div className="max-w-4xl w-full relative z-10">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Skrivande</h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. Ibland i form av dikter och poesi, ibland i form av debattartiklar eller böcker. Att skriva om stora saker med små medel. Så få ord som möjligt, helst. Det har blivit en längtan och den stora utmaningen när jag skriver. </p>
           
