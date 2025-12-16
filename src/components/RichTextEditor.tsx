@@ -211,8 +211,8 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Bilden är för stor. Max 5MB.');
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Bilden är för stor. Max 10MB.');
         return;
       }
 
