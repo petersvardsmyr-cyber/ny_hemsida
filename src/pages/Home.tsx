@@ -70,16 +70,50 @@ const Home = () => {
 
       {/* Writing Section */}
       <section id="writing" className="py-12 md:py-20 px-4 md:px-12 relative overflow-hidden">
-        {/* Subtle decorative shapes */}
+        {/* Artistic decorative elements */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Large soft circle - top right */}
-          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-muted-foreground/[0.06]" />
+          {/* Elegant curved stroke - top right */}
+          <svg className="absolute -top-4 right-8 md:right-16 w-48 h-48 md:w-64 md:h-64" viewBox="0 0 200 200" fill="none">
+            <path 
+              d="M180 20 Q140 60 100 80 Q60 100 40 160" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              opacity="0.12"
+              fill="none"
+            />
+            <path 
+              d="M170 30 Q130 70 95 90" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="1"
+              strokeLinecap="round"
+              opacity="0.08"
+              fill="none"
+            />
+          </svg>
           
-          {/* Smaller circle - bottom left */}
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full border border-muted-foreground/[0.04]" />
+          {/* Flowing ink line - bottom left */}
+          <svg className="absolute -bottom-8 -left-4 w-56 h-56 md:w-72 md:h-72" viewBox="0 0 200 200" fill="none">
+            <path 
+              d="M20 180 C40 140 70 120 100 110 C140 95 160 70 175 30" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              opacity="0.1"
+              fill="none"
+            />
+            <circle cx="175" cy="30" r="2" fill="hsl(var(--muted-foreground))" opacity="0.15" />
+          </svg>
           
-          {/* Thin diagonal line */}
-          <div className="absolute top-1/4 right-0 w-px h-48 bg-muted-foreground/[0.05] transform rotate-[30deg] origin-top" />
+          {/* Soft circle accent */}
+          <div className="absolute top-1/3 -right-24 w-64 h-64 rounded-full border border-muted-foreground/[0.08]" />
+          
+          {/* Small decorative dot cluster */}
+          <div className="absolute bottom-1/4 right-1/4 flex gap-3 opacity-[0.12]">
+            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+            <div className="w-1 h-1 rounded-full bg-muted-foreground" />
+            <div className="w-0.5 h-0.5 rounded-full bg-muted-foreground" />
+          </div>
         </div>
         
         <div className="max-w-4xl w-full relative z-10">
