@@ -70,58 +70,16 @@ const Home = () => {
 
       {/* Writing Section */}
       <section id="writing" className="py-12 md:py-20 px-4 md:px-12 relative overflow-hidden">
-        {/* Subtle artistic background */}
+        {/* Subtle decorative shapes */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Soft gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-accent/[0.02]" />
+          {/* Large soft circle - top right */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-muted-foreground/[0.06]" />
           
-          {/* Decorative ink flourish - top right */}
-          <svg 
-            className="absolute -top-10 -right-10 w-64 h-64 text-primary/[0.04] transform rotate-12"
-            viewBox="0 0 200 200" 
-            fill="none"
-          >
-            <path 
-              d="M40 160 Q60 100 100 80 Q140 60 160 40" 
-              stroke="currentColor" 
-              strokeWidth="2"
-              strokeLinecap="round"
-              fill="none"
-            />
-            <path 
-              d="M50 150 Q80 110 110 95 Q150 75 170 50" 
-              stroke="currentColor" 
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-            <circle cx="165" cy="35" r="3" fill="currentColor" opacity="0.5" />
-          </svg>
+          {/* Smaller circle - bottom left */}
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full border border-muted-foreground/[0.04]" />
           
-          {/* Decorative quill stroke - bottom left */}
-          <svg 
-            className="absolute -bottom-20 -left-10 w-72 h-72 text-muted-foreground/[0.03] transform -rotate-6"
-            viewBox="0 0 200 200" 
-            fill="none"
-          >
-            <path 
-              d="M30 180 C50 150 80 120 120 100 C150 85 170 60 180 30" 
-              stroke="currentColor" 
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-            <path 
-              d="M25 170 Q70 130 100 110" 
-              stroke="currentColor" 
-              strokeWidth="1"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-          
-          {/* Subtle radial glow behind quotes */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-radial from-primary/[0.02] to-transparent rounded-full blur-3xl" />
+          {/* Thin diagonal line */}
+          <div className="absolute top-1/4 right-0 w-px h-48 bg-muted-foreground/[0.05] transform rotate-[30deg] origin-top" />
         </div>
         
         <div className="max-w-4xl w-full relative z-10">
