@@ -129,10 +129,10 @@ export default function AdminPostEditor() {
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "Bilden är för stor",
-          description: "Max storlek är 5MB.",
+          description: "Max storlek är 10MB.",
           variant: "destructive",
         });
         return;
