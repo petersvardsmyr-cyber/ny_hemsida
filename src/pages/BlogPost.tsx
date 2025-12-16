@@ -17,6 +17,7 @@ interface BlogPost {
   slug: string;
   published_date: string;
   featured_image_url?: string;
+  image_caption?: string;
   author: string;
   tags?: string[];
 }
@@ -183,13 +184,20 @@ const BlogPost = () => {
         )}
 
         {post.featured_image_url && (
-          <div className="aspect-video overflow-hidden rounded-lg mb-8">
-            <img 
-              src={post.featured_image_url} 
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <figure className="mb-8">
+            <div className="aspect-video overflow-hidden rounded-lg">
+              <img 
+                src={post.featured_image_url} 
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {post.image_caption && (
+              <figcaption className="text-center text-sm text-muted-foreground mt-3 italic">
+                {post.image_caption}
+              </figcaption>
+            )}
+          </figure>
         )}
       </header>
 

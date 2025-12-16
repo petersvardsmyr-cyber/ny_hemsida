@@ -19,6 +19,7 @@ interface BlogPostData {
   content: string;
   meta_description: string;
   featured_image_url: string;
+  image_caption: string;
   is_published: boolean;
   tags: string[];
   author: string;
@@ -38,6 +39,7 @@ export default function AdminPostEditor() {
     content: '',
     meta_description: '',
     featured_image_url: '',
+    image_caption: '',
     is_published: false,
     tags: [],
     author: 'Peter Svärdsmyr',
@@ -71,6 +73,7 @@ export default function AdminPostEditor() {
         content: data.content || '',
         meta_description: data.meta_description || '',
         featured_image_url: data.featured_image_url || '',
+        image_caption: data.image_caption || '',
         is_published: data.is_published || false,
         tags: data.tags || [],
         author: data.author || 'Peter Svärdsmyr',
@@ -445,34 +448,45 @@ export default function AdminPostEditor() {
                     />
                   </div>
                   {formData.featured_image_url && (
-                    <div className="mt-3">
-                      <Label className="text-sm text-muted-foreground">Förhandsvisning</Label>
-                      <div className="mt-2 border rounded-lg overflow-hidden bg-muted/30">
-                        <img
-                          src={formData.featured_image_url}
-                          alt="Förhandsvisning av bild"
-                          className="w-full h-48 object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.classList.add('hidden');
-                            const errorDiv = target.nextElementSibling as HTMLDivElement;
-                            if (errorDiv) errorDiv.classList.remove('hidden');
-                          }}
-                          onLoad={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.classList.remove('hidden');
-                            const errorDiv = target.nextElementSibling as HTMLDivElement;
-                            if (errorDiv) errorDiv.classList.add('hidden');
-                          }}
-                        />
-                        <div className="w-full h-48 hidden flex items-center justify-center text-muted-foreground bg-muted/50">
-                          <div className="text-center">
-                            <p className="text-sm">Kunde inte ladda bilden</p>
-                            <p className="text-xs">Kontrollera att URL:en är korrekt</p>
+                    <>
+                      <div className="mt-3">
+                        <Label className="text-sm text-muted-foreground">Förhandsvisning</Label>
+                        <div className="mt-2 border rounded-lg overflow-hidden bg-muted/30">
+                          <img
+                            src={formData.featured_image_url}
+                            alt="Förhandsvisning av bild"
+                            className="w-full h-48 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.classList.add('hidden');
+                              const errorDiv = target.nextElementSibling as HTMLDivElement;
+                              if (errorDiv) errorDiv.classList.remove('hidden');
+                            }}
+                            onLoad={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.classList.remove('hidden');
+                              const errorDiv = target.nextElementSibling as HTMLDivElement;
+                              if (errorDiv) errorDiv.classList.add('hidden');
+                            }}
+                          />
+                          <div className="w-full h-48 hidden flex items-center justify-center text-muted-foreground bg-muted/50">
+                            <div className="text-center">
+                              <p className="text-sm">Kunde inte ladda bilden</p>
+                              <p className="text-xs">Kontrollera att URL:en är korrekt</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                      <div className="mt-3">
+                        <Label htmlFor="image_caption">Bildtext</Label>
+                        <Input
+                          id="image_caption"
+                          value={formData.image_caption}
+                          onChange={(e) => setFormData(prev => ({ ...prev, image_caption: e.target.value }))}
+                          placeholder="Beskrivning som visas under bilden (valfritt)"
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
 
