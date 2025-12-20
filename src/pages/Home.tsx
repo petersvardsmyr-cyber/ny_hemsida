@@ -74,87 +74,31 @@ const Home = () => {
         <div className="absolute inset-0 pointer-events-none">
           {/* Elegant curved stroke - top right */}
           <svg className="absolute -top-4 right-8 md:right-16 w-48 h-48 md:w-64 md:h-64" viewBox="0 0 200 200" fill="none">
-            <path 
-              d="M180 20 Q140 60 100 80 Q60 100 40 160" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              opacity="0.12"
-              fill="none"
-            />
-            <path 
-              d="M170 30 Q130 70 95 90" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="1"
-              strokeLinecap="round"
-              opacity="0.08"
-              fill="none"
-            />
+            <path d="M180 20 Q140 60 100 80 Q60 100 40 160" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeLinecap="round" opacity="0.12" fill="none" />
+            <path d="M170 30 Q130 70 95 90" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeLinecap="round" opacity="0.08" fill="none" />
           </svg>
           
           {/* Handwritten cursive lines - center right */}
           <svg className="absolute top-1/3 -right-8 md:right-4 w-64 h-40 md:w-80 md:h-48" viewBox="0 0 300 150" fill="none">
             {/* First cursive line */}
-            <path 
-              d="M20 30 Q35 20 50 30 Q65 40 80 30 Q100 15 120 30 Q135 42 150 32 Q170 18 190 30 Q210 42 230 28 Q250 15 270 30" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="1"
-              strokeLinecap="round"
-              opacity="0.1"
-              fill="none"
-            />
+            <path d="M20 30 Q35 20 50 30 Q65 40 80 30 Q100 15 120 30 Q135 42 150 32 Q170 18 190 30 Q210 42 230 28 Q250 15 270 30" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeLinecap="round" opacity="0.1" fill="none" />
             {/* Second cursive line */}
-            <path 
-              d="M30 60 Q50 48 70 58 Q90 68 110 55 Q130 42 155 58 Q175 72 195 55 Q220 38 245 58" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="0.8"
-              strokeLinecap="round"
-              opacity="0.08"
-              fill="none"
-            />
+            <path d="M30 60 Q50 48 70 58 Q90 68 110 55 Q130 42 155 58 Q175 72 195 55 Q220 38 245 58" stroke="hsl(var(--muted-foreground))" strokeWidth="0.8" strokeLinecap="round" opacity="0.08" fill="none" />
             {/* Third cursive line - shorter */}
-            <path 
-              d="M50 90 Q70 78 90 88 Q115 100 140 85 Q160 72 185 88" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="0.6"
-              strokeLinecap="round"
-              opacity="0.06"
-              fill="none"
-            />
+            <path d="M50 90 Q70 78 90 88 Q115 100 140 85 Q160 72 185 88" stroke="hsl(var(--muted-foreground))" strokeWidth="0.6" strokeLinecap="round" opacity="0.06" fill="none" />
           </svg>
           
           {/* Flowing ink line - bottom left */}
           <svg className="absolute -bottom-8 -left-4 w-56 h-56 md:w-72 md:h-72" viewBox="0 0 200 200" fill="none">
-            <path 
-              d="M20 180 C40 140 70 120 100 110 C140 95 160 70 175 30" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              opacity="0.1"
-              fill="none"
-            />
+            <path d="M20 180 C40 140 70 120 100 110 C140 95 160 70 175 30" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeLinecap="round" opacity="0.1" fill="none" />
             <circle cx="175" cy="30" r="2" fill="hsl(var(--muted-foreground))" opacity="0.15" />
           </svg>
           
           {/* Old-fashioned script flourish - bottom */}
           <svg className="absolute bottom-8 left-1/4 w-48 h-24 md:w-64 md:h-32" viewBox="0 0 200 80" fill="none">
-            <path 
-              d="M10 50 Q30 30 50 45 C70 60 80 25 100 40 Q120 55 140 35 C155 20 170 45 190 30" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="0.8"
-              strokeLinecap="round"
-              opacity="0.09"
-              fill="none"
-            />
+            <path d="M10 50 Q30 30 50 45 C70 60 80 25 100 40 Q120 55 140 35 C155 20 170 45 190 30" stroke="hsl(var(--muted-foreground))" strokeWidth="0.8" strokeLinecap="round" opacity="0.09" fill="none" />
             {/* Small decorative loop */}
-            <path 
-              d="M85 42 Q90 30 95 42" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth="0.6"
-              strokeLinecap="round"
-              opacity="0.07"
-              fill="none"
-            />
+            <path d="M85 42 Q90 30 95 42" stroke="hsl(var(--muted-foreground))" strokeWidth="0.6" strokeLinecap="round" opacity="0.07" fill="none" />
           </svg>
           
           {/* Soft circle accent */}
@@ -219,9 +163,7 @@ const Home = () => {
       <section id="media" className="py-12 md:py-20 px-4 md:px-12">
         <div className="max-w-6xl w-full">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Media</h2>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">
-            Artiklar, poddar och andra medieframträdanden där jag delar tankar om livet, kreativitet och mänskliga relationer.
-          </p>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Artiklar, poddar och andra medieframträdanden där jag skrivit eller pratat om saker som kreativitet, existens, kyrka, skrivande, AI och annat.</p>
           
           <MediaGrid />
         </div>
