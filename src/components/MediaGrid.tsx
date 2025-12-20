@@ -75,6 +75,15 @@ const mediaItems: MediaItem[] = [
     domain: 'kyrkanstidning.se',
     favicon: 'https://www.kyrkanstidning.se/favicon.ico',
     type: 'article'
+  },
+  {
+    id: '8',
+    title: 'Kyrkan tar inte AI-utvecklingen på allvar',
+    description: 'Samtalet om AI måste få legitimitet bortom fikaborden i kyrkan och istället flytta in i rummen för styrning och ledning.',
+    url: 'https://www.kyrkanstidning.se/debatt/kyrkan-tar-inte-ai-utvecklingen-pa-allvar/341871',
+    domain: 'kyrkanstidning.se',
+    favicon: 'https://www.kyrkanstidning.se/favicon.ico',
+    type: 'article'
   }
 ];
 
