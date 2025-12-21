@@ -19,6 +19,9 @@ interface BlogCommentsProps {
   postId: string;
 }
 
+const RATE_LIMIT_KEY = 'blog_comment_last_post';
+const RATE_LIMIT_MS = 60000; // 1 minute
+
 const BlogComments = ({ postId }: BlogCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +29,7 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
+  const [honeypot, setHoneypot] = useState(''); // Hidden field for bots
 
   useEffect(() => {
     fetchComments();
@@ -48,6 +52,26 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Honeypot check - if filled, silently reject (bot detected)
+    if (honeypot) {
+      toast.success('Kommentar publicerad!'); // Fake success to fool bots
+      setContent('');
+      setName('');
+      setShowForm(false);
+      return;
+    }
+
+    // Rate limiting check
+    const lastPost = localStorage.getItem(RATE_LIMIT_KEY);
+    if (lastPost) {
+      const timeSince = Date.now() - parseInt(lastPost, 10);
+      if (timeSince < RATE_LIMIT_MS) {
+        const secondsLeft = Math.ceil((RATE_LIMIT_MS - timeSince) / 1000);
+        toast.error(`Vänta ${secondsLeft} sekunder innan du kan kommentera igen`);
+        return;
+      }
+    }
     
     if (!content.trim()) {
       toast.error('Skriv en kommentar');
@@ -73,9 +97,11 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
       console.error('Error posting comment:', error);
       toast.error('Kunde inte posta kommentaren');
     } else {
+      localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
       toast.success('Kommentar publicerad!');
       setName('');
       setContent('');
+      setHoneypot('');
       setShowForm(false);
       fetchComments();
     }
@@ -103,6 +129,17 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-8 space-y-4 p-4 bg-muted/30 rounded-lg">
+          {/* Honeypot field - hidden from users, visible to bots */}
+          <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+            <Input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
           <div>
             <Input
               placeholder="Ditt namn (valfritt)"
