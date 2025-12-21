@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ShareButton } from "@/components/ShareButton";
+import BlogComments from "@/components/BlogComments";
 
 interface BlogPost {
   id: string;
@@ -206,7 +207,9 @@ const BlogPost = () => {
         dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
 
-      <footer className="mt-12 pt-8 border-t">
+      <BlogComments postId={post.id} />
+
+      <footer className="mt-12 pt-8 border-t border-border">
         <div className="flex flex-col items-center gap-6">
           <div className="text-sm text-muted-foreground">
             Publicerad {new Date(post.published_date).toLocaleDateString('sv-SE')}
