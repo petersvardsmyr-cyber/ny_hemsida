@@ -6,13 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { MessageCircle, Send } from 'lucide-react';
+import { MessageCircle, Send, ThumbsUp } from 'lucide-react';
 
 interface Comment {
   id: string;
   author_name: string | null;
   content: string;
   created_at: string;
+  likes: number;
 }
 
 interface BlogCommentsProps {
@@ -21,6 +22,24 @@ interface BlogCommentsProps {
 
 const RATE_LIMIT_KEY = 'blog_comment_last_post';
 const RATE_LIMIT_MS = 60000; // 1 minute
+const LIKED_COMMENTS_KEY = 'blog_liked_comments';
+
+const getLikedComments = (): string[] => {
+  try {
+    const stored = localStorage.getItem(LIKED_COMMENTS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveLikedComment = (commentId: string) => {
+  const liked = getLikedComments();
+  if (!liked.includes(commentId)) {
+    liked.push(commentId);
+    localStorage.setItem(LIKED_COMMENTS_KEY, JSON.stringify(liked));
+  }
+};
 
 const BlogComments = ({ postId }: BlogCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -30,9 +49,11 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [honeypot, setHoneypot] = useState(''); // Hidden field for bots
+  const [likedComments, setLikedComments] = useState<string[]>([]);
 
   useEffect(() => {
     fetchComments();
+    setLikedComments(getLikedComments());
   }, [postId]);
 
   const fetchComments = async () => {
@@ -48,6 +69,33 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
       setComments(data || []);
     }
     setLoading(false);
+  };
+
+  const handleLike = async (commentId: string, currentLikes: number) => {
+    if (likedComments.includes(commentId)) {
+      return; // Already liked
+    }
+
+    // Optimistic update
+    setComments(prev => 
+      prev.map(c => c.id === commentId ? { ...c, likes: currentLikes + 1 } : c)
+    );
+    setLikedComments(prev => [...prev, commentId]);
+    saveLikedComment(commentId);
+
+    const { error } = await supabase
+      .from('blog_comments')
+      .update({ likes: currentLikes + 1 })
+      .eq('id', commentId);
+
+    if (error) {
+      console.error('Error liking comment:', error);
+      // Revert on error
+      setComments(prev => 
+        prev.map(c => c.id === commentId ? { ...c, likes: currentLikes } : c)
+      );
+      setLikedComments(prev => prev.filter(id => id !== commentId));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,24 +237,42 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
         <p className="text-muted-foreground text-sm">Inga kommentarer ännu. Bli först att kommentera!</p>
       ) : (
         <div className="space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="p-4 bg-muted/20 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">
-                  {comment.author_name || 'Anonym'}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(comment.created_at), { 
-                    addSuffix: true, 
-                    locale: sv 
-                  })}
-                </span>
+          {comments.map((comment) => {
+            const hasLiked = likedComments.includes(comment.id);
+            return (
+              <div key={comment.id} className="p-4 bg-muted/20 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium text-sm">
+                    {comment.author_name || 'Anonym'}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(comment.created_at), { 
+                      addSuffix: true, 
+                      locale: sv 
+                    })}
+                  </span>
+                </div>
+                <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-3">
+                  {comment.content}
+                </p>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => handleLike(comment.id, comment.likes)}
+                    disabled={hasLiked}
+                    className={`flex items-center gap-1.5 text-xs transition-colors ${
+                      hasLiked 
+                        ? 'text-accent cursor-default' 
+                        : 'text-muted-foreground hover:text-accent'
+                    }`}
+                    title={hasLiked ? 'Du har redan gillat denna kommentar' : 'Gilla kommentar'}
+                  >
+                    <ThumbsUp className={`h-3.5 w-3.5 ${hasLiked ? 'fill-current' : ''}`} />
+                    {comment.likes > 0 && <span>{comment.likes}</span>}
+                  </button>
+                </div>
               </div>
-              <p className="text-sm text-foreground/90 whitespace-pre-wrap">
-                {comment.content}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
