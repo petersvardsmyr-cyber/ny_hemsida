@@ -255,7 +255,7 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
                 <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-3">
                   {comment.content}
                 </p>
-                <div className="flex items-center">
+                <div className="flex items-center justify-end">
                   <button
                     onClick={() => handleLike(comment.id, comment.likes)}
                     disabled={hasLiked}
