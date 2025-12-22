@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { MessageCircle } from "lucide-react";
 
 interface BlogPost {
   id: string;
@@ -12,6 +13,7 @@ interface BlogPost {
   published_date: string;
   author: string;
   featured_image_url: string;
+  comment_count?: number;
 }
 
 export const BlogPosts = () => {
@@ -36,7 +38,18 @@ export const BlogPosts = () => {
           return;
         }
 
-        setPosts(data || []);
+        // Fetch comment counts for all posts
+        const postsWithComments = await Promise.all(
+          (data || []).map(async (post) => {
+            const { count } = await supabase
+              .from('blog_comments')
+              .select('*', { count: 'exact', head: true })
+              .eq('post_id', post.id);
+            return { ...post, comment_count: count || 0 };
+          })
+        );
+
+        setPosts(postsWithComments);
         setHasMore(data?.length === POSTS_PER_PAGE);
       } catch (err) {
         console.error('Fetch error:', err);
@@ -65,10 +78,21 @@ export const BlogPosts = () => {
         return;
       }
 
+      // Fetch comment counts for loaded posts
+      const postsWithComments = await Promise.all(
+        (data || []).map(async (post) => {
+          const { count } = await supabase
+            .from('blog_comments')
+            .select('*', { count: 'exact', head: true })
+            .eq('post_id', post.id);
+          return { ...post, comment_count: count || 0 };
+        })
+      );
+
       // Add a small delay for smoother animation
       setTimeout(() => {
-        if (data && data.length > 0) {
-          setPosts(prev => [...prev, ...data]);
+        if (postsWithComments.length > 0) {
+          setPosts(prev => [...prev, ...postsWithComments]);
           setHasMore(data.length === POSTS_PER_PAGE);
         } else {
           setHasMore(false);
@@ -136,7 +160,7 @@ export const BlogPosts = () => {
                   <h3 className="text-lg md:text-xl font-heading font-medium mb-2 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
                     {post.title}
                   </h3>
-                  <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 flex items-center gap-2">
+                  <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 flex items-center gap-2 flex-wrap">
                     <span>{new Date(post.published_date).toLocaleDateString('sv-SE', { 
                       year: 'numeric', 
                       month: 'long', 
@@ -148,6 +172,15 @@ export const BlogPosts = () => {
                         <Badge variant="secondary" className="bg-accent/10 text-accent text-xs animate-pulse">
                           Nytt
                         </Badge>
+                      </>
+                    )}
+                    {post.comment_count && post.comment_count > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <MessageCircle className="h-3 w-3" />
+                          {post.comment_count}
+                        </span>
                       </>
                     )}
                   </div>
