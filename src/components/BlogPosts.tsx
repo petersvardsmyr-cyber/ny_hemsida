@@ -15,11 +15,13 @@ interface BlogPost {
   featured_image_url: string;
   is_featured: boolean;
   comment_count?: number;
+  tags?: string[];
 }
 
 export const BlogPosts = () => {
   const [featuredPost, setFeaturedPost] = useState<BlogPost | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -31,11 +33,27 @@ export const BlogPosts = () => {
         // First, fetch the featured post
         const { data: featuredData, error: featuredError } = await supabase
           .from('blog_posts')
-          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
+          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured, tags')
           .eq('is_published', true)
           .eq('is_featured', true)
           .limit(1)
           .maybeSingle();
+
+        // Fetch all tags from all published posts
+        const { data: allPostsForTags } = await supabase
+          .from('blog_posts')
+          .select('tags')
+          .eq('is_published', true);
+
+        if (allPostsForTags) {
+          const tagsSet = new Set<string>();
+          allPostsForTags.forEach(post => {
+            if (post.tags && Array.isArray(post.tags)) {
+              post.tags.forEach(tag => tagsSet.add(tag));
+            }
+          });
+          setAllTags(Array.from(tagsSet).sort());
+        }
 
         if (featuredError) {
           console.error('Error fetching featured post:', featuredError);
@@ -54,7 +72,7 @@ export const BlogPosts = () => {
         // Fetch regular posts, excluding featured one
         let query = supabase
           .from('blog_posts')
-          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
+          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured, tags')
           .eq('is_published', true)
           .order('published_date', { ascending: false })
           .limit(POSTS_PER_PAGE);
@@ -103,7 +121,7 @@ export const BlogPosts = () => {
       
       let query = supabase
         .from('blog_posts')
-        .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
+        .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured, tags')
         .eq('is_published', true)
         .order('published_date', { ascending: false })
         .range(offset, offset + POSTS_PER_PAGE - 1);
@@ -213,6 +231,28 @@ export const BlogPosts = () => {
             </p>
           </article>
         </Link>
+      )}
+
+      {/* Tags Section */}
+      {allTags.length > 0 && (
+        <div className="mb-10 md:mb-12">
+          <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Utforska ämnen</h4>
+          <div className="flex flex-wrap gap-2">
+            {allTags.map((tag) => (
+              <Link 
+                key={tag} 
+                to={`/blogg/tag/${encodeURIComponent(tag)}`}
+              >
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs hover:bg-accent/20 cursor-pointer transition-colors"
+                >
+                  {tag}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Regular Posts */}
