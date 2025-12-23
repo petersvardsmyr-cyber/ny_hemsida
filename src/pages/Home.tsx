@@ -14,7 +14,7 @@ const attBlitillImg = "/lovable-uploads/945ace33-dadc-46c4-907c-ab6bb84a1c3b.png
 const Home = () => {
   return <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
       {/* About Section */}
-      <section id="about" className="min-h-screen py-12 md:py-20 px-4 md:px-12 flex items-center">
+      <section id="about" className="py-12 md:py-20 px-4 md:px-12 flex items-center">
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
