@@ -89,7 +89,7 @@ export function NewsletterSignup() {
       setIsLoading(false);
     }
   };
-  return <Card className="w-full max-w-md">
+  return <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-2">
           <Mail className="h-8 w-8 text-primary" />
