@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Star } from "lucide-react";
 
 interface BlogPost {
   id: string;
@@ -171,9 +171,13 @@ export const BlogPosts = () => {
       {/* Featured Post */}
       {featuredPost && (
         <Link to={`/blogg/${featuredPost.slug}`} className="block mb-12 md:mb-16">
-          <article className="group cursor-pointer animate-fade-in">
+          <article className="group cursor-pointer animate-fade-in border border-border/50 rounded-xl p-4 md:p-6 bg-muted/20">
+            <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
+              <Star className="h-3 w-3 fill-accent text-accent" />
+              <span className="uppercase tracking-wider">Utvalt inlägg</span>
+            </div>
             {featuredPost.featured_image_url && (
-              <div className="w-full h-48 sm:h-64 md:h-80 mb-4 md:mb-6">
+              <div className="w-full h-48 sm:h-56 md:h-64 mb-4 md:mb-5">
                 <img 
                   src={featuredPost.featured_image_url} 
                   alt={featuredPost.title}
@@ -181,7 +185,7 @@ export const BlogPosts = () => {
                 />
               </div>
             )}
-            <h3 className="text-xl md:text-2xl font-heading font-medium mb-2 md:mb-3 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
+            <h3 className="text-lg md:text-xl font-heading font-medium mb-2 md:mb-3 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
               {featuredPost.title}
             </h3>
             <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 flex items-center gap-2 flex-wrap">
@@ -204,7 +208,7 @@ export const BlogPosts = () => {
                 {featuredPost.comment_count && featuredPost.comment_count > 0 && featuredPost.comment_count}
               </span>
             </div>
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-4">
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3">
               {featuredPost.excerpt}
             </p>
           </article>
