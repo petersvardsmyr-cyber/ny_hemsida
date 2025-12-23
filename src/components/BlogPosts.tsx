@@ -171,7 +171,7 @@ export const BlogPosts = () => {
       {/* Featured Post */}
       {featuredPost && (
         <Link to={`/blogg/${featuredPost.slug}`} className="block mb-12 md:mb-16">
-          <article className="group cursor-pointer animate-fade-in border border-border/50 rounded-xl p-4 md:p-6 bg-muted/20">
+          <article className="group cursor-pointer animate-fade-in border border-border/50 rounded-xl p-4 md:p-6 bg-muted/40">
             <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
               <Star className="h-3 w-3 fill-accent text-accent" />
               <span className="uppercase tracking-wider">Utvalt inlägg</span>
