@@ -21,6 +21,7 @@ interface BlogPostData {
   featured_image_url: string;
   image_caption: string;
   is_published: boolean;
+  is_featured: boolean;
   tags: string[];
   author: string;
   published_date: string;
@@ -41,6 +42,7 @@ export default function AdminPostEditor() {
     featured_image_url: '',
     image_caption: '',
     is_published: false,
+    is_featured: false,
     tags: [],
     author: 'Peter Svärdsmyr',
     published_date: new Date().toISOString().split('T')[0],
@@ -75,6 +77,7 @@ export default function AdminPostEditor() {
         featured_image_url: data.featured_image_url || '',
         image_caption: data.image_caption || '',
         is_published: data.is_published || false,
+        is_featured: data.is_featured || false,
         tags: data.tags || [],
         author: data.author || 'Peter Svärdsmyr',
         published_date: data.published_date || new Date().toISOString().split('T')[0],
@@ -380,6 +383,20 @@ export default function AdminPostEditor() {
                 <CardTitle>Metadata</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="is_featured">Utvalt inlägg</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Visas överst på startsidan
+                    </p>
+                  </div>
+                  <Switch
+                    id="is_featured"
+                    checked={formData.is_featured}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_featured: checked }))}
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="published_date">Publiceringsdatum</Label>
                   <Input

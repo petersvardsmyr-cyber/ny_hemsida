@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, ArrowUpDown } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, ArrowUpDown, Star } from 'lucide-react';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
@@ -17,6 +17,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   is_published: boolean;
+  is_featured: boolean;
   published_date: string;
   author: string;
   tags: string[];
@@ -46,7 +47,7 @@ export default function AdminBlogPosts() {
     try {
       let query = supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, is_published, published_date, author, tags');
+        .select('id, title, slug, excerpt, is_published, is_featured, published_date, author, tags');
 
       // Apply sorting based on selected option
       switch (sortBy) {
@@ -206,8 +207,14 @@ export default function AdminBlogPosts() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 flex-wrap">
                       {post.title}
+                      {post.is_featured && (
+                        <Badge variant="outline" className="border-amber-500 text-amber-600 bg-amber-50">
+                          <Star className="h-3 w-3 mr-1 fill-amber-500" />
+                          Utvalt
+                        </Badge>
+                      )}
                       {post.is_published ? (
                         <Badge variant="default">Publicerad</Badge>
                       ) : (
