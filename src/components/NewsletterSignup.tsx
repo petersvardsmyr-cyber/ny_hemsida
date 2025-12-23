@@ -41,12 +41,13 @@ export function NewsletterSignup() {
             name,
             unsubscribed_at: null
           }).eq('email', email);
-          
+
           // Send confirmation email
           await supabase.functions.invoke('send-confirmation-email', {
-            body: { email }
+            body: {
+              email
+            }
           });
-          
           toast({
             title: "Välkommen tillbaka!",
             description: "Din prenumeration har aktiverats igen. Du får en bekräftelse på epost."
@@ -55,22 +56,24 @@ export function NewsletterSignup() {
       } else {
         // Create new subscription with pending status
         const confirmationToken = crypto.randomUUID();
-        
         const {
           error
         } = await supabase.from('newsletter_subscribers').insert([{
           email,
           name,
-          is_active: false, // Pending confirmation
+          is_active: false,
+          // Pending confirmation
           confirmation_token: confirmationToken
         }]);
         if (error) throw error;
-        
+
         // Send confirmation email
         await supabase.functions.invoke('send-confirmation-email', {
-          body: { email, confirmationToken }
+          body: {
+            email,
+            confirmationToken
+          }
         });
-        
         toast({
           title: "Nästan klar!",
           description: "Kolla din e-post och klicka på bekräftelselänken för att slutföra din prenumeration."
@@ -89,22 +92,26 @@ export function NewsletterSignup() {
       setIsLoading(false);
     }
   };
-  return <div className="w-full max-w-md">
-      <div className="flex items-center gap-2 mb-4">
-        <Mail className="h-6 w-6 text-primary" />
-        <h3 className="text-lg font-medium">Prenumerera på nyhetsbrevet</h3>
-      </div>
-      <p className="text-muted-foreground mb-6">Prenumerera gärna på mitt nyhetsbrev om du vill. Där får du uppmuntran, nyheter och mina senaste texter och uppdateringarna direkt i din inkorg.</p>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Input type="text" placeholder="Ditt namn (valfritt)" value={name} onChange={e => setName(e.target.value)} />
+  return <Card className="w-full max-w-md mx-auto">
+      <CardHeader className="text-center">
+        <div className="flex justify-center mb-2">
+          <Mail className="h-8 w-8 text-primary" />
         </div>
-        <div>
-          <Input type="email" placeholder="Din e-postadress" value={email} onChange={e => setEmail(e.target.value)} required />
-        </div>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Prenumererar...' : 'Prenumerera'}
-        </Button>
-      </form>
-    </div>;
+        
+        <CardDescription>Prenumerera gärna på mitt nyhetsbrev om du vill. Där får du uppmuntran, nyheter och mina senaste texter och uppdateringarna direkt i din inkorg.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Input type="text" placeholder="Ditt namn (valfritt)" value={name} onChange={e => setName(e.target.value)} />
+          </div>
+          <div>
+            <Input type="email" placeholder="Din e-postadress" value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? 'Prenumererar...' : 'Prenumerera'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>;
 }
