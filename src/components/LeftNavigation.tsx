@@ -42,7 +42,9 @@ const LeftNavigation = () => {
     { id: 'blog', label: 'Blogg', type: 'scroll' },
     { id: 'writing', label: 'Skrivande', type: 'scroll' },
     { id: 'books', label: 'Böcker', type: 'scroll' },
-    { id: 'media', label: 'Media', type: 'scroll' }
+    { id: 'media', label: 'Media', type: 'scroll' },
+    { id: 'newsletter', label: 'Nyhetsbrev', type: 'scroll' },
+    { id: 'music', label: 'Musik', type: 'scroll' }
   ];
 
   const pageLinks = [
