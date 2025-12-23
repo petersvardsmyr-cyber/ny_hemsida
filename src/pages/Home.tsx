@@ -12,7 +12,7 @@ const detOrdnarSigImg = "/lovable-uploads/764ef977-eac5-4ecb-9a99-886c0a473b5f.p
 const alltDetViDelarAndraAretImg = "/lovable-uploads/d46f78be-5cd0-4056-a65d-0315a8ca0464.png";
 const attBlitillImg = "/lovable-uploads/945ace33-dadc-46c4-907c-ab6bb84a1c3b.png";
 const Home = () => {
-  return <div className="min-h-screen flex flex-col justify-start pt-8 md:pt-20 pb-20 md:pb-8">
+  return <div className="min-h-screen flex flex-col justify-start pt-16 md:pt-32 pb-20 md:pb-8">
       {/* About Section */}
       <section id="about" className="py-12 md:py-20 px-4 md:px-12 flex items-center">
         <div className="max-w-4xl w-full">
