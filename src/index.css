@@ -129,23 +129,23 @@ All colors MUST be HSL.
   }
   
   .prose p {
-    @apply text-lg/8 mb-6;
+    @apply text-base/7 mb-5;
   }
 
   .prose h1 {
-    @apply text-2xl font-heading font-medium mt-12 mb-6;
-  }
-
-  .prose h2 {
     @apply text-xl font-heading font-medium mt-10 mb-5;
   }
 
-  .prose h3 {
+  .prose h2 {
     @apply text-lg font-heading font-medium mt-8 mb-4;
   }
 
+  .prose h3 {
+    @apply text-[1.1rem] leading-7 font-heading font-medium mt-6 mb-3;
+  }
+
   .prose h4 {
-    @apply text-base font-heading font-medium mt-6 mb-3;
+    @apply text-base font-heading font-semibold mt-5 mb-2;
   }
 
   /* Smooth animations */
