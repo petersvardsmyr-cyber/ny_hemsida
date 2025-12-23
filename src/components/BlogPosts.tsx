@@ -46,13 +46,20 @@ export const BlogPosts = () => {
           .eq('is_published', true);
 
         if (allPostsForTags) {
-          const tagsSet = new Set<string>();
+          const tagCounts = new Map<string, number>();
           allPostsForTags.forEach(post => {
             if (post.tags && Array.isArray(post.tags)) {
-              post.tags.forEach(tag => tagsSet.add(tag));
+              post.tags.forEach(tag => {
+                tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+              });
             }
           });
-          setAllTags(Array.from(tagsSet).sort());
+          // Sort by count (descending) and take top 5
+          const sortedTags = Array.from(tagCounts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([tag]) => tag);
+          setAllTags(sortedTags);
         }
 
         if (featuredError) {
