@@ -203,7 +203,7 @@ const BlogPost = () => {
       </header>
 
       <div 
-        className="prose prose-lg max-w-none [&_p]:text-foreground [&_p]:text-base [&_p]:leading-relaxed [&_h1]:text-foreground [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-foreground [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-foreground [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_strong]:text-foreground [&_strong]:font-bold [&_em]:text-foreground [&_em]:italic [&_img]:my-4 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_blockquote]:border-l-4 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_blockquote]:text-foreground"
+        className="prose max-w-none [&_p]:text-foreground [&_strong]:text-foreground [&_strong]:font-bold [&_em]:text-foreground [&_em]:italic [&_img]:my-4 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_blockquote]:border-l-4 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_blockquote]:text-foreground [&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h4]:text-foreground"
         dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
 
