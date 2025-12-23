@@ -114,7 +114,7 @@ const Home = () => {
         
         <div className="max-w-4xl w-full relative z-10">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Skrivande</h2>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det finns en rytm i allt. När jag skriver tänker jag på det, ibland mer än på exakt innehåll. Självklart är innehållet viktigt, men om rytmen inte finns där kommer alltid något fattas.
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-4 md:mb-6 max-w-2xl">Det finns en rytm i allt. När jag skriver tänker jag på det, ibland mer än på exakt innehåll. Självklart är innehållet viktigt, men om rytmen inte finns där kommer alltid något fattas.
 
 För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Det mesta jag skriver handlar om populärpsykologi, lärande, personlig utveckling och olika former av tro och andlighet. Ibland i form av dikter och poesi, ibland i form av debattartiklar eller böcker. Att skriva om stora saker med små medel. Så få ord som möjligt, helst. Det har blivit en längtan och den stora utmaningen när jag skriver.</p>
