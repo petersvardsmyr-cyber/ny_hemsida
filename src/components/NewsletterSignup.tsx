@@ -89,26 +89,22 @@ export function NewsletterSignup() {
       setIsLoading(false);
     }
   };
-  return <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center">
-        <div className="flex justify-center mb-2">
-          <Mail className="h-8 w-8 text-primary" />
+  return <div className="w-full max-w-md">
+      <div className="flex items-center gap-2 mb-4">
+        <Mail className="h-6 w-6 text-primary" />
+        <h3 className="text-lg font-medium">Prenumerera på nyhetsbrevet</h3>
+      </div>
+      <p className="text-muted-foreground mb-6">Prenumerera gärna på mitt nyhetsbrev om du vill. Där får du uppmuntran, nyheter och mina senaste texter och uppdateringarna direkt i din inkorg.</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Input type="text" placeholder="Ditt namn (valfritt)" value={name} onChange={e => setName(e.target.value)} />
         </div>
-        <CardTitle>Prenumerera på nyhetsbrevet</CardTitle>
-        <CardDescription>Prenumerera gärna på mitt nyhetsbrev om du vill. Där får du uppmuntran, nyheter och mina senaste texter och uppdateringarna direkt i din inkorg.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Input type="text" placeholder="Ditt namn (valfritt)" value={name} onChange={e => setName(e.target.value)} />
-          </div>
-          <div>
-            <Input type="email" placeholder="Din e-postadress" value={email} onChange={e => setEmail(e.target.value)} required />
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Prenumererar...' : 'Prenumerera'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>;
+        <div>
+          <Input type="email" placeholder="Din e-postadress" value={email} onChange={e => setEmail(e.target.value)} required />
+        </div>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Prenumererar...' : 'Prenumerera'}
+        </Button>
+      </form>
+    </div>;
 }
