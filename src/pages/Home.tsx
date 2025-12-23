@@ -27,11 +27,7 @@ const Home = () => {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
                   Peter Svärdsmyr
                 </h1>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 md:mb-8">Jag är en person som älskar att skriva och skapa. Så länge jag kommer ihåg har jag varit fascinerad möjligheterna i världen omkring mig. Språket, musiken och konsten har fångat mig mest, men även pedagogik, utbildning och entreprenörsskap. Jag är utbildad beteendevetare och församlingspedagog. Till vardags arbetar jag som stiftspedagog i Skara stift med kompetensutveckling, rekrytering och utvecklingsarbete.
-                <br /><br />
-                När jag skriver tänker jag på det, ibland mer än på exakt innehåll. Självklart är innehållet viktigt, men om rytmen inte finns där kommer alltid något fattas.
-                <br /><br />
-                För ord är så mycket mer än ord, eller hur? Hur jag säger eller skriver något är minst lika viktigt som vad. Och det är som det ska, som Thomas Tranströmer skulle sagt.</p>
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 md:mb-8">Jag är en person som älskar att skriva och skapa. Så länge jag kommer ihåg har jag varit fascinerad möjligheterna i världen omkring mig. Språket, musiken och konsten har fångat mig mest, men även pedagogik, utbildning och entreprenörsskap. Jag är utbildad beteendevetare och församlingspedagog. Till vardags arbetar jag som stiftspedagog i Skara stift med kompetensutveckling, rekrytering och utvecklingsarbete.</p>
                 
                 {/* Social Links */}
                 <div className="flex gap-3 md:gap-4 mb-6">
