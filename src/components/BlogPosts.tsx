@@ -13,10 +13,12 @@ interface BlogPost {
   published_date: string;
   author: string;
   featured_image_url: string;
+  is_featured: boolean;
   comment_count?: number;
 }
 
 export const BlogPosts = () => {
+  const [featuredPost, setFeaturedPost] = useState<BlogPost | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -26,12 +28,42 @@ export const BlogPosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data, error } = await supabase
+        // First, fetch the featured post
+        const { data: featuredData, error: featuredError } = await supabase
           .from('blog_posts')
-          .select('id, title, excerpt, slug, published_date, author, featured_image_url')
+          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
+          .eq('is_published', true)
+          .eq('is_featured', true)
+          .limit(1)
+          .maybeSingle();
+
+        if (featuredError) {
+          console.error('Error fetching featured post:', featuredError);
+        }
+
+        let featuredWithComments: BlogPost | null = null;
+        if (featuredData) {
+          const { count } = await supabase
+            .from('blog_comments')
+            .select('*', { count: 'exact', head: true })
+            .eq('post_id', featuredData.id);
+          featuredWithComments = { ...featuredData, comment_count: count || 0 };
+          setFeaturedPost(featuredWithComments);
+        }
+
+        // Fetch regular posts, excluding featured one
+        let query = supabase
+          .from('blog_posts')
+          .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
           .eq('is_published', true)
           .order('published_date', { ascending: false })
           .limit(POSTS_PER_PAGE);
+
+        if (featuredData) {
+          query = query.neq('id', featuredData.id);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
           console.error('Error fetching posts:', error);
@@ -66,12 +98,21 @@ export const BlogPosts = () => {
     
     setLoadingMore(true);
     try {
-      const { data, error } = await supabase
+      // Calculate the correct offset considering the featured post is excluded
+      const offset = posts.length + (featuredPost ? 1 : 0);
+      
+      let query = supabase
         .from('blog_posts')
-        .select('id, title, excerpt, slug, published_date, author, featured_image_url')
+        .select('id, title, excerpt, slug, published_date, author, featured_image_url, is_featured')
         .eq('is_published', true)
         .order('published_date', { ascending: false })
-        .range(posts.length, posts.length + POSTS_PER_PAGE - 1);
+        .range(offset, offset + POSTS_PER_PAGE - 1);
+
+      if (featuredPost) {
+        query = query.neq('id', featuredPost.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching more posts:', error);
@@ -127,6 +168,50 @@ export const BlogPosts = () => {
 
   return (
     <div>
+      {/* Featured Post */}
+      {featuredPost && (
+        <Link to={`/blogg/${featuredPost.slug}`} className="block mb-12 md:mb-16">
+          <article className="group cursor-pointer animate-fade-in">
+            {featuredPost.featured_image_url && (
+              <div className="w-full h-48 sm:h-64 md:h-80 mb-4 md:mb-6">
+                <img 
+                  src={featuredPost.featured_image_url} 
+                  alt={featuredPost.title}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+            )}
+            <h3 className="text-xl md:text-2xl font-heading font-medium mb-2 md:mb-3 group-hover:text-accent transition-all duration-300 group-hover:translate-x-1">
+              {featuredPost.title}
+            </h3>
+            <div className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 flex items-center gap-2 flex-wrap">
+              <span>{new Date(featuredPost.published_date).toLocaleDateString('sv-SE', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</span>
+              {new Date(featuredPost.published_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
+                <>
+                  <span>•</span>
+                  <Badge variant="secondary" className="bg-accent/10 text-accent text-xs animate-pulse">
+                    Nytt
+                  </Badge>
+                </>
+              )}
+              <span>•</span>
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <MessageCircle className="h-3 w-3" />
+                {featuredPost.comment_count && featuredPost.comment_count > 0 && featuredPost.comment_count}
+              </span>
+            </div>
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-4">
+              {featuredPost.excerpt}
+            </p>
+          </article>
+        </Link>
+      )}
+
+      {/* Regular Posts */}
       <div className="space-y-12 md:space-y-16 transition-all duration-500">
         {posts.map((post, index) => {
           const isNewPost = index >= posts.length - POSTS_PER_PAGE && posts.length > POSTS_PER_PAGE && !loadingMore;
