@@ -68,6 +68,15 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Blog Section */}
+      <section id="blog" className="py-12 md:py-20 px-4 md:px-12">
+        <div className="max-w-4xl w-full">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Blogg</h2>
+          
+          <BlogPosts />
+        </div>
+      </section>
+
       {/* Writing Section */}
       <section id="writing" className="py-12 md:py-20 px-4 md:px-12 relative overflow-hidden">
         {/* Artistic decorative elements */}
@@ -147,15 +156,6 @@ const Home = () => {
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12 max-w-2xl">Här kan du läsa mer om och beställa mina böcker om personlig utveckling, relationer, kristen tro och en hel del vardagsfilosofi och poesi.</p>
           
           <BooksPreview />
-        </div>
-      </section>
-
-      {/* Blog Section */}
-      <section id="blog" className="py-12 md:py-20 px-4 md:px-12">
-        <div className="max-w-4xl w-full">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 md:mb-8 text-foreground">Blogg</h2>
-          
-          <BlogPosts />
         </div>
       </section>
 
