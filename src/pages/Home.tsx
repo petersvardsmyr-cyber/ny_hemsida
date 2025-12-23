@@ -30,6 +30,10 @@ const Home = () => {
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 md:mb-8">Jag är en person som älskar att skriva och skapa. Så länge jag kommer ihåg har jag varit fascinerad möjligheterna i världen omkring mig. Språket, musiken och konsten har fångat mig mest, men även pedagogik, utbildning och entreprenörsskap.
 
 
+
+
+
+
 Jag är utbildad beteendevetare och församlingspedagog. Till vardags arbetar jag som stiftspedagog i Skara stift med kompetensutveckling, rekrytering och utvecklingsarbete.<br /><br />
                 När jag skriver tänker jag på det, ibland mer än på exakt innehåll. Självklart är innehållet viktigt, men om rytmen inte finns där kommer alltid något fattas.
                 <br /><br />
