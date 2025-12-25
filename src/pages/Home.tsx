@@ -19,7 +19,7 @@ const Home = () => {
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden flex-shrink-0">
+              <div className="w-28 h-40 md:w-36 md:h-52 rounded-xl overflow-hidden flex-shrink-0">
                 <img src={peterProfileImg} alt="Peter Svärdsmyr - Författare och berättare" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
