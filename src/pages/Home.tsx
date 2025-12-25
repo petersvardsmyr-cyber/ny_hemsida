@@ -6,6 +6,7 @@ import { BlogPosts } from "@/components/BlogPosts";
 import { MediaGrid } from "@/components/MediaGrid";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { BooksPreview } from "@/components/BooksPreview";
+import peterProfileImg from "@/assets/peter-profile-new.jpg";
 // High-resolution product images stored in public directory
 const alltDetViDelarImg = "/lovable-uploads/0290e479-7e17-4147-98cf-68745458f273.png";
 const detOrdnarSigImg = "/lovable-uploads/764ef977-eac5-4ecb-9a99-886c0a473b5f.png";
@@ -18,10 +19,8 @@ const Home = () => {
         <div className="max-w-4xl w-full">
           <div className="mb-16">
             <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden flex-shrink-0">
-                <img src="/lovable-uploads/0c4c081c-c3c9-4531-b9a3-1dcb94c959d7.png" alt="Peter Svärdsmyr - Författare och berättare" className="w-full h-full object-cover transform scale-110" style={{
-                objectPosition: '50% 0%'
-              }} />
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden flex-shrink-0">
+                <img src={peterProfileImg} alt="Peter Svärdsmyr - Författare och berättare" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-foreground leading-tight mb-6 md:mb-8">
