@@ -54,11 +54,11 @@ export const BlogPosts = () => {
               });
             }
           });
-          // Sort by count (descending) and take top 5
-          const sortedTags = Array.from(tagCounts.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
-            .map(([tag]) => tag);
+        // Sort by count (descending) and take top 10
+        const sortedTags = Array.from(tagCounts.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([tag]) => tag);
           setAllTags(sortedTags);
         }
 
