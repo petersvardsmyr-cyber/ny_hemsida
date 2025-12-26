@@ -27,11 +27,12 @@ export default function BlogSubscribe() {
     setIsSubmitting(true);
 
     try {
-      // Check if subscriber already exists
+      // Check if subscriber already exists for blog
       const { data: existing } = await supabase
         .from('newsletter_subscribers')
         .select('id, is_active, confirmed_at')
         .eq('email', validation.data.toLowerCase())
+        .eq('subscription_type', 'blog')
         .maybeSingle();
 
       if (existing) {
@@ -57,14 +58,15 @@ export default function BlogSubscribe() {
           body: { email: validation.data.toLowerCase(), confirmationToken: token }
         });
       } else {
-        // Create new subscriber
+        // Create new subscriber for blog notifications
         const token = crypto.randomUUID();
         await supabase
           .from('newsletter_subscribers')
           .insert({
             email: validation.data.toLowerCase(),
             is_active: false,
-            confirmation_token: token
+            confirmation_token: token,
+            subscription_type: 'blog'
           });
 
         await supabase.functions.invoke('send-confirmation-email', {

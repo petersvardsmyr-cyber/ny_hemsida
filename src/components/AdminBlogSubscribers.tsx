@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Users, Mail, Pencil, Trash2 } from 'lucide-react';
+import { Users, Pencil, Trash2 } from 'lucide-react';
 
 interface Subscriber {
   id: string;
@@ -20,7 +20,7 @@ interface Subscriber {
   confirmed_at: string | null;
 }
 
-export function AdminNewsletterSubscribers() {
+export function AdminBlogSubscribers() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingSubscriber, setEditingSubscriber] = useState<Subscriber | null>(null);
@@ -34,14 +34,14 @@ export function AdminNewsletterSubscribers() {
       const { data, error } = await supabase
         .from('newsletter_subscribers')
         .select('*')
-        .eq('subscription_type', 'newsletter')
+        .eq('subscription_type', 'blog')
         .order('subscribed_at', { ascending: false });
 
       if (error) throw error;
       setSubscribers(data || []);
     } catch (error: any) {
-      console.error('Error loading subscribers:', error);
-      toast.error('Kunde inte ladda prenumeranter');
+      console.error('Error loading blog subscribers:', error);
+      toast.error('Kunde inte ladda bloggprenumeranter');
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +81,6 @@ export function AdminNewsletterSubscribers() {
 
     try {
       if (isAddMode) {
-        // Add new subscriber with confirmed status
         const { error } = await supabase
           .from('newsletter_subscribers')
           .insert([{
@@ -90,13 +89,12 @@ export function AdminNewsletterSubscribers() {
             is_active: editForm.is_active,
             confirmed_at: new Date().toISOString(),
             confirmation_token: null,
-            subscription_type: 'newsletter'
+            subscription_type: 'blog'
           }]);
 
         if (error) throw error;
-        toast.success('Prenumerant tillagd');
+        toast.success('Bloggprenumerant tillagd');
       } else {
-        // Update existing subscriber
         if (!editingSubscriber) return;
         
         const { error } = await supabase
@@ -109,7 +107,7 @@ export function AdminNewsletterSubscribers() {
           .eq('id', editingSubscriber.id);
 
         if (error) throw error;
-        toast.success('Prenumerant uppdaterad');
+        toast.success('Bloggprenumerant uppdaterad');
       }
 
       setIsDialogOpen(false);
@@ -139,23 +137,6 @@ export function AdminNewsletterSubscribers() {
     }
   };
 
-  const handleResendConfirmation = async (email: string) => {
-    try {
-      const { error } = await supabase.functions.invoke('send-confirmation-email', {
-        body: { email }
-      });
-
-      if (error) throw error;
-
-      toast.success('Bekräftelsemail skickat', {
-        description: `Ett nytt bekräftelsemail har skickats till ${email}`
-      });
-    } catch (error: any) {
-      console.error('Error sending confirmation:', error);
-      toast.error('Kunde inte skicka bekräftelsemail');
-    }
-  };
-
   const activeCount = subscribers.filter(s => s.is_active).length;
   const inactiveCount = subscribers.length - activeCount;
 
@@ -164,7 +145,7 @@ export function AdminNewsletterSubscribers() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Totalt prenumeranter</CardTitle>
+            <CardTitle className="text-sm font-medium">Totalt bloggprenumeranter</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -197,9 +178,9 @@ export function AdminNewsletterSubscribers() {
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle>Prenumeranter</CardTitle>
+              <CardTitle>Bloggprenumeranter</CardTitle>
               <CardDescription>
-                Hantera alla dina nyhetsbrevsprenumeranter
+                Personer som får notiser om nya blogginlägg
               </CardDescription>
             </div>
             <Button onClick={handleAdd}>
@@ -211,7 +192,7 @@ export function AdminNewsletterSubscribers() {
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground">Laddar prenumeranter...</p>
           ) : subscribers.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">Inga prenumeranter ännu</p>
+            <p className="text-center py-8 text-muted-foreground">Inga bloggprenumeranter ännu</p>
           ) : (
             <Table>
               <TableHeader>
@@ -220,7 +201,6 @@ export function AdminNewsletterSubscribers() {
                   <TableHead>E-post</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Prenumererad</TableHead>
-                  <TableHead>Avregistrerad</TableHead>
                   <TableHead className="text-right">Åtgärder</TableHead>
                 </TableRow>
               </TableHeader>
@@ -240,12 +220,6 @@ export function AdminNewsletterSubscribers() {
                     </TableCell>
                     <TableCell>
                       {new Date(subscriber.subscribed_at).toLocaleDateString('sv-SE')}
-                    </TableCell>
-                    <TableCell>
-                      {subscriber.unsubscribed_at 
-                        ? new Date(subscriber.unsubscribed_at).toLocaleDateString('sv-SE')
-                        : '-'
-                      }
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -276,7 +250,7 @@ export function AdminNewsletterSubscribers() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isAddMode ? 'Lägg till prenumerant' : 'Redigera prenumerant'}</DialogTitle>
+            <DialogTitle>{isAddMode ? 'Lägg till bloggprenumerant' : 'Redigera bloggprenumerant'}</DialogTitle>
             <DialogDescription>
               {isAddMode ? 'Lägg till en ny prenumerant som bekräftad och aktiv' : 'Uppdatera information för prenumeranten'}
             </DialogDescription>
