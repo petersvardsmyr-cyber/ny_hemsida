@@ -227,11 +227,15 @@ export const BlogPosts = () => {
                   </Badge>
                 </>
               )}
-              <span>•</span>
-              <span className="flex items-center gap-1 text-muted-foreground">
-                <MessageCircle className="h-3 w-3" />
-                {featuredPost.comment_count && featuredPost.comment_count > 0 && featuredPost.comment_count}
-              </span>
+              {featuredPost.comment_count && featuredPost.comment_count > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1 text-muted-foreground">
+                    <MessageCircle className="h-3 w-3" />
+                    {featuredPost.comment_count}
+                  </span>
+                </>
+              )}
             </div>
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3">
               {featuredPost.excerpt}
@@ -310,11 +314,15 @@ export const BlogPosts = () => {
                         </Badge>
                       </>
                     )}
-                    <span>•</span>
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <MessageCircle className="h-3 w-3" />
-                      {post.comment_count && post.comment_count > 0 && post.comment_count}
-                    </span>
+                    {post.comment_count && post.comment_count > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <MessageCircle className="h-3 w-3" />
+                          {post.comment_count}
+                        </span>
+                      </>
+                    )}
                   </div>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed flex-1">
                     {post.excerpt}
