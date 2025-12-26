@@ -8,7 +8,6 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ShareButton } from "@/components/ShareButton";
-import { InstagramStoryShare } from "@/components/InstagramStoryShare";
 import BlogComments from "@/components/BlogComments";
 
 interface BlogPost {
@@ -163,18 +162,11 @@ const BlogPost = () => {
             <span>•</span>
             <span className="text-sm">{post.author}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <ShareButton 
-              title={post.title}
-              text={post.excerpt}
-              url={pageUrl}
-            />
-            <InstagramStoryShare 
-              title={post.title}
-              imageUrl={post.featured_image_url}
-              author={post.author}
-            />
-          </div>
+          <ShareButton 
+            title={post.title}
+            text={post.excerpt}
+            url={pageUrl}
+          />
         </div>
 
         {post.tags && post.tags.length > 0 && (
@@ -223,18 +215,11 @@ const BlogPost = () => {
             Publicerad {new Date(post.published_date).toLocaleDateString('sv-SE')}
           </div>
           
-          <div className="flex items-center gap-2">
-            <ShareButton 
-              title={post.title}
-              text={post.excerpt}
-              url={pageUrl}
-            />
-            <InstagramStoryShare 
-              title={post.title}
-              imageUrl={post.featured_image_url}
-              author={post.author}
-            />
-          </div>
+          <ShareButton 
+            title={post.title}
+            text={post.excerpt}
+            url={pageUrl}
+          />
           
           <Button variant="outline" asChild>
             <Link to="/blogg">Läs fler inlägg</Link>
