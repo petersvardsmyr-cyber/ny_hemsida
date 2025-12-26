@@ -227,7 +227,7 @@ export const BlogPosts = () => {
                   </Badge>
                 </>
               )}
-              {featuredPost.comment_count && featuredPost.comment_count > 0 && (
+              {(featuredPost.comment_count ?? 0) > 0 && (
                 <>
                   <span>•</span>
                   <span className="flex items-center gap-1 text-muted-foreground">
@@ -314,7 +314,7 @@ export const BlogPosts = () => {
                         </Badge>
                       </>
                     )}
-                    {post.comment_count && post.comment_count > 0 && (
+                    {(post.comment_count ?? 0) > 0 && (
                       <>
                         <span>•</span>
                         <span className="flex items-center gap-1 text-muted-foreground">
