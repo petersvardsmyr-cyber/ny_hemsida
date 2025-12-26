@@ -47,9 +47,10 @@ export default function AdminBlogPosts() {
     try {
       let query = supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, is_published, is_featured, published_date, author, tags');
+        .select('id, title, slug, excerpt, is_published, is_featured, published_date, author, tags')
+        .order('is_featured', { ascending: false }); // Featured posts always first
 
-      // Apply sorting based on selected option
+      // Apply secondary sorting based on selected option
       switch (sortBy) {
         case 'newest':
           query = query.order('published_date', { ascending: false });
