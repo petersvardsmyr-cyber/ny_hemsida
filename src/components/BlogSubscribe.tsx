@@ -86,7 +86,7 @@ export default function BlogSubscribe() {
 
   return (
     <section className="mt-16 pt-8 border-t border-border">
-      <p className="text-muted-foreground mb-4">Vill du inte missa nästa inlägg?</p>
+      <p className="text-muted-foreground mb-4">Mejlnotis för nya inlägg?</p>
       <form onSubmit={handleSubmit} className="flex gap-3 max-w-md">
         <Input
           type="email"
