@@ -241,6 +241,7 @@ export type Database = {
           is_active: boolean
           name: string | null
           subscribed_at: string
+          subscription_type: string
           unsubscribed_at: string | null
           updated_at: string
         }
@@ -253,6 +254,7 @@ export type Database = {
           is_active?: boolean
           name?: string | null
           subscribed_at?: string
+          subscription_type?: string
           unsubscribed_at?: string | null
           updated_at?: string
         }
@@ -265,6 +267,7 @@ export type Database = {
           is_active?: boolean
           name?: string | null
           subscribed_at?: string
+          subscription_type?: string
           unsubscribed_at?: string | null
           updated_at?: string
         }

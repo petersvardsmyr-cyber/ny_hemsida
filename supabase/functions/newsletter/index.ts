@@ -175,11 +175,12 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    // Get all active subscribers
+    // Get all active newsletter subscribers (not blog subscribers)
     const { data: allSubscribers, error: dbError } = await supabase
       .from('newsletter_subscribers')
       .select('email, name')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .eq('subscription_type', 'newsletter');
 
     if (dbError) {
       console.error("Database error:", dbError);
