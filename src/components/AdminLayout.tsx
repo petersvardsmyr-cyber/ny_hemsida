@@ -32,7 +32,7 @@ export default function AdminLayout() {
   };
 
   const isBlogSectionActive = () => {
-    return location.pathname.includes('/admin/posts');
+    return location.pathname.includes('/admin/posts') || location.pathname.includes('/admin/blog');
   };
 
   const isShopSectionActive = () => {
@@ -166,6 +166,17 @@ export default function AdminLayout() {
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         Nytt inlägg
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/blog/subscribers" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/blog/subscribers') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Users className="mr-2 h-4 w-4" />
+                        Prenumeranter
                       </Button>
                     </Link>
                   </div>
