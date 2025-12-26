@@ -104,3 +104,6 @@ verify_jwt = true
 
 [functions.og-meta]
 verify_jwt = false
+
+[functions.send-blog-notification]
+verify_jwt = true

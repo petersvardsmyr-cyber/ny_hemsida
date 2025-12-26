@@ -178,6 +178,30 @@ export default function AdminPostEditor() {
     }
   };
 
+  const sendBlogNotification = async (postId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase.functions.invoke('send-blog-notification', {
+        body: {
+          post_id: postId,
+          title: formData.title,
+          excerpt: formData.excerpt,
+          slug: formData.slug,
+        },
+      });
+
+      if (error) {
+        console.error('Failed to send blog notification:', error);
+      } else {
+        console.log('Blog notification sent successfully');
+      }
+    } catch (err) {
+      console.error('Error sending blog notification:', err);
+    }
+  };
+
   const handlePublish = async () => {
     setLoading(true);
 
@@ -187,7 +211,17 @@ export default function AdminPostEditor() {
         is_published: true,
       };
 
+      // Check if this is a new publication (not already published)
+      const wasPublished = isEditing ? formData.is_published : false;
+
       if (isEditing && id) {
+        // Fetch current state to check if already published
+        const { data: currentPost } = await supabase
+          .from('blog_posts')
+          .select('is_published')
+          .eq('id', id)
+          .single();
+
         const { error } = await supabase
           .from('blog_posts')
           .update({
@@ -198,20 +232,36 @@ export default function AdminPostEditor() {
 
         if (error) throw error;
 
-        toast({
-          title: "Inlägg publicerat",
-          description: "Blogginlägget har publicerats och är nu synligt.",
-        });
+        // Send notification only if post wasn't already published
+        if (!currentPost?.is_published) {
+          await sendBlogNotification(id);
+          toast({
+            title: "Inlägg publicerat",
+            description: "Blogginlägget har publicerats och prenumeranter har notifierats.",
+          });
+        } else {
+          toast({
+            title: "Inlägg uppdaterat",
+            description: "Blogginlägget har uppdaterats.",
+          });
+        }
       } else {
-        const { error } = await supabase
+        const { data: newPost, error } = await supabase
           .from('blog_posts')
-          .insert([publishData]);
+          .insert([publishData])
+          .select('id')
+          .single();
 
         if (error) throw error;
 
+        // Send notification for new published post
+        if (newPost) {
+          await sendBlogNotification(newPost.id);
+        }
+
         toast({
           title: "Inlägg publicerat",
-          description: "Blogginlägget har skapats och publicerats.",
+          description: "Blogginlägget har skapats och prenumeranter har notifierats.",
         });
       }
 
