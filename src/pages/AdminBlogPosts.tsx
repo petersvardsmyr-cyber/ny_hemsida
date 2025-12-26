@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, ArrowUpDown, Star } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, ArrowUpDown, Star, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
@@ -31,12 +32,25 @@ export default function AdminBlogPosts() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filter, setFilter] = useState<FilterOption>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   const filteredPosts = posts.filter(post => {
-    if (filter === 'published') return post.is_published;
-    if (filter === 'drafts') return !post.is_published;
-    return true; // 'all'
+    // Filter by publish status
+    if (filter === 'published' && !post.is_published) return false;
+    if (filter === 'drafts' && post.is_published) return false;
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const matchesTitle = post.title?.toLowerCase().includes(query);
+      const matchesExcerpt = post.excerpt?.toLowerCase().includes(query);
+      const matchesTags = post.tags?.some(tag => tag.toLowerCase().includes(query));
+      const matchesAuthor = post.author?.toLowerCase().includes(query);
+      return matchesTitle || matchesExcerpt || matchesTags || matchesAuthor;
+    }
+    
+    return true;
   });
 
   useEffect(() => {
@@ -174,6 +188,17 @@ export default function AdminBlogPosts() {
             </Button>
           </Link>
         </div>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Sök bland inlägg..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       <Tabs value={filter} onValueChange={(value: FilterOption) => setFilter(value)}>
