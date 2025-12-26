@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ShareButton } from "@/components/ShareButton";
 import BlogComments from "@/components/BlogComments";
+import BlogSubscribe from "@/components/BlogSubscribe";
 
 interface BlogPost {
   id: string;
@@ -208,6 +209,8 @@ const BlogPost = () => {
       />
 
       <BlogComments postId={post.id} />
+
+      <BlogSubscribe />
 
       <footer className="mt-12 pt-8 border-t border-border">
         <div className="flex flex-col items-center gap-6">
