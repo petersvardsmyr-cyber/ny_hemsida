@@ -208,7 +208,13 @@ export default function AdminBlogPosts() {
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <CardTitle className="flex items-center gap-2 flex-wrap">
-                      {post.title}
+                      <Link 
+                        to={`/blogg/${post.slug}`} 
+                        target="_blank"
+                        className="hover:underline hover:text-primary transition-colors"
+                      >
+                        {post.title}
+                      </Link>
                       {post.is_featured && (
                         <Badge variant="outline" className="border-amber-500 text-amber-600 bg-amber-50">
                           <Star className="h-3 w-3 mr-1 fill-amber-500" />
