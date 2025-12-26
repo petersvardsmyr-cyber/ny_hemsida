@@ -7,7 +7,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*(facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Pinterest|Discordbot|Instagram).*"
+          "value": ".*(facebookexternalhit|Facebot|InstagramBot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Pinterest|Discordbot).*"
         }
       ],
       "permanent": false
