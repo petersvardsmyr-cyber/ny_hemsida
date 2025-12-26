@@ -209,8 +209,7 @@ export default function AdminBlogPosts() {
                   <div className="flex-1">
                     <CardTitle className="flex items-center gap-2 flex-wrap">
                       <Link 
-                        to={`/blogg/${post.slug}`} 
-                        target="_blank"
+                        to={`/admin/posts/edit/${post.id}`}
                         className="hover:underline hover:text-primary transition-colors"
                       >
                         {post.title}
