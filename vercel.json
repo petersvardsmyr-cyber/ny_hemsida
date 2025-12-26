@@ -5,6 +5,18 @@
       "destination": "https://tpehwkimphnkjaxqnpjq.supabase.co/functions/v1/og-meta?slug=:slug",
       "has": [
         {
+          "type": "query",
+          "key": "share",
+          "value": "1"
+        }
+      ],
+      "permanent": false
+    },
+    {
+      "source": "/blogg/:slug",
+      "destination": "https://tpehwkimphnkjaxqnpjq.supabase.co/functions/v1/og-meta?slug=:slug",
+      "has": [
+        {
           "type": "header",
           "key": "user-agent",
           "value": ".*(facebookexternalhit|Facebot|InstagramBot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Pinterest|Discordbot).*"

@@ -28,10 +28,14 @@ export const ShareButton = ({
     // Try native Web Share API first
     if (navigator.share) {
       try {
+        // iOS link previews in the share sheet are generated from server-rendered HTML.
+        // Since this is an SPA, we share a "preview" URL that returns OG tags and then redirects back.
+        const previewUrl = `${url}${url.includes("?") ? "&" : "?"}share=1`;
+
         await navigator.share({
           title,
           text,
-          url,
+          url: previewUrl,
         });
       } catch (error) {
         // User cancelled or error occurred
