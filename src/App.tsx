@@ -30,6 +30,7 @@ import AdminNewsletterNotifications from "./pages/AdminNewsletterNotifications";
 import AdminEmailSettings from "./pages/AdminEmailSettings";
 import AdminPostEditor from "./pages/AdminPostEditor";
 import AdminChangePassword from "./pages/AdminChangePassword";
+import AdminBlogSubscribersPage from "./pages/AdminBlogSubscribersPage";
 import NotFound from "./pages/NotFound";
 import NewsletterUnsubscribe from "./pages/NewsletterUnsubscribe";
 import NewsletterConfirm from "./pages/NewsletterConfirm";
@@ -66,6 +67,7 @@ const App = () => (
             }>
               <Route index element={<AdminDashboard />} />
               <Route path="posts" element={<AdminBlogPosts />} />
+              <Route path="blog/subscribers" element={<AdminBlogSubscribersPage />} />
               <Route path="products" element={<AdminProductsPage />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="accounting" element={<AdminAccounting />} />
