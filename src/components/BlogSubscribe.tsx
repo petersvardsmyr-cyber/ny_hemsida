@@ -45,7 +45,7 @@ export default function BlogSubscribe() {
         
         // Reactivate inactive subscriber
         const token = crypto.randomUUID();
-        await supabase
+        const { error: updateError } = await supabase
           .from('newsletter_subscribers')
           .update({ 
             is_active: true, 
@@ -53,6 +53,11 @@ export default function BlogSubscribe() {
             unsubscribed_at: null 
           })
           .eq('id', existing.id);
+
+        if (updateError) {
+          console.error('Error reactivating blog subscriber:', updateError);
+          throw updateError;
+        }
 
         await supabase.functions.invoke('send-confirmation-email', {
           body: { email: validation.data.toLowerCase(), confirmationToken: token }
