@@ -12,6 +12,7 @@ const corsHeaders = {
 interface ConfirmationRequest {
   email: string;
   confirmationToken?: string;
+  subscriptionType?: 'newsletter' | 'blog';
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -30,7 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, confirmationToken }: ConfirmationRequest = await req.json();
+    const { email, confirmationToken, subscriptionType = 'newsletter' }: ConfirmationRequest = await req.json();
 
     if (!email) {
       return new Response(
@@ -42,18 +43,27 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    const isBlog = subscriptionType === 'blog';
     const confirmUrl = confirmationToken 
       ? `https://petersvardsmyr.se/nyhetsbrev/bekrafta?token=${confirmationToken}`
       : null;
 
+    // Different content based on subscription type
+    const subscriptionLabel = isBlog ? 'bloggnotiser' : 'nyhetsbrevet';
+    const subscriptionDescription = isBlog 
+      ? 'Du kommer nu att få ett mejl varje gång jag publicerar ett nytt blogginlägg.'
+      : 'Du kommer nu att få mina uppdateringar, texter och uppmuntran direkt i din inkorg.';
+
     const emailResponse = await resend.emails.send({
       from: "Peter Svärdsmyr <hej@petersvardsmyr.se>",
       to: [email],
-      subject: confirmationToken ? "Bekräfta din prenumeration" : "Välkommen till mitt nyhetsbrev!",
+      subject: confirmationToken 
+        ? (isBlog ? "Bekräfta prenumeration på bloggnotiser" : "Bekräfta din prenumeration på nyhetsbrevet")
+        : (isBlog ? "Välkommen som bloggprenumerant!" : "Välkommen till mitt nyhetsbrev!"),
       html: confirmationToken ? `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #333;">Bekräfta din prenumeration</h1>
-          <p>Tack för att du vill prenumerera på mitt nyhetsbrev!</p>
+          <p>Tack för att du vill prenumerera på ${subscriptionLabel}!</p>
           <p>För att slutföra din prenumeration behöver du bekräfta din e-postadress genom att klicka på knappen nedan:</p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${confirmUrl}" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
@@ -65,7 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
             <a href="${confirmUrl}" style="color: #2563eb; word-break: break-all;">${confirmUrl}</a>
           </p>
           <p style="font-size: 14px; color: #666;">
-            Om du inte prenumererat på detta nyhetsbrev kan du ignorera detta meddelande.
+            Om du inte anmält dig för ${subscriptionLabel} kan du ignorera detta meddelande.
           </p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
           <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
@@ -88,9 +98,9 @@ const handler = async (req: Request): Promise<Response> => {
       ` : `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #333;">Välkommen!</h1>
-          <p>Tack för att du prenumererar på mitt nyhetsbrev!</p>
-          <p>Du kommer nu att få mina uppdateringar, texter och uppmuntran direkt i din inkorg.</p>
-          <p>Vill du inte längre prenumerera kan du när som helst avregistrera dig via länken längst ner i varje nyhetsbrev.</p>
+          <p>Tack för att du prenumererar på ${subscriptionLabel}!</p>
+          <p>${subscriptionDescription}</p>
+          <p>Vill du inte längre prenumerera kan du när som helst avregistrera dig via länken längst ner i varje mejl.</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
           <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
             <div style="text-align: center; margin-bottom: 15px;">
