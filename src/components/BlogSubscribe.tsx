@@ -60,7 +60,7 @@ export default function BlogSubscribe() {
         }
 
         await supabase.functions.invoke('send-confirmation-email', {
-          body: { email: validation.data.toLowerCase(), confirmationToken: token }
+          body: { email: validation.data.toLowerCase(), confirmationToken: token, subscriptionType: 'blog' }
         });
       } else {
         // Create new subscriber for blog notifications
@@ -80,7 +80,7 @@ export default function BlogSubscribe() {
         }
 
         await supabase.functions.invoke('send-confirmation-email', {
-          body: { email: validation.data.toLowerCase(), confirmationToken: token }
+          body: { email: validation.data.toLowerCase(), confirmationToken: token, subscriptionType: 'blog' }
         });
       }
 
