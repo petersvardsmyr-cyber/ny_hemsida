@@ -60,7 +60,7 @@ export default function BlogSubscribe() {
       } else {
         // Create new subscriber for blog notifications
         const token = crypto.randomUUID();
-        await supabase
+        const { error: insertError } = await supabase
           .from('newsletter_subscribers')
           .insert({
             email: validation.data.toLowerCase(),
@@ -68,6 +68,11 @@ export default function BlogSubscribe() {
             confirmation_token: token,
             subscription_type: 'blog'
           });
+
+        if (insertError) {
+          console.error('Error inserting blog subscriber:', insertError);
+          throw insertError;
+        }
 
         await supabase.functions.invoke('send-confirmation-email', {
           body: { email: validation.data.toLowerCase(), confirmationToken: token }
