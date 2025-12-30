@@ -551,8 +551,8 @@ export function AdminNewsletter() {
                 {isLoading 
                   ? 'Skickar...' 
                   : newsletterStatus && newsletterStatus.remaining > 0 
-                    ? `Skicka till nästa ${Math.min(75, newsletterStatus.remaining)} prenumeranter`
-                    : `Skicka till max 75 av ${subscribers.filter(s => s.is_active).length} prenumeranter`}
+                    ? `Skicka till nästa ${Math.min(40, newsletterStatus.remaining)} prenumeranter`
+                    : `Skicka till max 40 av ${subscribers.filter(s => s.is_active && s.subscription_type === 'newsletter').length} prenumeranter`}
               </Button>
             </div>
           </form>
