@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight, Bell, Settings, Users, FileSpreadsheet } from 'lucide-react';
+import { LogOut, PenTool, Home, Plus, List, Menu, X, FileText, BookOpen, Mail, Package, ChevronDown, ChevronRight, Bell, Settings, Users, FileSpreadsheet, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout() {
@@ -177,6 +177,17 @@ export default function AdminLayout() {
                       >
                         <Users className="mr-2 h-4 w-4" />
                         Prenumeranter
+                      </Button>
+                    </Link>
+                    
+                    <Link to="/admin/blog/comments" onClick={() => setSidebarOpen(false)}>
+                      <Button
+                        variant={isActive('/admin/blog/comments') ? 'secondary' : 'ghost'}
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        Kommentarer
                       </Button>
                     </Link>
                   </div>
