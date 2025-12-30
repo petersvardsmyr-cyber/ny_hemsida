@@ -278,26 +278,44 @@ const handler = async (req: Request): Promise<Response> => {
     
     // Build HTML template once
     // Keep it lightweight: webfont imports increase payload and can contribute to memory pressure.
+    // Use inline styles on all elements since email clients don't support CSS classes well.
+    // Apply Georgia serif font consistently for elegant typography matching the website.
+    const styledContent = emailContent
+      // Style h1 headings - large, bold serif
+      .replace(/<h1([^>]*)>/gi, '<h1$1 style="font-family: Georgia, \'Times New Roman\', serif; font-size: 28px; font-weight: bold; line-height: 1.3; margin: 0 0 20px 0; color: #1a1a1a;">')
+      // Style h2 headings - medium, bold serif  
+      .replace(/<h2([^>]*)>/gi, '<h2$1 style="font-family: Georgia, \'Times New Roman\', serif; font-size: 24px; font-weight: bold; line-height: 1.3; margin: 30px 0 15px 0; color: #1a1a1a;">')
+      // Style h3 headings
+      .replace(/<h3([^>]*)>/gi, '<h3$1 style="font-family: Georgia, \'Times New Roman\', serif; font-size: 20px; font-weight: bold; line-height: 1.3; margin: 25px 0 12px 0; color: #1a1a1a;">')
+      // Style paragraphs - readable serif with good line-height
+      .replace(/<p([^>]*)>/gi, '<p$1 style="font-family: Georgia, \'Times New Roman\', serif; font-size: 18px; line-height: 1.7; margin: 0 0 18px 0; color: #333;">')
+      // Style emphasis/italic text
+      .replace(/<em([^>]*)>/gi, '<em$1 style="font-family: Georgia, \'Times New Roman\', serif; font-style: italic;">')
+      // Style links
+      .replace(/<a ([^>]*)>/gi, '<a $1 style="color: #2563eb; text-decoration: underline;">')
+      // Style strong/bold text
+      .replace(/<strong([^>]*)>/gi, '<strong$1 style="font-weight: bold;">');
+
     const emailTemplate = `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
-        ${emailContent}
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-        <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
+      <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; font-size: 18px; line-height: 1.7;">
+        ${styledContent}
+        <hr style="margin: 40px 0 30px 0; border: none; border-top: 1px solid #ddd;">
+        <footer style="background-color: #f9f9f9; padding: 25px; border-radius: 8px; margin-top: 30px;">
           <div style="text-align: center; margin-bottom: 15px;">
-            <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+            <a href="https://petersvardsmyr.se" style="color: #2563eb; text-decoration: none; font-weight: 500; font-family: Georgia, 'Times New Roman', serif;">
               petersvardsmyr.se
             </a>
           </div>
           <div style="text-align: center; margin-bottom: 15px;">
-            <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none;">
+            <a href="mailto:hej@petersvardsmyr.se" style="color: #666; text-decoration: none; font-family: Georgia, 'Times New Roman', serif;">
               hej@petersvardsmyr.se
             </a>
           </div>
           <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-          <p style="font-size: 12px; color: #666; text-align: center; margin: 10px 0;">
-            Du får detta e-postmeddelande eftersom du prenumererar på vårt nyhetsbrev.
+          <p style="font-size: 13px; color: #666; text-align: center; margin: 10px 0; font-family: Georgia, 'Times New Roman', serif; line-height: 1.5;">
+            Du får detta e-postmeddelande eftersom du prenumererar på nyhetsbrevet.
           </p>
-          <p style="font-size: 12px; text-align: center; margin: 10px 0;">
+          <p style="font-size: 13px; text-align: center; margin: 10px 0; font-family: Georgia, 'Times New Roman', serif;">
             <a href="https://petersvardsmyr.se/nyhetsbrev/avregistrera?email=SUBSCRIBER_EMAIL" style="color: #666; text-decoration: underline;">
               Avregistrera dig här
             </a>
