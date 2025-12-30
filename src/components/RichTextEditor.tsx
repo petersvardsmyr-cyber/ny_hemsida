@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo, Image as ImageIcon, Link as LinkIcon, Heading1, Heading2, Heading3, Heading4, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RichTextEditorProps {
   content: string;
@@ -208,22 +209,41 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('Bilden är för stor. Max 10MB.');
-        return;
-      }
+    if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        editor.chain().focus().setImage({ src: dataUrl }).run();
-        toast.success('Bild tillagd! Dra i den blå cirkeln i nedre högra hörnet för att ändra storlek.');
-      };
-      reader.readAsDataURL(file);
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Bilden är för stor. Max 10MB.');
+      return;
     }
+
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `newsletter/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+    toast.loading('Laddar upp bild...', { id: 'image-upload' });
+
+    const { data, error } = await supabase.storage
+      .from('blog-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Upload error:', error);
+      toast.error('Kunde inte ladda upp bilden. Försök igen.', { id: 'image-upload' });
+      return;
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('blog-images')
+      .getPublicUrl(data.path);
+
+    editor.chain().focus().setImage({ src: urlData.publicUrl }).run();
+    toast.success('Bild tillagd! Dra i den blå cirkeln i nedre högra hörnet för att ändra storlek.', { id: 'image-upload' });
   };
 
   const addLink = () => {
