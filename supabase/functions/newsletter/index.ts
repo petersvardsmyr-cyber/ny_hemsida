@@ -142,9 +142,25 @@ const handler = async (req: Request): Promise<Response> => {
     if (!emailSubject || !emailContent) {
       return new Response(
         JSON.stringify({ error: "Subject and content are required" }),
-        { 
-          status: 400, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Guard: base64 images will explode memory usage in serverless environments.
+    // If content contains data:image/... we must block and ask the admin to re-insert the image
+    // so it becomes a hosted URL (Supabase Storage) instead.
+    if (emailContent.includes('data:image/')) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'Nyhetsbrevet innehåller en inbäddad bild (base64). Ta bort bilden i editorn och ladda upp den igen så att den blir en URL (Storage).',
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
         }
       );
     }
@@ -161,17 +177,47 @@ const handler = async (req: Request): Promise<Response> => {
 
     let newsletterId = lastNewsletter?.id;
 
+    // Ensure we have a newsletter record early so we can record recipients incrementally
+    if (!newsletterId) {
+      const { data: created, error: createdError } = await supabase
+        .from('sent_newsletters')
+        .insert({
+          subject: emailSubject,
+          content: emailContent,
+          template_id: template_id || null,
+          recipient_count: 0,
+          sent_by: user?.email || 'system',
+        })
+        .select('id')
+        .single();
+
+      if (createdError) {
+        console.error('Error creating sent_newsletters record:', createdError);
+        return new Response(
+          JSON.stringify({ error: 'Kunde inte skapa nyhetsbrevslogg' }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          }
+        );
+      }
+
+      newsletterId = created.id;
+    }
+
     // If we have a pending newsletter, get recipients who already received it
-    let excludedEmails: string[] = [];
+    const excludedEmails = new Set<string>();
     if (newsletterId) {
       const { data: alreadySent } = await supabase
         .from('newsletter_recipients')
         .select('subscriber_email')
         .eq('sent_newsletter_id', newsletterId);
-      
+
       if (alreadySent && alreadySent.length > 0) {
-        excludedEmails = alreadySent.map(r => r.subscriber_email);
-        console.log(`Found ${excludedEmails.length} subscribers who already received this newsletter`);
+        for (const r of alreadySent) excludedEmails.add(r.subscriber_email);
+        console.log(
+          `Found ${excludedEmails.size} subscribers who already received this newsletter`
+        );
       }
     }
 
@@ -183,67 +229,57 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('subscription_type', 'newsletter');
 
     if (dbError) {
-      console.error("Database error:", dbError);
-      return new Response(
-        JSON.stringify({ error: "Failed to fetch subscribers" }),
-        { 
-          status: 500, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        }
-      );
+      console.error('Database error:', dbError);
+      return new Response(JSON.stringify({ error: 'Failed to fetch subscribers' }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
     if (!allSubscribers || allSubscribers.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "No active subscribers found" }),
-        { 
-          status: 200, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        }
-      );
+      return new Response(JSON.stringify({ message: 'No active subscribers found' }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
     // Filter out subscribers who already received this newsletter
-    const subscribers = allSubscribers.filter(s => !excludedEmails.includes(s.email));
+    const subscribers = allSubscribers.filter((s) => !excludedEmails.has(s.email));
 
     if (subscribers.length === 0) {
       return new Response(
-        JSON.stringify({ 
-          message: "All subscribers have already received this newsletter",
+        JSON.stringify({
+          message: 'All subscribers have already received this newsletter',
           total_subscribers: allSubscribers.length,
-          already_sent: excludedEmails.length
+          already_sent: excludedEmails.size,
         }),
-        { 
-          status: 200, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
         }
       );
     }
 
     // Use Resend batch API which can send up to 100 emails in one API call
-    // Limit to 75 to save quota for order confirmations and other emails
-    const MAX_EMAILS_PER_RUN = 75;
+    // Keep per-run size conservative to avoid serverless memory limits.
+    const MAX_EMAILS_PER_RUN = 40;
     // Send in very small chunks to ensure we never exceed memory limits
     const CHUNK_SIZE = 5;
-    
+
     const subscribersToSend = subscribers.slice(0, MAX_EMAILS_PER_RUN);
     const remainingAfterThis = subscribers.length - subscribersToSend.length;
 
-    console.log(`Sending to ${subscribersToSend.length} subscribers (${remainingAfterThis} remaining)`);
+    console.log(
+      `Sending to ${subscribersToSend.length} subscribers (${remainingAfterThis} remaining)`
+    );
 
     let successful = 0;
     let failed = 0;
-    const successfulEmails: string[] = [];
     
     // Build HTML template once
+    // Keep it lightweight: webfont imports increase payload and can contribute to memory pressure.
     const emailTemplate = `
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-        body { font-family: 'Crimson Text', Georgia, serif; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', Georgia, serif; }
-        p, li, blockquote, span, div { font-family: 'Crimson Text', Georgia, serif; }
-      </style>
-      <div style="font-family: 'Crimson Text', Georgia, serif; max-width: 600px; margin: 0 auto;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
         ${emailContent}
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
         <footer style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 30px;">
@@ -269,41 +305,46 @@ const handler = async (req: Request): Promise<Response> => {
         </footer>
       </div>
     `;
-    
+
     // Create progress tracking record
-    await supabase
-      .from('newsletter_send_status')
-      .insert({
-        run_id: runId,
-        started_by: user?.email || 'system',
-        total: subscribersToSend.length,
-        sent: 0,
-        failed: 0,
-        status: 'started'
-      });
-    
-    console.log(`Sending newsletter to ${subscribersToSend.length} subscribers in chunks of ${CHUNK_SIZE}`);
-    
+    await supabase.from('newsletter_send_status').insert({
+      run_id: runId,
+      started_by: user?.email || 'system',
+      total: subscribersToSend.length,
+      sent: 0,
+      failed: 0,
+      status: 'started',
+    });
+
+    console.log(
+      `Sending newsletter to ${subscribersToSend.length} subscribers in chunks of ${CHUNK_SIZE}`
+    );
+
     // Send in chunks to avoid memory limits
     const totalChunks = Math.ceil(subscribersToSend.length / CHUNK_SIZE);
-    
+
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
       const chunkStart = chunkIndex * CHUNK_SIZE;
       const chunkEnd = Math.min(chunkStart + CHUNK_SIZE, subscribersToSend.length);
       const chunk = subscribersToSend.slice(chunkStart, chunkEnd);
-      
-      console.log(`Sending chunk ${chunkIndex + 1}/${totalChunks}: ${chunk.length} emails (${chunkStart + 1}-${chunkEnd} of ${subscribersToSend.length})`);
-      
+
+      console.log(
+        `Sending chunk ${chunkIndex + 1}/${totalChunks}: ${chunk.length} emails (${chunkStart + 1}-${chunkEnd} of ${subscribersToSend.length})`
+      );
+
       try {
-        const batchEmails = chunk.map(subscriber => ({
+        const batchEmails = chunk.map((subscriber) => ({
           from,
           to: [subscriber.email],
           subject: emailSubject,
-          html: emailTemplate.replace('SUBSCRIBER_EMAIL', encodeURIComponent(subscriber.email)),
+          html: emailTemplate.replace(
+            'SUBSCRIBER_EMAIL',
+            encodeURIComponent(subscriber.email)
+          ),
         }));
 
         const { data: batchData, error: batchError } = await resend.batch.send(batchEmails);
-        
+
         if (batchError) {
           console.error(`Chunk ${chunkIndex + 1} send error:`, batchError);
           failed += chunk.length;
@@ -312,103 +353,85 @@ const handler = async (req: Request): Promise<Response> => {
           const chunkFailed = chunk.length - chunkSuccessful;
           successful += chunkSuccessful;
           failed += chunkFailed;
-          
-          // Track which emails were sent successfully for this chunk
-          successfulEmails.push(...chunk.slice(0, chunkSuccessful).map(s => s.email));
-          
-          console.log(`Chunk ${chunkIndex + 1} completed: ${chunkSuccessful} successful, ${chunkFailed} failed. Total so far: ${successful}/${subscribersToSend.length}`);
+
+          // Record recipients incrementally (prevents memory growth)
+          if (chunkSuccessful > 0) {
+            const sentEmails = chunk.slice(0, chunkSuccessful).map((s) => s.email);
+            const recipientRecords = sentEmails.map((email) => ({
+              sent_newsletter_id: newsletterId,
+              subscriber_email: email,
+            }));
+
+            const { error: recipientsError } = await supabase
+              .from('newsletter_recipients')
+              .insert(recipientRecords);
+
+            if (recipientsError) {
+              console.error('Error recording recipients (chunk):', recipientsError);
+            } else {
+              for (const email of sentEmails) excludedEmails.add(email);
+            }
+          }
+
+          console.log(
+            `Chunk ${chunkIndex + 1} completed: ${chunkSuccessful} successful, ${chunkFailed} failed. Total so far: ${successful}/${subscribersToSend.length}`
+          );
         }
-        
+
         // Update progress in database after each chunk
         await supabase
           .from('newsletter_send_status')
           .update({
             sent: successful,
             failed: failed,
-            status: 'sending'
+            status: 'sending',
           })
           .eq('run_id', runId);
-        
-        // Wait between chunks to avoid rate limits and memory spikes (1200ms for extra safety)
+
+        // Wait between chunks to avoid rate limits and memory spikes
         if (chunkIndex < totalChunks - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1200));
+          await new Promise((resolve) => setTimeout(resolve, 1200));
         }
       } catch (error) {
         console.error(`Chunk ${chunkIndex + 1} exception:`, error);
         failed += chunk.length;
       }
     }
-    
+
     // Mark as completed
     await supabase
       .from('newsletter_send_status')
       .update({
         sent: successful,
         failed: failed,
-        status: 'completed'
+        status: 'completed',
       })
       .eq('run_id', runId);
 
+    // Update newsletter record with new recipient count
+    const { error: updateError } = await supabase
+      .from('sent_newsletters')
+      .update({
+        recipient_count: excludedEmails.size,
+      })
+      .eq('id', newsletterId);
+
+    if (updateError) {
+      console.error('Error updating newsletter history:', updateError);
+    }
+
     console.log(`Newsletter sent: ${successful} successful, ${failed} failed`);
 
-    // Create or update newsletter record
-    if (!newsletterId) {
-      const { data: newNewsletter, error: saveError } = await supabase
-        .from('sent_newsletters')
-        .insert({
-          subject: emailSubject,
-          content: emailContent,
-          template_id: template_id || null,
-          recipient_count: successful,
-          sent_by: user?.email || 'system'
-        })
-        .select()
-        .single();
-
-      if (saveError) {
-        console.error("Error saving newsletter history:", saveError);
-      } else {
-        newsletterId = newNewsletter.id;
-      }
-    } else {
-      // Update existing newsletter with new recipient count
-      const { error: updateError } = await supabase
-        .from('sent_newsletters')
-        .update({
-          recipient_count: (excludedEmails.length + successful)
-        })
-        .eq('id', newsletterId);
-
-      if (updateError) {
-        console.error("Error updating newsletter history:", updateError);
-      }
-    }
-
-    // Record which subscribers received this newsletter
-    if (newsletterId && successfulEmails.length > 0) {
-      const recipientRecords = successfulEmails.map(email => ({
-        sent_newsletter_id: newsletterId,
-        subscriber_email: email
-      }));
-
-      const { error: recipientsError } = await supabase
-        .from('newsletter_recipients')
-        .insert(recipientRecords);
-
-      if (recipientsError) {
-        console.error("Error recording recipients:", recipientsError);
-      }
-    }
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         message: `Newsletter sent to ${successful} subscribers`,
         successful,
         failed,
         run_id: runId,
         remaining: remainingAfterThis,
         total_subscribers: allSubscribers.length,
-        already_sent: excludedEmails.length
+        already_sent: excludedEmails.size,
       }),
       {
         status: 200,
