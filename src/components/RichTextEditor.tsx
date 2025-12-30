@@ -144,6 +144,51 @@ const ResizableImage = Image.extend({
   },
 });
 
+// Helper function to upload image file to Supabase Storage
+const uploadImageToStorage = async (file: File): Promise<string | null> => {
+  if (file.size > 10 * 1024 * 1024) {
+    toast.error('Bilden är för stor. Max 10MB.');
+    return null;
+  }
+
+  const fileExt = file.name.split('.').pop() || 'jpg';
+  const fileName = `newsletter/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+  toast.loading('Laddar upp bild...', { id: 'paste-upload' });
+
+  const { data, error } = await supabase.storage
+    .from('blog-images')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if (error) {
+    console.error('Upload error:', error);
+    toast.error('Kunde inte ladda upp bilden.', { id: 'paste-upload' });
+    return null;
+  }
+
+  const { data: urlData } = supabase.storage
+    .from('blog-images')
+    .getPublicUrl(data.path);
+
+  toast.success('Bild uppladdad!', { id: 'paste-upload' });
+  return urlData.publicUrl;
+};
+
+// Helper function to convert base64 to File
+const base64ToFile = async (base64String: string, filename: string): Promise<File | null> => {
+  try {
+    const response = await fetch(base64String);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  } catch (error) {
+    console.error('Error converting base64 to file:', error);
+    return null;
+  }
+};
+
 export function RichTextEditor({ content, onChange, placeholder = "Börja skriva..." }: RichTextEditorProps) {
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -158,7 +203,7 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       }),
       ResizableImage.configure({
         inline: false,
-        allowBase64: true,
+        allowBase64: false, // IMPORTANT: Disable base64 to prevent large email payloads
         HTMLAttributes: {
           class: 'rounded-lg',
         },
@@ -178,6 +223,53 @@ export function RichTextEditor({ content, onChange, placeholder = "Börja skriva
       attributes: {
         class: 'focus:outline-none min-h-[300px] p-4 text-foreground',
         style: 'color: hsl(var(--foreground));',
+      },
+      // Handle paste events to intercept images and upload them
+      handlePaste: (view, event) => {
+        const items = event.clipboardData?.items;
+        if (!items) return false;
+
+        for (const item of items) {
+          if (item.type.startsWith('image/')) {
+            event.preventDefault();
+            const file = item.getAsFile();
+            if (file) {
+              uploadImageToStorage(file).then((url) => {
+                if (url && view.state.tr) {
+                  const { state } = view;
+                  const node = state.schema.nodes.image.create({ src: url });
+                  const transaction = state.tr.replaceSelectionWith(node);
+                  view.dispatch(transaction);
+                }
+              });
+            }
+            return true;
+          }
+        }
+        return false;
+      },
+      // Handle drop events to intercept images and upload them
+      handleDrop: (view, event) => {
+        const files = event.dataTransfer?.files;
+        if (!files || files.length === 0) return false;
+
+        const file = files[0];
+        if (file.type.startsWith('image/')) {
+          event.preventDefault();
+          uploadImageToStorage(file).then((url) => {
+            if (url && view.state.tr) {
+              const { state } = view;
+              const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+              if (coordinates) {
+                const node = state.schema.nodes.image.create({ src: url });
+                const transaction = state.tr.insert(coordinates.pos, node);
+                view.dispatch(transaction);
+              }
+            }
+          });
+          return true;
+        }
+        return false;
       },
     },
   });
