@@ -89,17 +89,17 @@ export default function AdminLayout() {
         `}>
           <div className="p-6">
             {/* Desktop header */}
-            <div className="hidden lg:flex items-center gap-2 mb-8">
+            <Link to="/admin" className="hidden lg:flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity">
               <PenTool className="h-8 w-8 text-primary" />
               <h1 className="text-xl font-semibold">Admin Panel</h1>
-            </div>
+            </Link>
             
             {/* Mobile header inside sidebar */}
             <div className="lg:hidden flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
+              <Link to="/admin" onClick={() => setSidebarOpen(false)} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <PenTool className="h-6 w-6 text-primary" />
                 <h1 className="text-lg font-semibold">Admin Panel</h1>
-              </div>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
