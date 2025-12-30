@@ -355,6 +355,7 @@ const handler = async (req: Request): Promise<Response> => {
           failed += chunkFailed;
 
           // Record recipients incrementally (prevents memory growth)
+          // Use upsert with onConflict to prevent duplicates from retries
           if (chunkSuccessful > 0) {
             const sentEmails = chunk.slice(0, chunkSuccessful).map((s) => s.email);
             const recipientRecords = sentEmails.map((email) => ({
@@ -364,7 +365,10 @@ const handler = async (req: Request): Promise<Response> => {
 
             const { error: recipientsError } = await supabase
               .from('newsletter_recipients')
-              .insert(recipientRecords);
+              .upsert(recipientRecords, {
+                onConflict: 'sent_newsletter_id,subscriber_email',
+                ignoreDuplicates: true,
+              });
 
             if (recipientsError) {
               console.error('Error recording recipients (chunk):', recipientsError);
