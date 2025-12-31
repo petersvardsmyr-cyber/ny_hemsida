@@ -96,6 +96,7 @@ export function AdminNewsletter() {
       const { data, error } = await supabase
         .from('newsletter_subscribers')
         .select('*')
+        .eq('subscription_type', 'newsletter')
         .order('subscribed_at', { ascending: false });
 
       if (error) throw error;
@@ -303,7 +304,7 @@ export function AdminNewsletter() {
       <div>
         <h2 className="text-2xl font-heading font-medium">Nyhetsbrev</h2>
         <p className="text-muted-foreground">
-          {subscribers.length} aktiva prenumeranter
+          {subscribers.filter(s => s.is_active && s.confirmed_at).length} bekräftade prenumeranter
         </p>
       </div>
 
@@ -552,7 +553,7 @@ export function AdminNewsletter() {
                   ? 'Skickar...' 
                   : newsletterStatus && newsletterStatus.remaining > 0 
                     ? `Skicka till nästa ${Math.min(40, newsletterStatus.remaining)} prenumeranter`
-                    : `Skicka till max 40 av ${subscribers.filter(s => s.is_active && s.subscription_type === 'newsletter').length} prenumeranter`}
+                    : `Skicka till max 40 av ${subscribers.filter(s => s.is_active && s.confirmed_at && s.subscription_type === 'newsletter').length} prenumeranter`}
               </Button>
             </div>
           </form>

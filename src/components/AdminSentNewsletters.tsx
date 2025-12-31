@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Mail, Eye, Calendar, Users, Send } from 'lucide-react';
+import { Mail, Eye, Calendar, Users } from 'lucide-react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,14 +19,9 @@ interface SentNewsletter {
   sent_by: string | null;
 }
 
-interface NewsletterWithStatus extends SentNewsletter {
-  remaining: number;
-  totalSubscribers: number;
-}
-
 export function AdminSentNewsletters() {
   const navigate = useNavigate();
-  const [newsletters, setNewsletters] = useState<NewsletterWithStatus[]>([]);
+  const [newsletters, setNewsletters] = useState<SentNewsletter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNewsletter, setSelectedNewsletter] = useState<SentNewsletter | null>(null);
 
@@ -46,32 +41,7 @@ export function AdminSentNewsletters() {
 
       if (sentError) throw sentError;
 
-      // Get total active subscribers count
-      const { count: totalSubscribers } = await supabase
-        .from('newsletter_subscribers')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true);
-
-      // For each newsletter, calculate remaining recipients
-      const newslettersWithStatus: NewsletterWithStatus[] = await Promise.all(
-        (sentData || []).map(async (newsletter) => {
-          const { data: recipients } = await supabase
-            .from('newsletter_recipients')
-            .select('subscriber_email')
-            .eq('sent_newsletter_id', newsletter.id);
-
-          const alreadySent = recipients?.length || 0;
-          const remaining = (totalSubscribers || 0) - alreadySent;
-
-          return {
-            ...newsletter,
-            remaining,
-            totalSubscribers: totalSubscribers || 0
-          };
-        })
-      );
-
-      setNewsletters(newslettersWithStatus);
+      setNewsletters(sentData || []);
     } catch (error: any) {
       console.error('Error loading sent newsletters:', error);
       toast.error('Kunde inte ladda skickade nyhetsbrev');
@@ -80,7 +50,7 @@ export function AdminSentNewsletters() {
     }
   };
 
-  const continueNewsletter = (newsletter: NewsletterWithStatus) => {
+  const continueNewsletter = (newsletter: SentNewsletter) => {
     navigate('/admin/newsletter', {
       state: {
         subject: newsletter.subject,
@@ -137,29 +107,14 @@ export function AdminSentNewsletters() {
                       </span>
                       <span className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
-                        {newsletter.recipient_count} skickade av {newsletter.totalSubscribers} totalt
+                        Skickat till {newsletter.recipient_count} mottagare
                       </span>
-                      {newsletter.remaining > 0 && (
-                        <span className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-medium">
-                          {newsletter.remaining} prenumeranter återstår
-                        </span>
-                      )}
                       {newsletter.sent_by && (
                         <span className="text-xs">Skickat av: {newsletter.sent_by}</span>
                       )}
                     </CardDescription>
                    </div>
                    <div className="flex gap-2">
-                     {newsletter.remaining > 0 && (
-                       <Button 
-                         variant="default" 
-                         size="sm"
-                         onClick={() => continueNewsletter(newsletter)}
-                       >
-                         <Send className="w-4 h-4 mr-2" />
-                         Fortsätt skicka
-                       </Button>
-                     )}
                      <Dialog>
                        <DialogTrigger asChild>
                          <Button 
