@@ -14,6 +14,7 @@ interface Comment {
   content: string;
   created_at: string;
   likes: number;
+  parent_id: string | null;
 }
 
 interface BlogCommentsProps {
@@ -46,6 +47,7 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [honeypot, setHoneypot] = useState(''); // Hidden field for bots
@@ -70,6 +72,10 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
     }
     setLoading(false);
   };
+
+  // Group comments: top-level and replies
+  const topLevelComments = comments.filter(c => !c.parent_id);
+  const getReplies = (parentId: string) => comments.filter(c => c.parent_id === parentId);
 
   const handleLike = async (commentId: string, currentLikes: number) => {
     if (likedComments.includes(commentId)) {
@@ -138,7 +144,8 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
       .insert({
         post_id: postId,
         author_name: name.trim() || null,
-        content: content.trim()
+        content: content.trim(),
+        parent_id: replyingTo?.id || null
       });
 
     if (error) {
@@ -146,15 +153,28 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
       toast.error('Kunde inte posta kommentaren');
     } else {
       localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
-      toast.success('Kommentar publicerad!');
+      toast.success(replyingTo ? 'Svar publicerat!' : 'Kommentar publicerad!');
       setName('');
       setContent('');
       setHoneypot('');
       setShowForm(false);
+      setReplyingTo(null);
       fetchComments();
     }
 
     setSubmitting(false);
+  };
+
+  const handleReply = (comment: Comment) => {
+    setReplyingTo(comment);
+    setShowForm(true);
+  };
+
+  const cancelForm = () => {
+    setShowForm(false);
+    setReplyingTo(null);
+    setContent('');
+    setName('');
   };
 
   return (
@@ -177,6 +197,11 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-8 space-y-4 p-4 bg-muted/30 rounded-lg">
+          {replyingTo && (
+            <div className="text-sm text-muted-foreground mb-2">
+              Svarar på <span className="font-medium">{replyingTo.author_name || 'Anonym'}</span>
+            </div>
+          )}
           {/* Honeypot field - hidden from users, visible to bots */}
           <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
             <Input
@@ -199,7 +224,7 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
           </div>
           <div>
             <Textarea
-              placeholder="Din kommentar..."
+              placeholder={replyingTo ? "Ditt svar..." : "Din kommentar..."}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -213,17 +238,13 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
           <div className="flex gap-2">
             <Button type="submit" disabled={submitting} size="sm">
               <Send className="h-4 w-4 mr-2" />
-              {submitting ? 'Publicerar...' : 'Publicera'}
+              {submitting ? 'Publicerar...' : (replyingTo ? 'Svara' : 'Publicera')}
             </Button>
             <Button 
               type="button" 
               variant="ghost" 
               size="sm"
-              onClick={() => {
-                setShowForm(false);
-                setContent('');
-                setName('');
-              }}
+              onClick={cancelForm}
             >
               Avbryt
             </Button>
@@ -237,39 +258,89 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
         <p className="text-muted-foreground text-sm">Inga kommentarer ännu. Bli först att kommentera!</p>
       ) : (
         <div className="space-y-4">
-          {comments.map((comment) => {
+          {topLevelComments.map((comment) => {
             const hasLiked = likedComments.includes(comment.id);
+            const replies = getReplies(comment.id);
             return (
-              <div key={comment.id} className="p-4 bg-muted/20 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-sm">
-                    {comment.author_name || 'Anonym'}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(comment.created_at), { 
-                      addSuffix: true, 
-                      locale: sv 
+              <div key={comment.id}>
+                <div className="p-4 bg-muted/20 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-sm">
+                      {comment.author_name || 'Anonym'}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {formatDistanceToNow(new Date(comment.created_at), { 
+                        addSuffix: true, 
+                        locale: sv 
+                      })}
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-3">
+                    {comment.content}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => handleReply(comment)}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Svara
+                    </button>
+                    <button
+                      onClick={() => handleLike(comment.id, comment.likes)}
+                      disabled={hasLiked}
+                      className={`flex items-center gap-1.5 text-xs transition-colors ${
+                        hasLiked 
+                          ? 'text-accent cursor-default' 
+                          : 'text-muted-foreground hover:text-accent'
+                      }`}
+                      title={hasLiked ? 'Du har redan gillat denna kommentar' : 'Gilla kommentar'}
+                    >
+                      <ThumbsUp className={`h-3.5 w-3.5 ${hasLiked ? 'fill-current' : ''}`} />
+                      {comment.likes > 0 && <span>{comment.likes}</span>}
+                    </button>
+                  </div>
+                </div>
+                {/* Replies */}
+                {replies.length > 0 && (
+                  <div className="ml-6 mt-2 space-y-2 border-l-2 border-muted pl-4">
+                    {replies.map((reply) => {
+                      const hasLikedReply = likedComments.includes(reply.id);
+                      return (
+                        <div key={reply.id} className="p-3 bg-muted/10 rounded-lg">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-medium text-sm">
+                              {reply.author_name || 'Anonym'}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(reply.created_at), { 
+                                addSuffix: true, 
+                                locale: sv 
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-2">
+                            {reply.content}
+                          </p>
+                          <div className="flex items-center justify-end">
+                            <button
+                              onClick={() => handleLike(reply.id, reply.likes)}
+                              disabled={hasLikedReply}
+                              className={`flex items-center gap-1.5 text-xs transition-colors ${
+                                hasLikedReply 
+                                  ? 'text-accent cursor-default' 
+                                  : 'text-muted-foreground hover:text-accent'
+                              }`}
+                              title={hasLikedReply ? 'Du har redan gillat denna kommentar' : 'Gilla kommentar'}
+                            >
+                              <ThumbsUp className={`h-3.5 w-3.5 ${hasLikedReply ? 'fill-current' : ''}`} />
+                              {reply.likes > 0 && <span>{reply.likes}</span>}
+                            </button>
+                          </div>
+                        </div>
+                      );
                     })}
-                  </span>
-                </div>
-                <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-3">
-                  {comment.content}
-                </p>
-                <div className="flex items-center justify-end">
-                  <button
-                    onClick={() => handleLike(comment.id, comment.likes)}
-                    disabled={hasLiked}
-                    className={`flex items-center gap-1.5 text-xs transition-colors ${
-                      hasLiked 
-                        ? 'text-accent cursor-default' 
-                        : 'text-muted-foreground hover:text-accent'
-                    }`}
-                    title={hasLiked ? 'Du har redan gillat denna kommentar' : 'Gilla kommentar'}
-                  >
-                    <ThumbsUp className={`h-3.5 w-3.5 ${hasLiked ? 'fill-current' : ''}`} />
-                    {comment.likes > 0 && <span>{comment.likes}</span>}
-                  </button>
-                </div>
+                  </div>
+                )}
               </div>
             );
           })}
