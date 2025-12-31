@@ -156,15 +156,16 @@ export function AdminNewsletterSubscribers() {
     }
   };
 
-  const activeCount = subscribers.filter(s => s.is_active).length;
-  const inactiveCount = subscribers.length - activeCount;
+  const confirmedActiveCount = subscribers.filter(s => s.is_active && s.confirmed_at).length;
+  const pendingConfirmationCount = subscribers.filter(s => s.is_active && !s.confirmed_at).length;
+  const inactiveCount = subscribers.filter(s => !s.is_active).length;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Totalt prenumeranter</CardTitle>
+            <CardTitle className="text-sm font-medium">Totalt</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -174,17 +175,28 @@ export function AdminNewsletterSubscribers() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aktiva</CardTitle>
+            <CardTitle className="text-sm font-medium">Bekräftade & aktiva</CardTitle>
             <Users className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeCount}</div>
+            <div className="text-2xl font-bold">{confirmedActiveCount}</div>
+            <p className="text-xs text-muted-foreground mt-1">Får nyhetsbrev</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inaktiva</CardTitle>
+            <CardTitle className="text-sm font-medium">Väntar på bekräftelse</CardTitle>
+            <Mail className="h-4 w-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingConfirmationCount}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avregistrerade</CardTitle>
             <Users className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -218,6 +230,7 @@ export function AdminNewsletterSubscribers() {
                 <TableRow>
                   <TableHead>Namn</TableHead>
                   <TableHead>E-post</TableHead>
+                  <TableHead>Bekräftad</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Prenumererad</TableHead>
                   <TableHead>Avregistrerad</TableHead>
@@ -230,12 +243,23 @@ export function AdminNewsletterSubscribers() {
                     <TableCell>{subscriber.name || '-'}</TableCell>
                     <TableCell>{subscriber.email}</TableCell>
                     <TableCell>
+                      {subscriber.confirmed_at ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                          Bekräftad
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                          Obekräftad
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                         subscriber.is_active 
                           ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
                           : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                       }`}>
-                        {subscriber.is_active ? 'Aktiv' : 'Inaktiv'}
+                        {subscriber.is_active ? 'Aktiv' : 'Avregistrerad'}
                       </span>
                     </TableCell>
                     <TableCell>
