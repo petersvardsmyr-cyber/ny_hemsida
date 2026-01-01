@@ -3,10 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { MessageCircle, ExternalLink, Trash2, ThumbsUp, RefreshCw } from 'lucide-react';
+import { MessageCircle, ExternalLink, Trash2, ThumbsUp, RefreshCw, Pencil, Check, X } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +35,9 @@ export default function AdminBlogCommentsPage() {
   const [comments, setComments] = useState<CommentWithPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchComments();
@@ -42,7 +46,6 @@ export default function AdminBlogCommentsPage() {
   const fetchComments = async () => {
     setLoading(true);
     
-    // First fetch comments
     const { data: commentsData, error: commentsError } = await supabase
       .from('blog_comments')
       .select('*')
@@ -61,7 +64,6 @@ export default function AdminBlogCommentsPage() {
       return;
     }
 
-    // Then fetch post titles for those comments
     const postIds = [...new Set(commentsData.map(c => c.post_id))];
     const { data: postsData, error: postsError } = await supabase
       .from('blog_posts')
@@ -72,7 +74,6 @@ export default function AdminBlogCommentsPage() {
       console.error('Error fetching posts:', postsError);
     }
 
-    // Map posts to comments
     const postsMap = new Map(postsData?.map(p => [p.id, { title: p.title, slug: p.slug }]) || []);
     
     const commentsWithPosts: CommentWithPost[] = commentsData.map(comment => ({
@@ -102,6 +103,41 @@ export default function AdminBlogCommentsPage() {
     }
     
     setDeleting(null);
+  };
+
+  const startEditing = (comment: CommentWithPost) => {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setEditContent('');
+  };
+
+  const handleSave = async () => {
+    if (!editingId || !editContent.trim()) return;
+    
+    setSaving(true);
+    
+    const { error } = await supabase
+      .from('blog_comments')
+      .update({ content: editContent.trim() })
+      .eq('id', editingId);
+
+    if (error) {
+      console.error('Error updating comment:', error);
+      toast.error('Kunde inte uppdatera kommentaren');
+    } else {
+      toast.success('Kommentar uppdaterad');
+      setComments(prev => prev.map(c => 
+        c.id === editingId ? { ...c, content: editContent.trim() } : c
+      ));
+      setEditingId(null);
+      setEditContent('');
+    }
+    
+    setSaving(false);
   };
 
   return (
@@ -181,44 +217,87 @@ export default function AdminBlogCommentsPage() {
                       )}
                     </div>
                   </div>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {editingId !== comment.id && (
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
-                        disabled={deleting === comment.id}
+                        onClick={() => startEditing(comment)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Radera kommentar?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Är du säker på att du vill radera denna kommentar? Detta går inte att ångra.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Avbryt</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDelete(comment.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          disabled={deleting === comment.id}
                         >
-                          Radera
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Radera kommentar?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Är du säker på att du vill radera denna kommentar? Detta går inte att ångra.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(comment.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Radera
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm whitespace-pre-wrap bg-muted/30 p-3 rounded-lg">
-                  {comment.content}
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  {format(new Date(comment.created_at), 'PPP HH:mm', { locale: sv })}
-                </p>
+                {editingId === comment.id ? (
+                  <div className="space-y-3">
+                    <Textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      className="min-h-[100px]"
+                      disabled={saving}
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={handleSave}
+                        disabled={saving || !editContent.trim()}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Spara
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={cancelEditing}
+                        disabled={saving}
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Avbryt
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm whitespace-pre-wrap bg-muted/30 p-3 rounded-lg">
+                      {comment.content}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {format(new Date(comment.created_at), 'PPP HH:mm', { locale: sv })}
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           ))}
