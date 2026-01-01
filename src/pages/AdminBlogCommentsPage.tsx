@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
 import { sv } from 'date-fns/locale';
@@ -37,6 +39,7 @@ export default function AdminBlogCommentsPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
+  const [editAuthor, setEditAuthor] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -108,11 +111,13 @@ export default function AdminBlogCommentsPage() {
   const startEditing = (comment: CommentWithPost) => {
     setEditingId(comment.id);
     setEditContent(comment.content);
+    setEditAuthor(comment.author_name || '');
   };
 
   const cancelEditing = () => {
     setEditingId(null);
     setEditContent('');
+    setEditAuthor('');
   };
 
   const handleSave = async () => {
@@ -122,7 +127,10 @@ export default function AdminBlogCommentsPage() {
     
     const { error } = await supabase
       .from('blog_comments')
-      .update({ content: editContent.trim() })
+      .update({ 
+        content: editContent.trim(),
+        author_name: editAuthor.trim() || null
+      })
       .eq('id', editingId);
 
     if (error) {
@@ -131,10 +139,11 @@ export default function AdminBlogCommentsPage() {
     } else {
       toast.success('Kommentar uppdaterad');
       setComments(prev => prev.map(c => 
-        c.id === editingId ? { ...c, content: editContent.trim() } : c
+        c.id === editingId ? { ...c, content: editContent.trim(), author_name: editAuthor.trim() || null } : c
       ));
       setEditingId(null);
       setEditContent('');
+      setEditAuthor('');
     }
     
     setSaving(false);
@@ -262,12 +271,26 @@ export default function AdminBlogCommentsPage() {
               <CardContent>
                 {editingId === comment.id ? (
                   <div className="space-y-3">
-                    <Textarea
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                      className="min-h-[100px]"
-                      disabled={saving}
-                    />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit-author">Författare</Label>
+                      <Input
+                        id="edit-author"
+                        value={editAuthor}
+                        onChange={(e) => setEditAuthor(e.target.value)}
+                        placeholder="Anonym"
+                        disabled={saving}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="edit-content">Kommentar</Label>
+                      <Textarea
+                        id="edit-content"
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="min-h-[100px]"
+                        disabled={saving}
+                      />
+                    </div>
                     <div className="flex items-center gap-2">
                       <Button 
                         size="sm" 
