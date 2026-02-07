@@ -14,13 +14,6 @@ const alltDetViDelarAndraAretImg = "/lovable-uploads/d46f78be-5cd0-4056-a65d-031
 const attBlitillImg = "/lovable-uploads/945ace33-dadc-46c4-907c-ab6bb84a1c3b.png";
 const Home = () => {
   return <div className="min-h-screen flex flex-col justify-start pt-16 md:pt-32 pb-20 md:pb-8">
-      {/* Book Banner */}
-      <Link to="/butik" className="block px-4 md:px-12 py-6 md:py-8 hover:bg-muted/50 transition-colors">
-        <p className="text-lg md:text-xl text-muted-foreground max-w-4xl">
-          En text för varje vecka på året. Köp min bok <em className="text-foreground">Det ordnar sig</em>. 👉🏼 📚
-        </p>
-      </Link>
-
       {/* About Section */}
       <section id="about" className="py-12 md:py-20 px-4 md:px-12 flex items-center">
         <div className="max-w-4xl w-full">
